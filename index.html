@@ -2,201 +2,122 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>DeepRise Scanner PRO</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeepRise Scanner V2 PRO</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-
+*{box-sizing:border-box}
 body{
- background:#07111f;
- color:#fff;
- font-family:Arial,sans-serif;
- min-height:100vh
+ margin:0;background:#06111f;color:#eef6ff;
+ font-family:Arial,sans-serif
 }
-
 header{
- padding:28px 18px;
- text-align:center;
- border-bottom:1px solid #1c3047
+ padding:24px 15px;text-align:center;
+ border-bottom:1px solid #193149
 }
+h1{margin:0;color:#35e0a1;font-size:29px}
+.subtitle{color:#8299ae;margin-top:7px;font-size:13px}
+.container{width:95%;max-width:1200px;margin:20px auto}
 
-h1{
- color:#35e0a1;
- font-size:30px;
- margin-bottom:8px
-}
-
-header p{color:#8fa8bf}
-
-.container{
- width:94%;
- max-width:1100px;
- margin:25px auto
-}
-
-.status,.card{
- background:#0c1929;
- border:1px solid #1b3249;
+.status,.card,.hero{
+ background:#0b1928;border:1px solid #19334b;
  border-radius:14px
 }
-
 .status{
- padding:15px;
- margin-bottom:20px;
- display:flex;
- justify-content:space-between
+ padding:14px 16px;display:flex;
+ justify-content:space-between;margin-bottom:15px
 }
+.green,.positive{color:#35e0a1}
+.red,.negative{color:#ff6574}
+.yellow{color:#ffd166}
 
-.online,.positive{color:#35e0a1}
-.negative{color:#ff5f6d}
-
-.controls{
- display:flex;
- gap:10px;
- margin-bottom:12px
-}
-
+.controls{display:flex;gap:8px;margin-bottom:12px}
 input{
- flex:1;
- background:#0c1929;
- border:1px solid #1b3249;
- color:#fff;
- padding:14px;
- border-radius:10px
+ flex:1;padding:14px;background:#0b1928;color:white;
+ border:1px solid #1c3852;border-radius:10px
 }
-
 button{
- background:#35e0a1;
- border:0;
- padding:14px 18px;
- border-radius:10px;
- font-weight:bold;
- cursor:pointer
+ padding:13px 16px;border:0;border-radius:10px;
+ background:#35e0a1;font-weight:bold;cursor:pointer
 }
-
-.filters{
- display:flex;
- gap:8px;
- margin-bottom:20px
-}
-
+.filters{display:flex;gap:7px;overflow:auto;margin-bottom:17px}
 .filter{
- background:#0c1929;
- color:#8fa8bf;
- border:1px solid #1b3249
+ background:#0b1928;color:#8da5ba;
+ border:1px solid #19334b;white-space:nowrap
+}
+.filter.active{background:#123b31;color:#35e0a1}
+
+.progress{height:5px;background:#102237;margin-bottom:15px}
+.progress span{
+ display:block;height:100%;width:0;background:#35e0a1;
+ transition:.2s
 }
 
-.filter.active{
- background:#123a31;
- color:#35e0a1
+.hero{padding:17px;margin-bottom:20px}
+.hero h2{margin:0 0 12px;color:#ffd166;font-size:18px}
+.top-grid{
+ display:grid;grid-template-columns:repeat(3,1fr);gap:10px
 }
-
-.card{
- padding:18px;
- margin-bottom:15px
+.pick{
+ background:#081522;border:1px solid #20374d;
+ border-radius:11px;padding:13px
 }
+.pick-rank{font-size:11px;color:#70899f}
+.pick-symbol{font-size:18px;font-weight:bold;margin:5px 0}
+.pick-score{color:#35e0a1;font-weight:bold}
 
+.card{padding:17px;margin-bottom:14px}
 .coin-header{
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin-bottom:15px
+ display:flex;justify-content:space-between;
+ align-items:center;gap:8px;margin-bottom:14px
 }
-
-.symbol{
- font-size:21px;
- font-weight:bold
+.symbol{font-size:20px;font-weight:bold}
+.badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.badge{
+ padding:6px 9px;border-radius:20px;
+ font-size:12px;font-weight:bold
 }
-
-.badges{
- display:flex;
- gap:8px
-}
-
-.score,.signal{
- padding:7px 11px;
- border-radius:20px;
- font-weight:bold
-}
-
-.score{
- background:#123a31;
- color:#35e0a1
-}
-
-.long{
- background:#123a31;
- color:#35e0a1
-}
-
-.watch{
- background:#3b3418;
- color:#ffd166
-}
-
-.avoid{
- background:#3b1b24;
- color:#ff7080
-}
+.long{background:#123b31;color:#35e0a1}
+.short{background:#3c1922;color:#ff6574}
+.watch{background:#3a3317;color:#ffd166}
+.score{background:#142a3d;color:#a9c8df}
+.pump-high{background:#143d30;color:#35e0a1}
+.pump-mid{background:#3b3418;color:#ffd166}
+.pump-low{background:#26313d;color:#93a9bc}
 
 .data{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:10px
+ display:grid;grid-template-columns:repeat(4,1fr);gap:9px
 }
-
 .box{
- background:#081522;
- padding:12px;
- border-radius:9px
+ background:#071522;padding:11px;border-radius:9px;
+ min-height:62px
 }
-
 .label{
- color:#7890a7;
- font-size:11px;
- margin-bottom:5px
+ color:#718ba1;font-size:10px;
+ margin-bottom:6px;text-transform:uppercase
 }
-
-.value{font-weight:bold}
-
+.value{font-weight:bold;font-size:13px}
 .reason{
- margin-top:12px;
- color:#9eb2c5;
- font-size:13px;
- line-height:1.5
+ margin-top:12px;padding-top:11px;
+ border-top:1px solid #172b3e;
+ color:#9db1c3;font-size:12px;line-height:1.6
+}
+.confirm{
+ margin-top:10px;background:#071522;
+ border-radius:9px;padding:10px
+}
+.confirm-title{font-size:11px;color:#7891a7;margin-bottom:6px}
+.loading{text-align:center;padding:35px;color:#8299ae}
+.footer{
+ text-align:center;color:#61798e;
+ font-size:10px;padding:20px;line-height:1.5
 }
 
-.loading{
- text-align:center;
- color:#8fa8bf;
- padding:30px
-}
-
-.progress{
- height:5px;
- background:#102235;
- margin-bottom:16px
-}
-
-.progress span{
- display:block;
- height:100%;
- background:#35e0a1;
- width:0
-}
-
-.foot{
- text-align:center;
- color:#647d94;
- font-size:11px;
- padding:18px
-}
-
-@media(max-width:650px){
+@media(max-width:750px){
  .data{grid-template-columns:repeat(2,1fr)}
+ .top-grid{grid-template-columns:1fr}
  .controls{flex-direction:column}
- .score,.signal{font-size:12px}
+ h1{font-size:25px}
 }
 </style>
 </head>
@@ -204,751 +125,642 @@ button{
 <body>
 
 <header>
-<h1>DeepRise Scanner PRO</h1>
-<p>Crypto Spot Opportunity Scanner • Technical Momentum Engine</p>
+ <h1>DeepRise Scanner V2 PRO</h1>
+ <div class="subtitle">
+ Pump Radar • Liquidity • Confirmation Engine • Trade Planner
+ </div>
 </header>
 
 <div class="container">
 
 <div class="status">
-<span>Market Scanner</span>
-<span class="online">● LIVE</span>
+ <span>DeepRise Market Engine</span>
+ <span class="green">● LIVE</span>
 </div>
 
 <div class="controls">
-<input id="search" placeholder="Search BTC, ETH, SOL...">
-<button onclick="loadMarket()">SCAN NOW</button>
+ <input id="search" placeholder="Search BTC, ETH, SOL...">
+ <button onclick="loadMarket()">SCAN NOW</button>
 </div>
 
 <div class="filters">
-<button class="filter active" data-filter="all">ALL</button>
-<button class="filter" data-filter="long">LONG</button>
-<button class="filter" data-filter="watch">WATCH</button>
-<button class="filter" data-filter="avoid">AVOID</button>
+ <button class="filter active" data-filter="all">ALL</button>
+ <button class="filter" data-filter="long">LONG</button>
+ <button class="filter" data-filter="short">SHORT</button>
+ <button class="filter" data-filter="watch">WATCH</button>
 </div>
 
-<div class="progress">
-<span id="bar"></span>
+<div class="progress"><span id="bar"></span></div>
+
+<div class="hero">
+ <h2>🔥 TOP 3 DEEPRISE PICKS</h2>
+ <div id="top3" class="top-grid">
+  <div class="loading">Scanning...</div>
+ </div>
 </div>
 
 <div id="results">
-<div class="loading">Loading market data...</div>
+ <div class="loading">Loading live market data...</div>
 </div>
 
-<div class="foot">
-DeepRise Score is a technical screening model — not financial advice.
+<div class="footer">
+ DeepRise scores are quantitative screening signals, not guaranteed predictions
+ or financial advice. Pump Radar represents probability/conditions only.
 </div>
 
 </div>
 
 <script>
-
 let marketData=[];
 let currentFilter="all";
 
-const stableBases=[
-"USDC","FDUSD","TUSD","USDP","DAI","EUR","TRY","BRL"
-];
+const API="https://api.binance.com";
+const stable=["USDC","FDUSD","TUSD","USDP","DAI","EUR","TRY","BRL"];
 
-
-/* EMA */
-
-function ema(values,p){
-
- const k=2/(p+1);
-
- let e=values[0];
-
- for(let i=1;i<values.length;i++)
-   e=values[i]*k+e*(1-k);
-
+function ema(a,p){
+ if(!a.length)return 0;
+ let e=a[0],k=2/(p+1);
+ for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);
  return e;
 }
 
-
-/* RSI */
-
-function rsi(values,p=14){
-
- if(values.length<=p) return 50;
-
- let gain=0;
- let loss=0;
-
- for(let i=values.length-p;i<values.length;i++){
-
-   const d=values[i]-values[i-1];
-
-   if(d>0) gain+=d;
-   else loss-=d;
+function RSI(a,p=14){
+ if(a.length<=p)return 50;
+ let g=0,l=0;
+ for(let i=a.length-p;i<a.length;i++){
+  let d=a[i]-a[i-1];
+  if(d>0)g+=d;else l-=d;
  }
-
- if(loss===0) return 100;
-
- const rs=(gain/p)/(loss/p);
-
+ if(!l)return 100;
+ let rs=(g/p)/(l/p);
  return 100-(100/(1+rs));
 }
 
+function ATR(k,p=14){
+ if(k.length<p+1)return 0;
+ let tr=[];
+ for(let i=1;i<k.length;i++){
+  let h=+k[i][2],l=+k[i][3],pc=+k[i-1][4];
+  tr.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc)));
+ }
+ return tr.slice(-p).reduce((a,b)=>a+b,0)/p;
+}
 
-/* Technical analysis */
+function candleSignal(k){
+ if(k.length<3)return {name:"NONE",bull:false,bear:false};
+
+ let x=k[k.length-2],p=k[k.length-3];
+
+ let o=+x[1],h=+x[2],l=+x[3],c=+x[4];
+ let po=+p[1],pc=+p[4];
+
+ let body=Math.abs(c-o);
+ let lower=Math.min(o,c)-l;
+ let upper=h-Math.max(o,c);
+
+ if(c>o && pc<po && o<=pc && c>=po)
+  return {name:"BULLISH ENGULFING",bull:true,bear:false};
+
+ if(c<o && pc>po && o>=pc && c<=po)
+  return {name:"BEARISH ENGULFING",bull:false,bear:true};
+
+ if(body>0 && lower>body*2 && upper<body)
+  return {name:"HAMMER / REJECTION",bull:true,bear:false};
+
+ if(body>0 && upper>body*2 && lower<body)
+  return {name:"BEARISH REJECTION",bull:false,bear:true};
+
+ return {
+  name:c>o?"BULLISH CLOSE":"BEARISH CLOSE",
+  bull:c>o,bear:c<o
+ };
+}
+
+async function orderBook(symbol,price){
+ try{
+  let r=await fetch(`${API}/api/v3/depth?symbol=${symbol}&limit=100`);
+  let d=await r.json();
+
+  let bids=0,asks=0;
+  const range=.01;
+
+  d.bids.forEach(x=>{
+   let p=+x[0],q=+x[1];
+   if(p>=price*(1-range))bids+=p*q;
+  });
+
+  d.asks.forEach(x=>{
+   let p=+x[0],q=+x[1];
+   if(p<=price*(1+range))asks+=p*q;
+  });
+
+  let total=bids+asks;
+  return{
+   bidLiquidity:bids,
+   askLiquidity:asks,
+   depth:total,
+   buyPressure:total?bids/total*100:50
+  };
+ }catch(e){
+  return{bidLiquidity:0,askLiquidity:0,depth:0,buyPressure:50};
+ }
+}
 
 async function enrich(c){
-
  try{
+  const kr=await fetch(
+   `${API}/api/v3/klines?symbol=${c.symbol}&interval=1h&limit=120`
+  );
+  const k=await kr.json();
 
- const response=await fetch(
- `https://api.binance.com/api/v3/klines?symbol=${c.symbol}&interval=4h&limit=60`
- );
+  if(!Array.isArray(k)||k.length<60)throw Error();
 
- const k=await response.json();
+  const closes=k.map(x=>+x[4]);
+  const qvol=k.map(x=>+x[7]);
+  const price=+c.lastPrice;
 
- const closes=k.map(x=>+x[4]);
- const volumes=k.map(x=>+x[7]);
+  const rsi=RSI(closes);
+  const e20=ema(closes.slice(-60),20);
+  const e50=ema(closes.slice(-100),50);
+  const atr=ATR(k);
 
- const R=rsi(closes);
+  const cs=candleSignal(k);
 
- const e20=ema(closes.slice(-40),20);
- const e50=ema(closes,50);
+  const avg20=qvol.slice(-21,-1)
+   .reduce((a,b)=>a+b,0)/20;
 
- const price=+c.lastPrice;
+  const recent3=qvol.slice(-4,-1)
+   .reduce((a,b)=>a+b,0)/3;
 
- const low30=Math.min(...closes);
- const high30=Math.max(...closes);
+  const volumeRatio=avg20?recent3/avg20:1;
 
- const range=Math.max(high30-low30,0.00000001);
+  const previous3=qvol.slice(-7,-4)
+   .reduce((a,b)=>a+b,0)/3;
 
- const bottomPos=
- ((price-low30)/range)*100;
+  const volumeAcceleration=
+   previous3?recent3/previous3:1;
 
- const avgVolume=
- volumes
- .slice(-21,-1)
- .reduce((a,b)=>a+b,0)/20;
+  const highs=closes.slice(-48);
+  const low48=Math.min(...highs);
+  const high48=Math.max(...highs);
+  const range=Math.max(high48-low48,0.0000001);
+  const position=(price-low48)/range*100;
 
- const volumeRatio=
- avgVolume
- ? volumes[volumes.length-1]/avgVolume
- :1;
+  const book=await orderBook(c.symbol,price);
 
+  /*
+    PUMP RADAR
+    Measures pre-expansion conditions.
+  */
+  let pump=20;
 
- let score=35;
+  if(volumeRatio>1.15)pump+=12;
+  if(volumeRatio>1.5)pump+=8;
 
- let reasons=[];
+  if(volumeAcceleration>1.15)pump+=12;
+  if(volumeAcceleration>1.5)pump+=8;
 
+  if(book.buyPressure>55)pump+=10;
+  if(book.buyPressure>62)pump+=8;
 
- /* RSI */
+  if(rsi>=42&&rsi<=65)pump+=8;
 
- if(R>=40 && R<=60){
+  if(price>e20)pump+=7;
+  if(e20>e50)pump+=7;
 
- score+=15;
- reasons.push("Healthy RSI");
+  if(position<65)pump+=5;
+  if(+c.priceChangePercent>8)pump-=15;
 
+  pump=Math.max(0,Math.min(100,Math.round(pump)));
+
+  /*
+    LONG / SHORT SCORE
+  */
+  let longScore=30;
+  let shortScore=30;
+
+  if(rsi>=42&&rsi<=62)longScore+=10;
+  if(rsi<35)longScore+=8;
+  if(rsi>70)shortScore+=12;
+
+  if(price>e20)longScore+=10;
+  else shortScore+=8;
+
+  if(e20>e50)longScore+=13;
+  else shortScore+=12;
+
+  if(volumeRatio>1.2){
+   if(book.buyPressure>=50)longScore+=10;
+   else shortScore+=10;
+  }
+
+  if(book.buyPressure>57)longScore+=12;
+  if(book.buyPressure<43)shortScore+=12;
+
+  if(cs.bull)longScore+=10;
+  if(cs.bear)shortScore+=10;
+
+  if(position<30)longScore+=8;
+  if(position>80)shortScore+=8;
+
+  longScore=Math.min(100,longScore);
+  shortScore=Math.min(100,shortScore);
+
+  let signal="WATCH",score=Math.max(longScore,shortScore);
+
+  if(longScore>=68 && longScore>shortScore+8)
+   signal="LONG";
+
+  if(shortScore>=68 && shortScore>longScore+8)
+   signal="SHORT";
+
+  /*
+    CONFIRMATIONS
+  */
+  let conf=0;
+  let confText=[];
+
+  if(signal==="LONG"){
+   if(price>e20){conf++;confText.push("Price > EMA20")}
+   if(e20>e50){conf++;confText.push("EMA20 > EMA50")}
+   if(book.buyPressure>53){conf++;confText.push("Buy pressure")}
+   if(volumeRatio>1.1){conf++;confText.push("Volume")}
+   if(cs.bull){conf++;confText.push(cs.name)}
+  }
+
+  if(signal==="SHORT"){
+   if(price<e20){conf++;confText.push("Price < EMA20")}
+   if(e20<e50){conf++;confText.push("EMA bearish")}
+   if(book.buyPressure<47){conf++;confText.push("Sell pressure")}
+   if(volumeRatio>1.1){conf++;confText.push("Volume")}
+   if(cs.bear){conf++;confText.push(cs.name)}
+  }
+
+  if(signal==="WATCH"){
+   confText.push("Waiting for stronger confirmation");
+  }
+
+  /*
+    TRADE PLAN
+  */
+  let entryLow,entryHigh,sl,tp1,tp2,tp3;
+
+  if(signal==="SHORT"){
+   entryLow=price;
+   entryHigh=price+atr*.25;
+   sl=price+atr*1.5;
+   tp1=price-atr*1.5;
+   tp2=price-atr*2.5;
+   tp3=price-atr*4;
+  }else{
+   entryLow=price-atr*.25;
+   entryHigh=price;
+   sl=price-atr*1.5;
+   tp1=price+atr*1.5;
+   tp2=price+atr*2.5;
+   tp3=price+atr*4;
+  }
+
+  let duration;
+
+  const atrPct=price?atr/price*100:0;
+
+  if(atrPct>3)duration="2–8 HOURS";
+  else if(atrPct>1.5)duration="6–24 HOURS";
+  else duration="1–3 DAYS";
+
+  let reasons=[];
+
+  if(volumeRatio>1.2)reasons.push("Volume expansion");
+  if(volumeAcceleration>1.15)reasons.push("Volume accelerating");
+  if(book.buyPressure>55)reasons.push("Buy-side liquidity");
+  if(book.buyPressure<45)reasons.push("Sell-side pressure");
+  if(e20>e50)reasons.push("Bullish trend");
+  else reasons.push("Bearish trend");
+
+  reasons.push(cs.name);
+
+  return{
+   ...c,rsi,e20,e50,atr,
+   volumeRatio,volumeAcceleration,
+   position,...book,pump,
+   longScore,shortScore,
+   signal,score:Math.round(score),
+   candle:cs.name,
+   confirmations:conf,
+   confText,
+   entryLow,entryHigh,sl,tp1,tp2,tp3,
+   duration,reasons
+  };
+
+ }catch(e){
+  return{
+   ...c,signal:"WATCH",score:0,pump:0,
+   rsi:null,volumeRatio:null,
+   volumeAcceleration:null,
+   buyPressure:50,depth:0,
+   confirmations:0,
+   confText:["Data unavailable"],
+   duration:"—",reasons:["Technical data unavailable"]
+  };
  }
-
- else if(R<35){
-
- score+=12;
- reasons.push("Oversold RSI");
-
- }
-
- else if(R>72){
-
- score-=12;
- reasons.push("Overbought");
-
- }
-
-
- /* EMA */
-
- if(price>e20){
-
- score+=10;
- reasons.push("Above EMA20");
-
- }else{
-
- score-=4;
-
- }
-
-
- if(e20>e50){
-
- score+=15;
- reasons.push("Bullish EMA trend");
-
- }
-
-
- /* Bottom detection */
-
- if(bottomPos<30){
-
- score+=15;
- reasons.push("Near range bottom");
-
- }
-
- else if(bottomPos>85){
-
- score-=8;
-
- }
-
-
- /* Volume */
-
- if(volumeRatio>1.2){
-
- score+=10;
- reasons.push("Volume expansion");
-
- }
-
-
- if(+c.quoteVolume>100000000)
- score+=5;
-
-
- /* Avoid chasing pumps */
-
- if(+c.priceChangePercent>8)
- score-=5;
-
-
- score=Math.max(
- 0,
- Math.min(100,Math.round(score))
- );
-
-
- let signal;
-
- if(score>=72)
- signal="LONG";
-
- else if(score>=55)
- signal="WATCH";
-
- else
- signal="AVOID";
-
-
- return{
-
- ...c,
-
- rsi:R,
-
- ema20:e20,
-
- ema50:e50,
-
- bottomPos,
-
- volumeRatio,
-
- score,
-
- signal,
-
- reasons:reasons.slice(0,4)
-
- };
-
-
- }catch(error){
-
- return{
-
- ...c,
-
- rsi:null,
-
- bottomPos:null,
-
- volumeRatio:null,
-
- score:40,
-
- signal:"WATCH",
-
- reasons:["Limited technical data"]
-
- };
-
- }
-
 }
-
-
-/* MARKET SCANNER */
-
-async function loadMarket(){
-
- const results=
- document.getElementById("results");
-
- const bar=
- document.getElementById("bar");
-
-
- results.innerHTML=
- '<div class="loading">Scanning Binance market + 4H indicators...</div>';
-
- bar.style.width="5%";
-
-
- try{
-
-
- const response=
- await fetch(
- "https://api.binance.com/api/v3/ticker/24hr"
- );
-
-
- const data=
- await response.json();
-
-
- let base=
- data
-
- .filter(c=>
-
- c.symbol.endsWith("USDT")
-
- && !c.symbol.includes("UPUSDT")
-
- && !c.symbol.includes("DOWNUSDT")
-
- && !stableBases.includes(
- c.symbol.replace("USDT","")
- )
-
- && +c.quoteVolume>5000000
-
- )
-
- .sort(
- (a,b)=>
- +b.quoteVolume-
- +a.quoteVolume
- )
-
- .slice(0,30);
-
-
- marketData=[];
-
-
- for(let i=0;i<base.length;i+=5){
-
-
- const batch=
- await Promise.all(
- base.slice(i,i+5)
- .map(enrich)
- );
-
-
- marketData.push(...batch);
-
-
- bar.style.width=
- Math.round(
- ((i+5)/base.length)*100
- )+"%";
-
- }
-
-
- marketData.sort(
- (a,b)=>
- b.score-a.score
- );
-
-
- renderCoins();
-
-
- setTimeout(
- ()=>bar.style.width="0",
- 800
- );
-
-
- }catch(error){
-
-
- results.innerHTML=
- '<div class="loading">Unable to load Binance data. Tap SCAN NOW to retry.</div>';
-
-
- bar.style.width="0";
-
- }
-
-}
-
-
-/* PRICE FORMAT */
 
 function money(v){
-
  v=+v;
-
- if(v>=1)
-
- return "$"+
- v.toLocaleString(
- undefined,
- {maximumFractionDigits:4}
- );
-
-
- return "$"+
- v.toLocaleString(
- undefined,
- {maximumSignificantDigits:6}
- );
-
+ if(!isFinite(v))return "—";
+ if(v>=1000)return "$"+v.toLocaleString(undefined,{maximumFractionDigits:2});
+ if(v>=1)return "$"+v.toLocaleString(undefined,{maximumFractionDigits:4});
+ return "$"+v.toLocaleString(undefined,{maximumSignificantDigits:6});
 }
 
-
-/* VOLUME FORMAT */
-
-function volume(v){
-
+function compact(v){
  v=+v;
-
- if(v>=1e9)
- return "$"+
- (v/1e9).toFixed(2)+"B";
-
-
- if(v>=1e6)
- return "$"+
- (v/1e6).toFixed(1)+"M";
-
-
+ if(!v)return "$0";
+ if(v>=1e9)return "$"+(v/1e9).toFixed(2)+"B";
+ if(v>=1e6)return "$"+(v/1e6).toFixed(1)+"M";
+ if(v>=1e3)return "$"+(v/1e3).toFixed(1)+"K";
  return "$"+v.toFixed(0);
-
 }
 
+function pumpClass(x){
+ if(x>=70)return "pump-high";
+ if(x>=50)return "pump-mid";
+ return "pump-low";
+}
 
-/* DISPLAY RESULTS */
+async function loadMarket(){
+ const res=document.getElementById("results");
+ const bar=document.getElementById("bar");
 
-function renderCoins(){
+ res.innerHTML='<div class="loading">Deep scanning Binance market...</div>';
+ bar.style.width="5%";
 
- const q=
- document
- .getElementById("search")
- .value
- .toUpperCase()
- .replace("/","")
- .replace("USDT","");
+ try{
+  const r=await fetch(`${API}/api/v3/ticker/24hr`);
+  const d=await r.json();
 
+  let base=d.filter(c=>
+   c.symbol.endsWith("USDT") &&
+   !c.symbol.includes("UPUSDT") &&
+   !c.symbol.includes("DOWNUSDT") &&
+   !stable.includes(c.symbol.replace("USDT","")) &&
+   +c.quoteVolume>10000000
+  )
+  .sort((a,b)=>+b.quoteVolume-+a.quoteVolume)
+  .slice(0,35);
 
- let coins=
- marketData.filter(c=>
+  marketData=[];
 
- c.symbol.startsWith(q)
+  for(let i=0;i<base.length;i+=5){
+   let batch=await Promise.all(
+    base.slice(i,i+5).map(enrich)
+   );
 
- &&
+   marketData.push(...batch);
 
- (
- currentFilter==="all"
+   bar.style.width=
+    Math.min(100,Math.round((i+5)/base.length*100))+"%";
+  }
 
- ||
+  marketData.sort((a,b)=>{
+   /*
+     Composite ranking:
+     trade score + pump conditions + confirmations
+   */
+   let A=a.score*.55+a.pump*.30+a.confirmations*3;
+   let B=b.score*.55+b.pump*.30+b.confirmations*3;
+   return B-A;
+  });
 
- c.signal.toLowerCase()
- ===currentFilter
- )
+  renderTop3();
+  renderCoins();
 
- );
+  setTimeout(()=>bar.style.width="0",700);
 
+ }catch(e){
+  res.innerHTML=
+   '<div class="loading">Unable to load Binance. Tap SCAN NOW to retry.</div>';
+  bar.style.width="0";
+ }
+}
 
- const results=
- document.getElementById("results");
+function renderTop3(){
+ const box=document.getElementById("top3");
 
+ /*
+  Require at least some confirmation for recommendations.
+ */
+ let picks=marketData
+  .filter(x=>x.signal!=="WATCH" && x.confirmations>=2)
+  .slice(0,3);
 
- if(!coins.length){
-
- results.innerHTML=
- '<div class="loading">No matching opportunities.</div>';
-
- return;
-
+ if(picks.length<3){
+  picks=marketData.slice(0,3);
  }
 
+ box.innerHTML="";
+
+ picks.forEach((c,i)=>{
+  let x=document.createElement("div");
+  x.className="pick";
+
+  x.innerHTML=`
+   <div class="pick-rank">DEEPRISE PICK #${i+1}</div>
+   <div class="pick-symbol">${c.symbol.replace("USDT","")}/USDT</div>
+   <div class="pick-score">${c.signal} • Score ${c.score}/100</div>
+   <div style="font-size:12px;margin-top:7px">
+    Pump Radar: <b>${c.pump}%</b><br>
+    Confirmations: <b>${c.confirmations}/5</b><br>
+    Duration: <b>${c.duration}</b>
+   </div>
+  `;
+
+  box.appendChild(x);
+ });
+}
+
+function renderCoins(){
+ const q=document.getElementById("search")
+  .value.toUpperCase()
+  .replace("/","")
+  .replace("USDT","");
+
+ let coins=marketData.filter(c=>
+  c.symbol.startsWith(q) &&
+  (currentFilter==="all" ||
+   c.signal.toLowerCase()===currentFilter)
+ );
+
+ const results=document.getElementById("results");
+
+ if(!coins.length){
+  results.innerHTML='<div class="loading">No matching signals.</div>';
+  return;
+ }
 
  results.innerHTML="";
 
-
  coins.forEach(c=>{
-
-
- const change=
- +c.priceChangePercent;
-
-
- const card=
- document.createElement("div");
-
-
- card.className="card";
-
-
- card.innerHTML=`
-
- <div class="coin-header">
-
- <div class="symbol">
-
- ${c.symbol.replace("USDT","")}/USDT
-
- </div>
-
-
- <div class="badges">
-
- <div class="signal ${c.signal.toLowerCase()}">
-
- ${c.signal}
-
- </div>
-
- <div class="score">
-
- Score ${c.score}
-
- </div>
-
- </div>
-
- </div>
-
-
- <div class="data">
-
-
- <div class="box">
-
- <div class="label">PRICE</div>
-
- <div class="value">
-
- ${money(c.lastPrice)}
-
- </div>
-
- </div>
-
-
- <div class="box">
-
- <div class="label">24H CHANGE</div>
-
- <div class="value ${
- change>=0
- ?"positive"
- :"negative"
- }">
-
- ${change>=0?"+":""}
- ${change.toFixed(2)}%
-
- </div>
-
- </div>
-
-
- <div class="box">
-
- <div class="label">RSI 4H</div>
-
- <div class="value">
-
- ${
- c.rsi===null
- ?"—"
- :c.rsi.toFixed(1)
- }
-
- </div>
-
- </div>
-
-
- <div class="box">
-
- <div class="label">
- RANGE POSITION
- </div>
-
- <div class="value">
-
- ${
- c.bottomPos===null
- ?"—"
- :c.bottomPos.toFixed(0)+"%"
- }
-
- </div>
-
- </div>
-
-
- <div class="box">
-
- <div class="label">
- 24H VOLUME
- </div>
-
- <div class="value">
-
- ${volume(c.quoteVolume)}
-
- </div>
-
- </div>
-
-
- <div class="box">
-
- <div class="label">
- VOLUME RATIO
- </div>
-
- <div class="value">
-
- ${
- c.volumeRatio===null
- ?"—"
- :c.volumeRatio.toFixed(2)+"×"
- }
-
- </div>
-
- </div>
-
-
- <div class="box">
-
- <div class="label">
- 4H TREND
- </div>
-
- <div class="value ${
- c.ema20>c.ema50
- ?"positive"
- :"negative"
- }">
-
- ${
- c.ema20>c.ema50
- ?"BULLISH"
- :"BEARISH"
- }
-
- </div>
-
- </div>
-
-
- <div class="box">
-
- <div class="label">
- 24H LOW
- </div>
-
- <div class="value">
-
- ${money(c.lowPrice)}
-
- </div>
-
- </div>
-
-
- </div>
-
-
- <div class="reason">
-
- Why:
- ${c.reasons.join(" • ")}
-
- </div>
-
- `;
-
-
- results.appendChild(card);
-
+  let change=+c.priceChangePercent;
+  let card=document.createElement("div");
+  card.className="card";
+
+  card.innerHTML=`
+   <div class="coin-header">
+    <div class="symbol">${c.symbol.replace("USDT","")}/USDT</div>
+
+    <div class="badges">
+     <span class="badge ${c.signal.toLowerCase()}">${c.signal}</span>
+     <span class="badge score">Score ${c.score}</span>
+     <span class="badge ${pumpClass(c.pump)}">
+      Pump ${c.pump}%
+     </span>
+    </div>
+   </div>
+
+   <div class="data">
+
+    <div class="box">
+     <div class="label">Price</div>
+     <div class="value">${money(c.lastPrice)}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">24H Change</div>
+     <div class="value ${change>=0?"positive":"negative"}">
+      ${change>=0?"+":""}${change.toFixed(2)}%
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">24H Volume / Liquidity</div>
+     <div class="value">${compact(c.quoteVolume)}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">±1% Order Book Depth</div>
+     <div class="value">${compact(c.depth)}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">Buy Pressure</div>
+     <div class="value ${c.buyPressure>=53?"positive":c.buyPressure<47?"negative":""}">
+      ${c.buyPressure.toFixed(1)}%
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">Volume Ratio</div>
+     <div class="value">
+      ${c.volumeRatio===null?"—":c.volumeRatio.toFixed(2)+"×"}
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">Volume Acceleration</div>
+     <div class="value">
+      ${c.volumeAcceleration===null?"—":c.volumeAcceleration.toFixed(2)+"×"}
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">RSI 1H</div>
+     <div class="value">
+      ${c.rsi===null?"—":c.rsi.toFixed(1)}
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">Confirmation Candle</div>
+     <div class="value">${c.candle||"—"}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">Confirmations</div>
+     <div class="value">${c.confirmations}/5</div>
+    </div>
+
+    <div class="box">
+     <div class="label">Expected Duration</div>
+     <div class="value">${c.duration}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">Pump Radar</div>
+     <div class="value ${c.pump>=70?"positive":""}">
+      ${c.pump}/100
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">Entry Zone</div>
+     <div class="value">
+      ${money(c.entryLow)} – ${money(c.entryHigh)}
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">Stop Loss</div>
+     <div class="value negative">${money(c.sl)}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">TP1</div>
+     <div class="value positive">${money(c.tp1)}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">TP2 / TP3</div>
+     <div class="value positive">
+      ${money(c.tp2)} / ${money(c.tp3)}
+     </div>
+    </div>
+
+   </div>
+
+   <div class="confirm">
+    <div class="confirm-title">TRADE CONFIRMATION ENGINE</div>
+    <div class="value">
+     ${c.confirmations>=4?"🟢 STRONG CONFIRMATION":
+       c.confirmations>=3?"🟡 CONFIRMING":
+       c.confirmations>=2?"🟡 EARLY SIGNAL":
+       "⚪ WAIT"}
+    </div>
+    <div style="font-size:11px;color:#8299ae;margin-top:5px">
+     ${c.confText.join(" • ")}
+    </div>
+   </div>
+
+   <div class="reason">
+    <b>DeepRise Analysis:</b>
+    ${c.reasons.join(" • ")}
+   </div>
+  `;
+
+  results.appendChild(card);
  });
-
 }
 
+document.getElementById("search")
+ .addEventListener("input",renderCoins);
 
-/* SEARCH */
+document.querySelectorAll(".filter").forEach(b=>{
+ b.addEventListener("click",()=>{
+  document.querySelectorAll(".filter")
+   .forEach(x=>x.classList.remove("active"));
 
-document
-.getElementById("search")
-.addEventListener(
-"input",
-renderCoins
-);
-
-
-/* FILTER BUTTONS */
-
-document
-.querySelectorAll(".filter")
-.forEach(button=>{
-
- button.addEventListener(
- "click",
- ()=>{
-
- document
- .querySelectorAll(".filter")
- .forEach(
- b=>b.classList.remove("active")
- );
-
-
- button.classList.add("active");
-
-
- currentFilter=
- button.dataset.filter;
-
-
- renderCoins();
-
+  b.classList.add("active");
+  currentFilter=b.dataset.filter;
+  renderCoins();
  });
-
 });
 
-
-/* START */
-
+/* Initial scan */
 loadMarket();
 
-
-/* AUTO UPDATE EVERY 3 MIN */
-
-setInterval(
- loadMarket,
- 180000
-);
-
+/* Refresh every 3 minutes */
+setInterval(loadMarket,180000);
 </script>
 
 </body>
