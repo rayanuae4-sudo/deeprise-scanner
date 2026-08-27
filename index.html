@@ -6,449 +6,194 @@
 <title>DeepRise V8.5 PRO</title>
 <style>
 *{box-sizing:border-box}
-:root{--bg:#050d18;--panel:#0a1827;--panel2:#071421;--border:#18344c;--
-green:#35e0a1;--red:#ff6574;--yellow:#ffd166;--blue:#65b8ff;--purple:#c084fc;--
-muted:#7f99af;--text:#edf6ff}
+:root{--bg:#050d18;--panel:#0a1827;--panel2:#071421;--border:#18344c;--green:#35e0a1;--red:#ff6574;--yellow:#ffd166;--blue:#65b8ff;--purple:#c084fc;--muted:#7f99af;--text:#edf6ff}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-header{position:sticky;top:0;z-index:20;background:rgba(5,13,24,.97);border-
-bottom:1px solid var(--border);padding:14px 4%}
-.header-row{max-width:1400px;margin:auto;display:flex;align-items:center;justify-
-content:space-between}.brand h1{font-size:23px;margin:0;color:var(--green)}.brand
-small{color:var(--muted)}.live{color:var(--green)}
-.container{width:94%;max-width:1400px;margin:18px
-auto}.marketbar,.card,.hero,.chart-panel{background:var(--panel);border:1px solid
-var(--border);border-radius:14px}
-.marketbar{padding:13px 15px;display:flex;gap:15px;justify-content:space-
-between;flex-wrap:wrap;margin-
-bottom:12px}.controls{display:flex;gap:8px;margin:12px 0}
-input{flex:1;padding:14px;background:var(--panel);border:1px solid var(--
-border);border-radius:10px;color:white}
-button{padding:12px 15px;border:0;border-radius:9px;background:var(--
-green);color:#04110d;font-
-weight:bold;cursor:pointer}.filters{display:flex;gap:7px;overflow:auto;margin-
-bottom:15px}
-.filter{background:var(--panel);color:#8ba3b7;border:1px solid var(--border);white-
-space:nowrap}.filter.active{background:#123c31;color:var(--green)}
-.progress{height:4px;background:#102236;margin-bottom:15px}.progress
-span{display:block;height:100%;width:0;background:var(--green);transition:.3s}
-.hero{padding:16px;margin-bottom:16px}.hero h2{font-size:17px;color:var(--
-yellow);margin:0 0 12px}.top-grid{display:grid;grid-template-
-columns:repeat(3,1fr);gap:9px}
-.pick{background:var(--panel2);border:1px solid #1c3a51;border-
-radius:10px;padding:13px}.rank{font-size:10px;color:#6f899e}.sym{font-
-size:19px;font-weight:bold;margin:5px 0}.sym-link{cursor:pointer}.sym-
-link:hover{color:var(--green)}
-.card{padding:16px;margin-bottom:13px}.coin-head{display:flex;justify-
-content:space-between;gap:10px;align-items:center;margin-
-bottom:12px}.badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
-.badge{font-size:11px;padding:6px 8px;border-radius:20px;font-
-weight:bold}.long,.safe{background:#123b31;color:var(--
-green)}.short,.danger{background:#3d1922;color:var(--
-red)}.wait,.caution{background:#3a3217;color:var(--
-yellow)}.score{background:#142b3e;color:#afd1e8}.pump{background:#30234a;colo
-r:#d8b4fe}
-.data{display:grid;grid-template-
-columns:repeat(5,1fr);gap:8px}.box{background:var(--panel2);border-
-radius:9px;padding:10px;min-height:65px}.label{font-size:9px;color:#718ba1;text-
-transform:uppercase;margin-bottom:6px}.value{font-size:13px;font-weight:bold}
-.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--
-yellow)}.blue{color:var(--blue)}.purple{color:var(--purple)}
-.confirm,.decision,.early{margin-top:10px;padding:11px;border-
-radius:10px;background:#071421}.confirm{border-left:3px solid var(--
-blue)}.early{border-left:3px solid var(--purple)}.decision{border-left:3px solid var(--
-green)}
-.small{font-size:11px;color:#8ba2b6;line-height:1.65;margin-top:5px}.loading{text-
-align:center;padding:35px;color:var(--muted)}.footer{text-
-align:center;color:#5e788e;font-size:10px;padding:25px}
-.chart-panel{display:none;margin-bottom:16px;overflow:hidden}.chart-
-panel.active{display:block}.chart-head{display:flex;justify-content:space-
-between;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid
-var(--border);flex-wrap:wrap}
-.chart-title{font-size:18px;font-weight:bold;color:var(--green)}.chart-
-actions{display:flex;gap:6px;flex-wrap:wrap}.chart-
-btn{background:#102236;color:#9eb5c8;border:1px solid var(--border);padding:8px
-11px}.chart-btn.active{background:#123c31;color:var(--green)}.chart-
-close{background:#3d1922;color:var(--red)}#tradingview_chart{height:520px}
-.menu-wrap{position:relative}.menu-btn{background:#102236;color:var(--
-text);border:1px solid var(--border);font-size:20px;padding:9px 13px}
-.dropdown{display:none;position:absolute;right:0;top:48px;min-
-width:210px;background:var(--panel);border:1px solid var(--border);border-
-radius:12px;padding:8px;z-index:50}
-.dropdown.active{display:block}.dropdown button{display:block;width:100%;text-
-align:left;margin:4px 0;background:var(--panel2);color:var(--text);border:1px solid
-var(--border)}
-.signal-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-
-top:10px}.signal-stat{background:#06111d;border:1px solid #173148;border-
-radius:8px;padding:8px}
-.chart-analysis{padding:12px 15px;border-bottom:1px solid var(--
-border);display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+header{position:sticky;top:0;z-index:20;background:rgba(5,13,24,.97);border-bottom:1px solid var(--border);padding:14px 4%}
+.header-row{max-width:1400px;margin:auto;display:flex;align-items:center;justify-content:space-between}.brand h1{font-size:23px;margin:0;color:var(--green)}.brand small{color:var(--muted)}.live{color:var(--green)}
+.container{width:94%;max-width:1400px;margin:18px auto}.marketbar,.card,.hero,.chart-panel{background:var(--panel);border:1px solid var(--border);border-radius:14px}
+.marketbar{padding:13px 15px;display:flex;gap:15px;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}.controls{display:flex;gap:8px;margin:12px 0}
+input{flex:1;padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:white}
+button{padding:12px 15px;border:0;border-radius:9px;background:var(--green);color:#04110d;font-weight:bold;cursor:pointer}.filters{display:flex;gap:7px;overflow:auto;margin-bottom:15px}
+.filter{background:var(--panel);color:#8ba3b7;border:1px solid var(--border);white-space:nowrap}.filter.active{background:#123c31;color:var(--green)}
+.progress{height:4px;background:#102236;margin-bottom:15px}.progress span{display:block;height:100%;width:0;background:var(--green);transition:.3s}
+.hero{padding:16px;margin-bottom:16px}.hero h2{font-size:17px;color:var(--yellow);margin:0 0 12px}.top-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.pick{background:var(--panel2);border:1px solid #1c3a51;border-radius:10px;padding:13px}.rank{font-size:10px;color:#6f899e}.sym{font-size:19px;font-weight:bold;margin:5px 0}.sym-link{cursor:pointer}.sym-link:hover{color:var(--green)}
+.card{padding:16px;margin-bottom:13px}.coin-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:11px;padding:6px 8px;border-radius:20px;font-weight:bold}.long,.safe{background:#123b31;color:var(--green)}.short,.danger{background:#3d1922;color:var(--red)}.wait,.caution{background:#3a3217;color:var(--yellow)}.score{background:#142b3e;color:#afd1e8}.pump{background:#30234a;color:#d8b4fe}
+.data{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.box{background:var(--panel2);border-radius:9px;padding:10px;min-height:65px}.label{font-size:9px;color:#718ba1;text-transform:uppercase;margin-bottom:6px}.value{font-size:13px;font-weight:bold}
+.green{color:var(--green)}.red{color:var(--red)}.yellow{color:var(--yellow)}.blue{color:var(--blue)}.purple{color:var(--purple)}
+.confirm,.decision,.early{margin-top:10px;padding:11px;border-radius:10px;background:#071421}.confirm{border-left:3px solid var(--blue)}.early{border-left:3px solid var(--purple)}.decision{border-left:3px solid var(--green)}
+.small{font-size:11px;color:#8ba2b6;line-height:1.65;margin-top:5px}.loading{text-align:center;padding:35px;color:var(--muted)}.footer{text-align:center;color:#5e788e;font-size:10px;padding:25px}
+.chart-panel{display:none;margin-bottom:16px;overflow:hidden}.chart-panel.active{display:block}.chart-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.chart-title{font-size:18px;font-weight:bold;color:var(--green)}.chart-actions{display:flex;gap:6px;flex-wrap:wrap}.chart-btn{background:#102236;color:#9eb5c8;border:1px solid var(--border);padding:8px 11px}.chart-btn.active{background:#123c31;color:var(--green)}.chart-close{background:#3d1922;color:var(--red)}#tradingview_chart{height:520px}
+.menu-wrap{position:relative}.menu-btn{background:#102236;color:var(--text);border:1px solid var(--border);font-size:20px;padding:9px 13px}
+.dropdown{display:none;position:absolute;right:0;top:48px;min-width:210px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px;z-index:50}
+.dropdown.active{display:block}.dropdown button{display:block;width:100%;text-align:left;margin:4px 0;background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.signal-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}.signal-stat{background:#06111d;border:1px solid #173148;border-radius:8px;padding:8px}
+.chart-analysis{padding:12px 15px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .chart-analysis .box{min-height:58px}
-@media(max-width:900px){.signal-stats,.chart-analysis{grid-template-
-columns:repeat(2,1fr)}.data{grid-template-columns:repeat(2,1fr)}.top-grid{grid-
-template-columns:1fr}.controls{flex-direction:column}.brand small{display:none}}
+@media(max-width:900px){.signal-stats,.chart-analysis{grid-template-columns:repeat(2,1fr)}.data{grid-template-columns:repeat(2,1fr)}.top-grid{grid-template-columns:1fr}.controls{flex-direction:column}.brand small{display:none}}
 </style>
 </head>
 <body>
-<header><div class="header-row"><div class="brand"><h1>â¡ DeepRise V8.5
-PRO</h1><small>Multi-Timeframe â¢ Liquidity â¢ Futures â¢ Pump Radar â¢ Chart
-Forecast â¢ Signal Tracking</small></div>
-<div style="display:flex;align-items:center;gap:10px"><span class="live">â LIVE</
-span><div class="menu-wrap"><button id="menuBtn" class="menu-btn">â°</
-button><div id="dropdown" class="dropdown">
-<button data-menu="all">Scanner / All</button><button data-menu="top">Top 3
-Setups</button><button data-menu="pump">ð¥ Pump Radar</button><button
-data-menu="long">ð¢ LONG</button><button data-menu="short">ð´ SHORT</
-button><button data-menu="wait">ð¡ Watch / Wait</button>
+<header><div class="header-row"><div class="brand"><h1>â¡ DeepRise V8.5 PRO</h1><small>Multi-Timeframe â¢ Liquidity â¢ Futures â¢ Pump Radar â¢ Chart Forecast â¢ Signal Tracking</small></div>
+<div style="display:flex;align-items:center;gap:10px"><span class="live">â LIVE</span><div class="menu-wrap"><button id="menuBtn" class="menu-btn">â°</button><div id="dropdown" class="dropdown">
+<button data-menu="all">Scanner / All</button><button data-menu="top">Top 3 Setups</button><button data-menu="pump">ð¥ Pump Radar</button><button data-menu="long">ð¢ LONG</button><button data-menu="short">ð´ SHORT</button><button data-menu="wait">ð¡ Watch / Wait</button>
 </div></div></div></div></header>
 <div class="container">
-<div class="marketbar"><span id="marketRegime">Market: <b>SCANNING...</b></
-span><span id="btcStatus">BTC: â</span><span>Engine: <b>V8.5 PRO</b></
-span></div>
-<div class="marketbar"><span>Price: <b>Binance Spot</b></
-span><span>Liquidity: <b>24H Quote Volume</b></span><span>Futures:
-<b>Funding + OI Value</b></span><span>Trend: <b>15m + 1H</b></span><span
-id="lastUpdate">Updated: â</span></div>
-<div class="controls"><input id="search" placeholder="Search BTC, ETH, SOL,
-ENA..."><button onclick="loadMarket()">â¡ DEEP SCAN</button></div>
-<div class="filters"><button class="filter active" data-filter="all">ALL</
-button><button class="filter" data-filter="long">ð¢ LONG</button><button
-class="filter" data-filter="short">ð´ SHORT</button><button class="filter" data-
-filter="wait">ð¡ WAIT</button><button class="filter" data-filter="pump">ð¥ PUMP
-RADAR</button></div>
+<div class="marketbar"><span id="marketRegime">Market: <b>SCANNING...</b></span><span id="btcStatus">BTC: â</span><span>Engine: <b>V8.5 PRO</b></span></div>
+<div class="marketbar"><span>Price: <b>Binance Spot</b></span><span>Liquidity: <b>24H Quote Volume</b></span><span>Futures: <b>Funding + OI Value</b></span><span>Trend: <b>15m + 1H</b></span><span id="lastUpdate">Updated: â</span></div>
+<div class="controls"><input id="search" placeholder="Search BTC, ETH, SOL, ENA..."><button onclick="loadMarket()">â¡ DEEP SCAN</button></div>
+<div class="filters"><button class="filter active" data-filter="all">ALL</button><button class="filter" data-filter="long">ð¢ LONG</button><button class="filter" data-filter="short">ð´ SHORT</button><button class="filter" data-filter="wait">ð¡ WAIT</button><button class="filter" data-filter="pump">ð¥ PUMP RADAR</button></div>
 <div class="progress"><span id="bar"></span></div>
-<div id="chartPanel" class="chart-panel"><div class="chart-head"><div><div
-id="chartTitle" class="chart-title">BTC/USDT LIVE CHART</div><div
-class="small">TradingView live chart</div></div><div class="chart-
-actions"><button class="chart-btn" data-tf="5"
-onclick="changeChartTF('5')">5m</button><button class="chart-btn active" data-
-tf="15" onclick="changeChartTF('15')">15m</button><button class="chart-btn"
-data-tf="60" onclick="changeChartTF('60')">1H</button><button class="chart-btn"
-data-tf="240" onclick="changeChartTF('240')">4H</button><button class="chart-
-btn" data-tf="D" onclick="changeChartTF('D')">1D</button><button class="chart-
-btn chart-close" onclick="closeChart()">â CLOSE</button></div></div><div
-id="chartAnalysis" class="chart-analysis">
-<div class="box"><div class="label">Forecast</div><div id="forecastDirection"
-class="value yellow">Select a coin</div></div>
-<div class="box"><div class="label">Projected Target</div><div
-id="forecastTarget" class="value">â</div></div>
-<div class="box"><div class="label">Support / Resistance</div><div
-id="forecastSR" class="value">â</div></div>
-<div class="box"><div class="label">Model Confidence</div><div
-id="forecastConfidence" class="value">â</div></div>
+<div id="chartPanel" class="chart-panel"><div class="chart-head"><div><div id="chartTitle" class="chart-title">BTC/USDT LIVE CHART</div><div class="small">TradingView live chart</div></div><div class="chart-actions"><button class="chart-btn" data-tf="5" onclick="changeChartTF('5')">5m</button><button class="chart-btn active" data-tf="15" onclick="changeChartTF('15')">15m</button><button class="chart-btn" data-tf="60" onclick="changeChartTF('60')">1H</button><button class="chart-btn" data-tf="240" onclick="changeChartTF('240')">4H</button><button class="chart-btn" data-tf="D" onclick="changeChartTF('D')">1D</button><button class="chart-btn chart-close" onclick="closeChart()">â CLOSE</button></div></div><div id="chartAnalysis" class="chart-analysis">
+<div class="box"><div class="label">Forecast</div><div id="forecastDirection" class="value yellow">Select a coin</div></div>
+<div class="box"><div class="label">Projected Target</div><div id="forecastTarget" class="value">â</div></div>
+<div class="box"><div class="label">Support / Resistance</div><div id="forecastSR" class="value">â</div></div>
+<div class="box"><div class="label">Model Confidence</div><div id="forecastConfidence" class="value">â</div></div>
 </div><div id="tradingview_chart"></div></div>
-<div class="hero"><h2>ð DEEPRISE TOP SETUPS</h2><div id="top3" class="top-
-grid"><div class="loading">Building market model...</div></div></div>
+<div class="hero"><h2>ð DEEPRISE TOP SETUPS</h2><div id="top3" class="top-grid"><div class="loading">Building market model...</div></div></div>
 <div id="results"><div class="loading">Connecting to Binance...</div></div>
-<div class="footer">DeepRise V8.5 PRO analyses public market data. Signals are
-probabilistic, not guarantees or financial advice.</div>
+<div class="footer">DeepRise V8.5 PRO analyses public market data. Signals are probabilistic, not guarantees or financial advice.</div>
 </div>
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
 const API="https://api.binance.com",FAPI="https://fapi.binance.com";
-let
-marketData=[],currentFilter="all",chartSymbol="BTCUSDT",chartInterval="15",scanR
-unning=false;
-const fmt=n=>{if(!isFinite(n))return"â";if(Math.abs(n)>=1e9)return(n/
-1e9).toFixed(2)+"B";if(Math.abs(n)>=1e6)return(n/
-1e6).toFixed(2)+"M";if(Math.abs(n)>=1e3)return(n/1e3).toFixed(2)+"K";return
-n.toFixed(2)};
-function priceFmt(n){if(n>=1000)return n.toFixed(2);if(n>=1)return
-n.toFixed(4);if(n>=.01)return n.toFixed(5);return n.toFixed(8)}
-function ema(a,p){if(!a.length)return 0;let e=a[0],k=2/(p+1);for(let i=1;i<a.length;i+
-+)e=a[i]*k+e*(1-k);return e}
-function RSI(a,p=14){if(a.length<=p)return 50;let g=0,l=0;for(let i=a.length-
-p;i<a.length;i++){let d=a[i]-a[i-1];d>0?g+=d:l-=d}if(l===0)return 100;let rs=(g/p)/(l/
-p);return 100-100/(1+rs)}
-function ATR(k,p=14){if(k.length<p+1)return 0;let tr=[];for(let i=1;i<k.length;i++){let
-h=+k[i][2],l=+k[i][3],pc=+k[i-1][4];tr.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-
-pc)))}return tr.slice(-p).reduce((a,b)=>a+b,0)/p}
-function candleSignal(k){if(k.length<3)return{name:"NONE",bull:false,bear:false};let
-x=k.at(-1),p=k.at(-2),o=+x[1],h=+x[2],l=+x[3],c=+x[4],po=+p[1],pc=+p[4],body=Mat
-h.abs(c-o),range=Math.max(h-l,1e-12),upper=h-
-Math.max(o,c),lower=Math.min(o,c)-l;if(c>o&&lower>body*1.5&&body/
-range>.2)return{name:"Bullish
-Hammer",bull:true,bear:false};if(c<o&&upper>body*1.5&&body/
-range>.2)return{name:"Bearish Shooting
-Star",bull:false,bear:true};if(c>o&&pc<po&&c>po&&o<pc)return{name:"Bullish
-Engulfing",bull:true,bear:false};if(c<o&&pc>po&&o>pc&&c<po)return{name:"Bearish
-Engulfing",bull:false,bear:true};if(body/range<.12)return{name:"Doji /
-Indecision",bull:false,bear:false};return{name:c>o?"Bullish Candle":"Bearish
-Candle",bull:c>o,bear:c<o}}
-function tradeDuration(a,v,s){if(s>=88&&v>=2)return"15m â
-2h";if(s>=78&&a>=2)return"1h â 6h";if(s>=68)return"4h â 24h";return"WAIT / No
-clear timing"}
-function pumpRadar({rsi,volumeRatio,change,e20,e50,price,h1Bull,candle}){let
-p=0,r=[];if(volumeRatio>=2){p+=28;r.push("Volume explosion")}else
-if(volumeRatio>=1.4){p+=17;r.push("Volume building")}if(rsi>=52&&rsi<=67)
-{p+=16;r.push("RSI momentum zone")}if(price>e20){p+=12;r.push("Above EMA20")}
-if(e20>e50){p+=12;r.push("15m bullish structure")}if(h1Bull){p+=14;r.push("1H trend
-aligned")}if(candle.bull){p+=10;r.push("Bullish confirmation candle")}
-if(change>0&&change<6){p+=8;r.push("Positive acceleration")}if(change>=10){p-
-=15;r.push("Move already extended")}
-return{score:Math.max(0,Math.min(100,p)),reasons:r.length?r.join(" â¢ "):"No strong
-pre-pump evidence"}}
-async function getJSON(u){let r=await fetch(u);if(!r.ok)throw new Error("API
-"+r.status);return r.json()}
-async function futuresData(symbol,price){try{let[fund,oi]=await
-Promise.all([getJSON(`${FAPI}/fapi/v1/premiumIndex?symbol=${symbol}
-`),getJSON(`${FAPI}/fapi/v1/openInterest?symbol=${symbol}`)]);let
-qty=+oi.openInterest;return{funding:
-+fund.lastFundingRate*100,oiQty:qty,oiValue:qty*price}}catch(e)
-{return{funding:0,oiQty:0,oiValue:0}}}
+let marketData=[],currentFilter="all",chartSymbol="BTCUSDT",chartInterval="15",scanRunning=false;
+const fmt=n=>{if(!isFinite(n))return"â";if(Math.abs(n)>=1e9)return(n/1e9).toFixed(2)+"B";if(Math.abs(n)>=1e6)return(n/1e6).toFixed(2)+"M";if(Math.abs(n)>=1e3)return(n/1e3).toFixed(2)+"K";return n.toFixed(2)};
+function priceFmt(n){if(n>=1000)return n.toFixed(2);if(n>=1)return n.toFixed(4);if(n>=.01)return n.toFixed(5);return n.toFixed(8)}
+function ema(a,p){if(!a.length)return 0;let e=a[0],k=2/(p+1);for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e}
+function RSI(a,p=14){if(a.length<=p)return 50;let g=0,l=0;for(let i=a.length-p;i<a.length;i++){let d=a[i]-a[i-1];d>0?g+=d:l-=d}if(l===0)return 100;let rs=(g/p)/(l/p);return 100-100/(1+rs)}
+function ATR(k,p=14){if(k.length<p+1)return 0;let tr=[];for(let i=1;i<k.length;i++){let h=+k[i][2],l=+k[i][3],pc=+k[i-1][4];tr.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc)))}return tr.slice(-p).reduce((a,b)=>a+b,0)/p}
+function candleSignal(k){if(k.length<3)return{name:"NONE",bull:false,bear:false};let x=k.at(-1),p=k.at(-2),o=+x[1],h=+x[2],l=+x[3],c=+x[4],po=+p[1],pc=+p[4],body=Math.abs(c-o),range=Math.max(h-l,1e-12),upper=h-Math.max(o,c),lower=Math.min(o,c)-l;if(c>o&&lower>body*1.5&&body/range>.2)return{name:"Bullish Hammer",bull:true,bear:false};if(c<o&&upper>body*1.5&&body/range>.2)return{name:"Bearish Shooting Star",bull:false,bear:true};if(c>o&&pc<po&&c>po&&o<pc)return{name:"Bullish Engulfing",bull:true,bear:false};if(c<o&&pc>po&&o>pc&&c<po)return{name:"Bearish Engulfing",bull:false,bear:true};if(body/range<.12)return{name:"Doji / Indecision",bull:false,bear:false};return{name:c>o?"Bullish Candle":"Bearish Candle",bull:c>o,bear:c<o}}
+function tradeDuration(a,v,s){if(s>=88&&v>=2)return"15m â 2h";if(s>=78&&a>=2)return"1h â 6h";if(s>=68)return"4h â 24h";return"WAIT / No clear timing"}
+function pumpRadar({rsi,volumeRatio,change,e20,e50,price,h1Bull,candle}){let p=0,r=[];if(volumeRatio>=2){p+=28;r.push("Volume explosion")}else if(volumeRatio>=1.4){p+=17;r.push("Volume building")}if(rsi>=52&&rsi<=67){p+=16;r.push("RSI momentum zone")}if(price>e20){p+=12;r.push("Above EMA20")}if(e20>e50){p+=12;r.push("15m bullish structure")}if(h1Bull){p+=14;r.push("1H trend aligned")}if(candle.bull){p+=10;r.push("Bullish confirmation candle")}if(change>0&&change<6){p+=8;r.push("Positive acceleration")}if(change>=10){p-=15;r.push("Move already extended")}return{score:Math.max(0,Math.min(100,p)),reasons:r.length?r.join(" â¢ "):"No strong pre-pump evidence"}}
+async function getJSON(u){let r=await fetch(u);if(!r.ok)throw new Error("API "+r.status);return r.json()}
+async function futuresData(symbol,price){try{let[fund,oi]=await Promise.all([getJSON(`${FAPI}/fapi/v1/premiumIndex?symbol=${symbol}`),getJSON(`${FAPI}/fapi/v1/openInterest?symbol=${symbol}`)]);let qty=+oi.openInterest;return{funding:+fund.lastFundingRate*100,oiQty:qty,oiValue:qty*price}}catch(e){return{funding:0,oiQty:0,oiValue:0}}}
 async function analyseCoin(t){
-try{
-let symbol=t.symbol,[k,k1]=await Promise.all([getJSON(`${API}/api/v3/klines?
-symbol=${symbol}&interval=15m&limit=120`),getJSON(`${API}/api/v3/klines?
-symbol=${symbol}&interval=1h&limit=80`)]);
-let
-closes=k.map(x=>+x[4]),volumes=k.map(x=>+x[5]),h1c=k1.map(x=>+x[4]),price=clo
-ses.at(-1),rsi=RSI(closes),e20=ema(closes.slice(-80),20),e50=ema(closes,50),h1e20
-=ema(h1c.slice(-60),20),h1e50=ema(h1c,50),h1Bull=h1c.at(-1)>h1e20&&h1e20>h1e5
-0,h1Bear=h1c.at(-1)<h1e20&&h1e20<h1e50,atr=ATR(k),atrPct=atr/price*100;
-let recent=volumes.slice(-4).reduce((a,b)=>a+b,0)/
-4,old=volumes.slice(-28,-4),avg=old.reduce((a,b)=>a+b,0)/
-Math.max(1,old.length),volumeRatio=avg?recent/
-avg:1,change=+t.priceChangePercent,quoteVolume=+t.quoteVolume,candle=candleS
-ignal(k),fut=await futuresData(symbol,price),L=0,S=0;
-price>e20?L+=12:S+=12;e20>e50?L+=15:S+=15;h1Bull?L+=18:h1Bear?S+=18:0;
-if(rsi>=50&&rsi<=68)L+=12;if(rsi>=72)S+=14;if(rsi<=28)L+=10;if(rsi>=32&&rsi<45)S
-+=6;
-if(volumeRatio>=1.5){change>=0?L+=16:S+=16}
-if(candle.bull)L+=12;if(candle.bear)S+=12;if(change>1&&change<10)L+=7;if(change<
--1)S+=7;if(fut.funding<-.03)L+=6;if(fut.funding>.05)S+=6;
-let direction="WAIT",edge=Math.abs(L-S);if(L-S>=18)direction="LONG";if(S-
-L>=18)direction="SHORT";
-let
-score=Math.min(99,Math.round(45+Math.max(L,S)*.55+Math.min(12,edge*.25)));if(d
-irection==="WAIT")score=Math.min(score,64);
-let
-pump=pumpRadar({rsi,volumeRatio,change,e20,e50,price,h1Bull,candle}),risk=atrPct
->=4?"HIGH":atrPct>=2?"MEDIUM":"CONTROLLED",entry=price,sl,tp1,tp2;
-if(direction==="SHORT"){sl=price+atr*1.5;tp1=price-atr*1.5;tp2=price-atr*3}
-else{sl=price-atr*1.5;tp1=price+atr*1.5;tp2=price+atr*3}
-let rr=Math.abs(tp2-entry)/Math.max(Math.abs(entry-sl),1e-12);
-return{symbol,base:symbol.replace("USDT",""),price,change,quoteVolume,rsi,e20,e5
-0,h1Bull,h1Bear,atr,atrPct,volumeRatio,funding:fut.funding,oiValue:fut.oiValue,candle,
-direction,score,pump,risk,entry,sl,tp1,tp2,rr,duration:tradeDuration(atrPct,volumeRati
-o,score)}
-}catch(e){return null}
+ try{
+  let symbol=t.symbol,[k,k1]=await Promise.all([getJSON(`${API}/api/v3/klines?symbol=${symbol}&interval=15m&limit=120`),getJSON(`${API}/api/v3/klines?symbol=${symbol}&interval=1h&limit=80`)]);
+  let closes=k.map(x=>+x[4]),volumes=k.map(x=>+x[5]),h1c=k1.map(x=>+x[4]),price=closes.at(-1),rsi=RSI(closes),e20=ema(closes.slice(-80),20),e50=ema(closes,50),h1e20=ema(h1c.slice(-60),20),h1e50=ema(h1c,50),h1Bull=h1c.at(-1)>h1e20&&h1e20>h1e50,h1Bear=h1c.at(-1)<h1e20&&h1e20<h1e50,atr=ATR(k),atrPct=atr/price*100;
+  let recent=volumes.slice(-4).reduce((a,b)=>a+b,0)/4,old=volumes.slice(-28,-4),avg=old.reduce((a,b)=>a+b,0)/Math.max(1,old.length),volumeRatio=avg?recent/avg:1,change=+t.priceChangePercent,quoteVolume=+t.quoteVolume,candle=candleSignal(k),fut=await futuresData(symbol,price),L=0,S=0;
+  price>e20?L+=12:S+=12;e20>e50?L+=15:S+=15;h1Bull?L+=18:h1Bear?S+=18:0;
+  if(rsi>=50&&rsi<=68)L+=12;if(rsi>=72)S+=14;if(rsi<=28)L+=10;if(rsi>=32&&rsi<45)S+=6;
+  if(volumeRatio>=1.5){change>=0?L+=16:S+=16}if(candle.bull)L+=12;if(candle.bear)S+=12;if(change>1&&change<10)L+=7;if(change<-1)S+=7;if(fut.funding<-.03)L+=6;if(fut.funding>.05)S+=6;
+  let direction="WAIT",edge=Math.abs(L-S);if(L-S>=18)direction="LONG";if(S-L>=18)direction="SHORT";
+  let score=Math.min(99,Math.round(45+Math.max(L,S)*.55+Math.min(12,edge*.25)));if(direction==="WAIT")score=Math.min(score,64);
+  let pump=pumpRadar({rsi,volumeRatio,change,e20,e50,price,h1Bull,candle}),risk=atrPct>=4?"HIGH":atrPct>=2?"MEDIUM":"CONTROLLED",entry=price,sl,tp1,tp2;
+  if(direction==="SHORT"){sl=price+atr*1.5;tp1=price-atr*1.5;tp2=price-atr*3}else{sl=price-atr*1.5;tp1=price+atr*1.5;tp2=price+atr*3}
+  let rr=Math.abs(tp2-entry)/Math.max(Math.abs(entry-sl),1e-12);
+  return{symbol,base:symbol.replace("USDT",""),price,change,quoteVolume,rsi,e20,e50,h1Bull,h1Bear,atr,atrPct,volumeRatio,funding:fut.funding,oiValue:fut.oiValue,candle,direction,score,pump,risk,entry,sl,tp1,tp2,rr,duration:tradeDuration(atrPct,volumeRatio,score)}
+ }catch(e){return null}
 }
-const SIGNAL
-_KEY="deeprise_
-v85
-_signals";
-function readSignals(){try{return
-JSON.parse(localStorage.getItem(SIGNAL_KEY)||"{}")}catch(e){return{}}}
-function writeSignals(s){try{localStorage.setItem(SIGNAL_KEY,JSON.stringify(s))}
-catch(e){}}
+
+const SIGNAL_KEY="deeprise_v85_signals";
+function readSignals(){try{return JSON.parse(localStorage.getItem(SIGNAL_KEY)||"{}")}catch(e){return{}}}
+function writeSignals(s){try{localStorage.setItem(SIGNAL_KEY,JSON.stringify(s))}catch(e){}}
 function syncTopSignals(top){
-let s=readSignals(),now=Date.now();
-top.forEach(x=>{
-let old=s[x.symbol];
-if(!old || old.direction!==x.direction || ["TP2 HIT","STOP HIT"].includes(old.status)){
-s[x.symbol]={symbol:x.symbol,direction:x.direction,entry:x.price,created:now,high:x.
-price,low:x.price,status:"ACTIVE",tp1:x.tp1,tp2:x.tp2,sl:x.sl};
-}else{
-old.high=Math.max(old.high||x.price,x.price);old.low=Math.min(old.low||
-x.price,x.price);
-if(old.direction==="LONG"){
-if(x.price>=old.tp2)old.status="TP2 HIT";else if(x.price>=old.tp1)old.status="TP1
-HIT";else if(x.price<=old.sl)old.status="STOP HIT";
-}else{
-if(x.price<=old.tp2)old.status="TP2 HIT";else if(x.price<=old.tp1)old.status="TP1
-HIT";else if(x.price>=old.sl)old.status="STOP HIT";
-}
-}
-});
-writeSignals(s);return s;
+ let s=readSignals(),now=Date.now();
+ top.forEach(x=>{
+  let old=s[x.symbol];
+  if(!old || old.direction!==x.direction || ["TP2 HIT","STOP HIT"].includes(old.status)){
+   s[x.symbol]={symbol:x.symbol,direction:x.direction,entry:x.price,created:now,high:x.price,low:x.price,status:"ACTIVE",tp1:x.tp1,tp2:x.tp2,sl:x.sl};
+  }else{
+   old.high=Math.max(old.high||x.price,x.price);old.low=Math.min(old.low||x.price,x.price);
+   if(old.direction==="LONG"){
+    if(x.price>=old.tp2)old.status="TP2 HIT";else if(x.price>=old.tp1)old.status="TP1 HIT";else if(x.price<=old.sl)old.status="STOP HIT";
+   }else{
+    if(x.price<=old.tp2)old.status="TP2 HIT";else if(x.price<=old.tp1)old.status="TP1 HIT";else if(x.price>=old.sl)old.status="STOP HIT";
+   }
+  }
+ });
+ writeSignals(s);return s;
 }
 function signalMetrics(x,s){
-let z=s[x.symbol];if(!z)return null;
-let move=(x.price-z.entry)/z.entry*100;
-let best=z.direction==="LONG"?(z.high-z.entry)/z.entry*100:(z.entry-z.low)/
-z.entry*100;
-let worst=z.direction==="LONG"?(z.low-z.entry)/z.entry*100:(z.entry-z.high)/
-z.entry*100;
-let age=Math.max(0,Date.now()-z.created),mins=Math.floor(age/
-60000),ageTxt=mins<60?mins+"m":mins<1440?Math.floor(mins/60)+"h "+
-(mins%60)+"m":Math.floor(mins/1440)+"d "+Math.floor((mins%1440)/60)+"h";
-return{...z,move,best,worst,ageTxt};
+ let z=s[x.symbol];if(!z)return null;
+ let move=(x.price-z.entry)/z.entry*100;
+ let best=z.direction==="LONG"?(z.high-z.entry)/z.entry*100:(z.entry-z.low)/z.entry*100;
+ let worst=z.direction==="LONG"?(z.low-z.entry)/z.entry*100:(z.entry-z.high)/z.entry*100;
+ let age=Math.max(0,Date.now()-z.created),mins=Math.floor(age/60000),ageTxt=mins<60?mins+"m":mins<1440?Math.floor(mins/60)+"h "+(mins%60)+"m":Math.floor(mins/1440)+"d "+Math.floor((mins%1440)/60)+"h";
+ return{...z,move,best,worst,ageTxt};
 }
 function updateChartAnalysis(symbol){
-let x=marketData.find(a=>a.symbol===symbol);if(!x)return;
-let trend=x.direction==="WAIT"?(x.h1Bull?"BULLISH WATCH":x.h1Bear?"BEARISH
-WATCH":"NEUTRAL"):x.direction;
-let projected=x.direction==="SHORT"?x.tp2:x.tp2;
-let projectedPct=(projected-x.price)/x.price*100;
-let support=x.price-x.atr*1.5,resistance=x.price+x.atr*1.5;
-let confidence=Math.min(95,Math.max(35,Math.round((x.score+x.pump.score)/2)));
-document.getElementById("forecastDirection").textContent=trend;
-document.getElementById("forecastDirection").className="value "+
-(trend.includes("BULL")||trend==="LONG"?"green":trend.includes("BEAR")||
-trend==="SHORT"?"red":"yellow");
-document.getElementById("forecastTarget").textContent="$"+priceFmt(projected)
-+" ("+(projectedPct>=0?"+":"")+projectedPct.toFixed(2)+"%)";
-document.getElementById("forecastSR").textContent="$"+priceFmt(support)+" /
-$"+priceFmt(resistance);
-document.getElementById("forecastConfidence").textContent=confidence+"%";
+ let x=marketData.find(a=>a.symbol===symbol);if(!x)return;
+ let trend=x.direction==="WAIT"?(x.h1Bull?"BULLISH WATCH":x.h1Bear?"BEARISH WATCH":"NEUTRAL"):x.direction;
+ let projected=x.direction==="SHORT"?x.tp2:x.tp2;
+ let projectedPct=(projected-x.price)/x.price*100;
+ let support=x.price-x.atr*1.5,resistance=x.price+x.atr*1.5;
+ let confidence=Math.min(95,Math.max(35,Math.round((x.score+x.pump.score)/2)));
+ document.getElementById("forecastDirection").textContent=trend;
+ document.getElementById("forecastDirection").className="value "+(trend.includes("BULL")||trend==="LONG"?"green":trend.includes("BEAR")||trend==="SHORT"?"red":"yellow");
+ document.getElementById("forecastTarget").textContent="$"+priceFmt(projected)+" ("+(projectedPct>=0?"+":"")+projectedPct.toFixed(2)+"%)";
+ document.getElementById("forecastSR").textContent="$"+priceFmt(support)+" / $"+priceFmt(resistance);
+ document.getElementById("forecastConfidence").textContent=confidence+"%";
 }
+
 async function loadMarket(){
-if(scanRunning)return;scanRunning=true;let
-bar=document.getElementById("bar"),results=document.getElementById("results");
-bar.style.width="5%";results.innerHTML='<div class="loading">Deep scanning
-Binance market...</div>';
-try{
-let ticks=await getJSON(`${API}/api/v3/ticker/24hr`);bar.style.width="15%";
-let universe=ticks.filter(x=>x.symbol.endsWith("USDT")&&!/(UPUSDT|DOWNUSDT|
-BULLUSDT|
-BEARUSDT)/.test(x.symbol)&&+x.quoteVolume>10000000).sort((a,b)=>+b.quoteVol
-ume-+a.quoteVolume).slice(0,35),output=[];
-for(let i=0;i<universe.length;i+=5){let batch=await
-Promise.all(universe.slice(i,i+5).map(analyseCoin));output.push(...batch.filter(Boolea
-n));bar.style.width=(15+Math.min(i+5,universe.length)/universe.length*75)+"%"}
-marketData=output.sort((a,b)=>b.score-
-a.score);updateBTC();render();renderTop();document.getElementById("lastUpdate").
-innerHTML="Updated: <b>"+new Date().toLocaleTimeString()+"</b>";
-let
-longs=marketData.filter(x=>x.direction==="LONG").length,shorts=marketData.filter(x
-=>x.direction==="SHORT").length,regime="NEUTRAL";if(longs>shorts*1.4)regime="
-BULLISH";if(shorts>longs*1.4)regime="BEARISH";
-document.getElementById("marketRegime").innerHTML=`Market: <b class="$
-{regime==="BULLISH"?"green":regime==="BEARISH"?"red":"yellow"}">${regime}</
-b>`;bar.style.width="100%";setTimeout(()=>bar.style.width="0",800)
-}catch(e){results.innerHTML=`<div class="loading red">Binance connection error.
-Tap DEEP SCAN to retry.<br>${e.message}</div>`;bar.style.width="0"}
-finally{scanRunning=false}
+ if(scanRunning)return;scanRunning=true;let bar=document.getElementById("bar"),results=document.getElementById("results");bar.style.width="5%";results.innerHTML='<div class="loading">Deep scanning Binance market...</div>';
+ try{
+  let ticks=await getJSON(`${API}/api/v3/ticker/24hr`);bar.style.width="15%";
+  let universe=ticks.filter(x=>x.symbol.endsWith("USDT")&&!/(UPUSDT|DOWNUSDT|BULLUSDT|BEARUSDT)/.test(x.symbol)&&+x.quoteVolume>10000000).sort((a,b)=>+b.quoteVolume-+a.quoteVolume).slice(0,35),output=[];
+  for(let i=0;i<universe.length;i+=5){let batch=await Promise.all(universe.slice(i,i+5).map(analyseCoin));output.push(...batch.filter(Boolean));bar.style.width=(15+Math.min(i+5,universe.length)/universe.length*75)+"%"}
+  marketData=output.sort((a,b)=>b.score-a.score);updateBTC();render();renderTop();document.getElementById("lastUpdate").innerHTML="Updated: <b>"+new Date().toLocaleTimeString()+"</b>";
+  let longs=marketData.filter(x=>x.direction==="LONG").length,shorts=marketData.filter(x=>x.direction==="SHORT").length,regime="NEUTRAL";if(longs>shorts*1.4)regime="BULLISH";if(shorts>longs*1.4)regime="BEARISH";
+  document.getElementById("marketRegime").innerHTML=`Market: <b class="${regime==="BULLISH"?"green":regime==="BEARISH"?"red":"yellow"}">${regime}</b>`;bar.style.width="100%";setTimeout(()=>bar.style.width="0",800)
+ }catch(e){results.innerHTML=`<div class="loading red">Binance connection error. Tap DEEP SCAN to retry.<br>${e.message}</div>`;bar.style.width="0"}finally{scanRunning=false}
 }
-function updateBTC(){let
-b=marketData.find(x=>x.symbol==="BTCUSDT");if(b)document.getElementById("bt
-cStatus").innerHTML=`BTC: <b>$${priceFmt(b.price)}</b> <span class="$
-{b.change>=0?"green":"red"}">${b.change.toFixed(2)}%</span>`}
+function updateBTC(){let b=marketData.find(x=>x.symbol==="BTCUSDT");if(b)document.getElementById("btcStatus").innerHTML=`BTC: <b>$${priceFmt(b.price)}</b> <span class="${b.change>=0?"green":"red"}">${b.change.toFixed(2)}%</span>`}
 function renderTop(){
-let top=[...marketData].filter(x=>x.direction!
-=="WAIT"&&x.score>=68).sort((a,b)=>b.score-a.score).slice(0,3);
-let signals=syncTopSignals(top);
-document.getElementById("top3").innerHTML=top.length?top.map((x,i)=>{
-let m=signalMetrics(x,signals),move=m?m.move:0;
-return `<div class="pick"><div class="rank">#${i+1} SETUP â¢ ${m?
-m.status:"ACTIVE"}</div>
-<div class="sym sym-link" onclick="openChart('${x.symbol}')">${x.base}/USDT</
-div>
-<span class="badge ${x.direction.toLowerCase()}">${x.direction}</span> <span
-class="badge score">${x.score}/100</span> ${x.pump.score>=60?`<span
-class="badge pump">ð¥ PUMP ${x.pump.score}</span>`:""}
-<div class="small">Signal price $${m?priceFmt(m.entry):priceFmt(x.entry)} â¢ $
-{m?m.ageTxt:"now"}<br>Entry $${priceFmt(x.entry)} â¢ TP1 $${priceFmt(x.tp1)} â¢
-TP2 $${priceFmt(x.tp2)}<br>SL $${priceFmt(x.sl)} â¢ ${x.duration}</div>
-<div class="signal-stats">
-<div class="signal-stat"><div class="label">Since Signal</div><div class="value $
-{move>=0?"green":"red"}">${move>=0?"+":""}${move.toFixed(2)}%</div></div>
-<div class="signal-stat"><div class="label">Best Move</div><div class="value
-green">${m?m.best.toFixed(2):"0.00"}%</div></div>
-<div class="signal-stat"><div class="label">Worst Move</div><div class="value
-red">${m?m.worst.toFixed(2):"0.00"}%</div></div>
-<div class="signal-stat"><div class="label">Status</div><div class="value
-yellow">${m?m.status:"ACTIVE"}</div></div>
-</div></div>`}).join(""):'<div class="loading">No high-quality setups.</div>'
+ let top=[...marketData].filter(x=>x.direction!=="WAIT"&&x.score>=68).sort((a,b)=>b.score-a.score).slice(0,3);
+ let signals=syncTopSignals(top);
+ document.getElementById("top3").innerHTML=top.length?top.map((x,i)=>{
+  let m=signalMetrics(x,signals),move=m?m.move:0;
+  return `<div class="pick"><div class="rank">#${i+1} SETUP â¢ ${m?m.status:"ACTIVE"}</div>
+  <div class="sym sym-link" onclick="openChart('${x.symbol}')">${x.base}/USDT</div>
+  <span class="badge ${x.direction.toLowerCase()}">${x.direction}</span> <span class="badge score">${x.score}/100</span> ${x.pump.score>=60?`<span class="badge pump">ð¥ PUMP ${x.pump.score}</span>`:""}
+  <div class="small">Signal price $${m?priceFmt(m.entry):priceFmt(x.entry)} â¢ ${m?m.ageTxt:"now"}<br>Entry $${priceFmt(x.entry)} â¢ TP1 $${priceFmt(x.tp1)} â¢ TP2 $${priceFmt(x.tp2)}<br>SL $${priceFmt(x.sl)} â¢ ${x.duration}</div>
+  <div class="signal-stats">
+   <div class="signal-stat"><div class="label">Since Signal</div><div class="value ${move>=0?"green":"red"}">${move>=0?"+":""}${move.toFixed(2)}%</div></div>
+   <div class="signal-stat"><div class="label">Best Move</div><div class="value green">${m?m.best.toFixed(2):"0.00"}%</div></div>
+   <div class="signal-stat"><div class="label">Worst Move</div><div class="value red">${m?m.worst.toFixed(2):"0.00"}%</div></div>
+   <div class="signal-stat"><div class="label">Status</div><div class="value yellow">${m?m.status:"ACTIVE"}</div></div>
+  </div></div>`}).join(""):'<div class="loading">No high-quality setups.</div>'
 }
 function render(){
-let
-q=document.getElementById("search").value.trim().toUpperCase(),data=marketData
-.filter(x=>{if(q&&!x.symbol.includes(q))return
-false;if(currentFilter==="long"&&x.direction!=="LONG")return
-false;if(currentFilter==="short"&&x.direction!=="SHORT")return
-false;if(currentFilter==="wait"&&x.direction!=="WAIT")return
-false;if(currentFilter==="pump"&&x.pump.score<60)return false;return true});
-document.getElementById("results").innerHTML=data.map(x=>{let
-d=x.direction.toLowerCase(),confirmText="WAIT FOR
-CONFIRMATION";if(x.direction==="LONG"&&x.candle.bull)confirmText="â
-LONG CONFIRMATION
-DETECTED";if(x.direction==="SHORT"&&x.candle.bear)confirmText="â
-SHORT CONFIRMATION DETECTED";return `<div class="card"><div class="coin-
-head"><div><div class="sym sym-link" onclick="openChart('${x.symbol}')">$
-{x.base}/USDT</div><div class="small">$${priceFmt(x.price)} <span class="$
-{x.change>=0?"green":"red"}">${x.change>=0?"+":""}${x.change.toFixed(2)}%</
-span></div></div><div class="badges"><span class="badge ${d}">${x.direction}</
-span><span class="badge score">SCORE ${x.score}</span><span class="badge
-pump">ð¥ ${x.pump.score}%</span></div></div>
-<div class="data">
-<div class="box"><div class="label">Liquidity 24H</div><div class="value blue">$
-${fmt(x.quoteVolume)}</div></div>
-<div class="box"><div class="label">Volume Surge</div><div class="value $
-{x.volumeRatio>=1.5?"purple":""}">${x.volumeRatio.toFixed(2)}Ã</div></div>
-<div class="box"><div class="label">RSI 15m</div><div class="value">$
-{x.rsi.toFixed(1)}</div></div>
-<div class="box"><div class="label">Funding</div><div class="value $
-{x.funding>0.05?"red":x.funding<-.03?"green":""}">${x.funding.toFixed(4)}%</
-div></div>
-<div class="box"><div class="label">Open Interest Value</div><div
-class="value">${x.oiValue?("$"+fmt(x.oiValue)):"â"}</div></div>
-<div class="box"><div class="label">15m Trend</div><div class="value $
-{x.e20>x.e50?"green":"red"}">${x.e20>x.e50?"BULLISH":"BEARISH"}</div></div>
-<div class="box"><div class="label">1H Trend</div><div class="value $
-{x.h1Bull?"green":x.h1Bear?"red":"yellow"}">$
-{x.h1Bull?"BULLISH":x.h1Bear?"BEARISH":"MIXED"}</div></div>
-<div class="box"><div class="label">Volatility ATR</div><div class="value">$
-{x.atrPct.toFixed(2)}%</div></div>
-<div class="box"><div class="label">Expected Duration</div><div class="value
-yellow">${x.duration}</div></div>
-<div class="box"><div class="label">Risk / R:R</div><div class="value $
-{x.risk==="HIGH"?"red":x.risk==="MEDIUM"?"yellow":"green"}">${x.risk} â¢ $
-{x.rr.toFixed(1)}</div></div>
-</div>
-<div class="early"><b class="purple">ð¥ EARLY PUMP RADAR: ${x.pump.score}/
-100</b><div class="small">${x.pump.reasons}</div></div>
-<div class="confirm"><b class="blue">ð¯ CONFIRMATION CANDLE</b><div
-class="small">${x.candle.name} â¢ ${confirmText}</div></div>
-<div class="decision"><b class="$
-{x.direction==="LONG"?"green":x.direction==="SHORT"?"red":"yellow"}">$
-{x.direction==="LONG"?"ð¢":x.direction==="SHORT"?"ð´":"ð¡"} DEEPRISE
-DECISION: ${x.direction}</b><div class="small">ENTRY: $${priceFmt(x.entry)}
-<br>STOP: $${priceFmt(x.sl)}<br>TP1: $${priceFmt(x.tp1)}<br>TP2: $$
-{priceFmt(x.tp2)}<br>RISK/REWARD: ${x.rr.toFixed(1)}R<br>EXPECTED TRADE: $
-{x.duration}</div></div></div>`}).join("")||'<div class="loading">No coins match this
-filter.</div>'
+ let q=document.getElementById("search").value.trim().toUpperCase(),data=marketData.filter(x=>{if(q&&!x.symbol.includes(q))return false;if(currentFilter==="long"&&x.direction!=="LONG")return false;if(currentFilter==="short"&&x.direction!=="SHORT")return false;if(currentFilter==="wait"&&x.direction!=="WAIT")return false;if(currentFilter==="pump"&&x.pump.score<60)return false;return true});
+ document.getElementById("results").innerHTML=data.map(x=>{let d=x.direction.toLowerCase(),confirmText="WAIT FOR CONFIRMATION";if(x.direction==="LONG"&&x.candle.bull)confirmText="â LONG CONFIRMATION DETECTED";if(x.direction==="SHORT"&&x.candle.bear)confirmText="â SHORT CONFIRMATION DETECTED";return `<div class="card"><div class="coin-head"><div><div class="sym sym-link" onclick="openChart('${x.symbol}')">${x.base}/USDT</div><div class="small">$${priceFmt(x.price)} <span class="${x.change>=0?"green":"red"}">${x.change>=0?"+":""}${x.change.toFixed(2)}%</span></div></div><div class="badges"><span class="badge ${d}">${x.direction}</span><span class="badge score">SCORE ${x.score}</span><span class="badge pump">ð¥ ${x.pump.score}%</span></div></div>
+ <div class="data">
+ <div class="box"><div class="label">Liquidity 24H</div><div class="value blue">$${fmt(x.quoteVolume)}</div></div>
+ <div class="box"><div class="label">Volume Surge</div><div class="value ${x.volumeRatio>=1.5?"purple":""}">${x.volumeRatio.toFixed(2)}Ã</div></div>
+ <div class="box"><div class="label">RSI 15m</div><div class="value">${x.rsi.toFixed(1)}</div></div>
+ <div class="box"><div class="label">Funding</div><div class="value ${x.funding>0.05?"red":x.funding<-.03?"green":""}">${x.funding.toFixed(4)}%</div></div>
+ <div class="box"><div class="label">Open Interest Value</div><div class="value">${x.oiValue?("$"+fmt(x.oiValue)):"â"}</div></div>
+ <div class="box"><div class="label">15m Trend</div><div class="value ${x.e20>x.e50?"green":"red"}">${x.e20>x.e50?"BULLISH":"BEARISH"}</div></div>
+ <div class="box"><div class="label">1H Trend</div><div class="value ${x.h1Bull?"green":x.h1Bear?"red":"yellow"}">${x.h1Bull?"BULLISH":x.h1Bear?"BEARISH":"MIXED"}</div></div>
+ <div class="box"><div class="label">Volatility ATR</div><div class="value">${x.atrPct.toFixed(2)}%</div></div>
+ <div class="box"><div class="label">Expected Duration</div><div class="value yellow">${x.duration}</div></div>
+ <div class="box"><div class="label">Risk / R:R</div><div class="value ${x.risk==="HIGH"?"red":x.risk==="MEDIUM"?"yellow":"green"}">${x.risk} â¢ ${x.rr.toFixed(1)}</div></div>
+ </div>
+ <div class="early"><b class="purple">ð¥ EARLY PUMP RADAR: ${x.pump.score}/100</b><div class="small">${x.pump.reasons}</div></div>
+ <div class="confirm"><b class="blue">ð¯ CONFIRMATION CANDLE</b><div class="small">${x.candle.name} â¢ ${confirmText}</div></div>
+ <div class="decision"><b class="${x.direction==="LONG"?"green":x.direction==="SHORT"?"red":"yellow"}">${x.direction==="LONG"?"ð¢":x.direction==="SHORT"?"ð´":"ð¡"} DEEPRISE DECISION: ${x.direction}</b><div class="small">ENTRY: $${priceFmt(x.entry)}<br>STOP: $${priceFmt(x.sl)}<br>TP1: $${priceFmt(x.tp1)}<br>TP2: $${priceFmt(x.tp2)}<br>RISK/REWARD: ${x.rr.toFixed(1)}R<br>EXPECTED TRADE: ${x.duration}</div></div></div>`}).join("")||'<div class="loading">No coins match this filter.</div>'
 }
-document.querySelectorAll(".filter").forEach(btn=>btn.addEventListener("click",
-()=>{document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));b
-tn.classList.add("active");currentFilter=btn.dataset.filter;render()}));
+document.querySelectorAll(".filter").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));btn.classList.add("active");currentFilter=btn.dataset.filter;render()}));
 document.getElementById("search").addEventListener("input",render);
-function openChart(symbol)
-{chartSymbol=symbol;document.getElementById("chartPanel").classList.add("active
-");document.getElementById("chartTitle").textContent=symbol.replace("USDT","")
-+"/USDT LIVE
-CHART";updateChartAnalysis(symbol);loadTradingView();setTimeout(()=>document.
-getElementById("chartPanel").scrollIntoView({behavior:"smooth",block:"start"}),100)
-}
-function loadTradingView(){let
-c=document.getElementById("tradingview_chart");c.innerHTML="";if(typeof
-TradingView==="undefined"){c.innerHTML='<div class="loading red">TradingView
-failed to load.</div>';return}new
-TradingView.widget({autosize:true,symbol:"BINANCE:"+chartSymbol,interval:chartInt
-erval,timezone:"Etc/
-UTC",theme:"dark",style:"1",locale:"en",enable_publishing:false,allow_symbol_chang
-e:true,container_id:"tradingview_chart"})}
-function changeChartTF(tf){chartInterval=tf;document.querySelectorAll(".chart-
-btn[data-
-tf]").forEach(b=>b.classList.toggle("active",b.dataset.tf===tf));loadTradingView()}
-function closeChart()
-{document.getElementById("chartPanel").classList.remove("active")}
-const
-menuBtn=document.getElementById("menuBtn"),dropdown=document.getElementB
-yId("dropdown");
+function openChart(symbol){chartSymbol=symbol;document.getElementById("chartPanel").classList.add("active");document.getElementById("chartTitle").textContent=symbol.replace("USDT","")+"/USDT LIVE CHART";updateChartAnalysis(symbol);loadTradingView();setTimeout(()=>document.getElementById("chartPanel").scrollIntoView({behavior:"smooth",block:"start"}),100)}
+function loadTradingView(){let c=document.getElementById("tradingview_chart");c.innerHTML="";if(typeof TradingView==="undefined"){c.innerHTML='<div class="loading red">TradingView failed to load.</div>';return}new TradingView.widget({autosize:true,symbol:"BINANCE:"+chartSymbol,interval:chartInterval,timezone:"Etc/UTC",theme:"dark",style:"1",locale:"en",enable_publishing:false,allow_symbol_change:true,container_id:"tradingview_chart"})}
+function changeChartTF(tf){chartInterval=tf;document.querySelectorAll(".chart-btn[data-tf]").forEach(b=>b.classList.toggle("active",b.dataset.tf===tf));loadTradingView()}
+function closeChart(){document.getElementById("chartPanel").classList.remove("active")}
+
+const menuBtn=document.getElementById("menuBtn"),dropdown=document.getElementById("dropdown");
 menuBtn.addEventListener("click",()=>dropdown.classList.toggle("active"));
-document.addEventListener("click",e=>{if(!e.target.closest(".menu-
-wrap"))dropdown.classList.remove("active")});
-dropdown.querySelectorAll("[data-menu]").forEach(b=>b.addEventListener("click",
-()=>{
-let f=b.dataset.menu;dropdown.classList.remove("active");
-if(f==="top")
-{document.querySelector(".hero").scrollIntoView({behavior:"smooth"});return}
-currentFilter=f;
-document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.dataset.
-filter===f));
+document.addEventListener("click",e=>{if(!e.target.closest(".menu-wrap"))dropdown.classList.remove("active")});
+dropdown.querySelectorAll("[data-menu]").forEach(b=>b.addEventListener("click",()=>{
+ let f=b.dataset.menu;dropdown.classList.remove("active");
+ if(f==="top"){document.querySelector(".hero").scrollIntoView({behavior:"smooth"});return}
+ currentFilter=f;
+ document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.dataset.filter===f));
+ render();document.getElementById("results").scrollIntoView({behavior:"smooth"});
 }));
-render();document.getElementById("results").scrollIntoView({behavior:"smooth"});
+
 loadMarket();setInterval(loadMarket,60000);
 </script>
 </body>
