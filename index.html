@@ -1,366 +1,954 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DeepRise Scanner PRO</title>
 
-  <title>DeepRise Scanner</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+body{
+ background:#07111f;
+ color:#fff;
+ font-family:Arial,sans-serif;
+ min-height:100vh
+}
 
-    body {
-      background: #07111f;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
-      min-height: 100vh;
-    }
+header{
+ padding:28px 18px;
+ text-align:center;
+ border-bottom:1px solid #1c3047
+}
 
-    header {
-      padding: 28px 18px;
-      text-align: center;
-      border-bottom: 1px solid #1c3047;
-    }
+h1{
+ color:#35e0a1;
+ font-size:30px;
+ margin-bottom:8px
+}
 
-    h1 {
-      color: #35e0a1;
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
+header p{color:#8fa8bf}
 
-    header p {
-      color: #8fa8bf;
-      font-size: 14px;
-    }
+.container{
+ width:94%;
+ max-width:1100px;
+ margin:25px auto
+}
 
-    .container {
-      width: 94%;
-      max-width: 1100px;
-      margin: 25px auto;
-    }
+.status,.card{
+ background:#0c1929;
+ border:1px solid #1b3249;
+ border-radius:14px
+}
 
-    .status {
-      background: #0c1929;
-      border: 1px solid #1b3249;
-      border-radius: 14px;
-      padding: 15px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.status{
+ padding:15px;
+ margin-bottom:20px;
+ display:flex;
+ justify-content:space-between
+}
 
-    .online {
-      color: #35e0a1;
-      font-weight: bold;
-    }
+.online,.positive{color:#35e0a1}
+.negative{color:#ff5f6d}
 
-    .controls {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+.controls{
+ display:flex;
+ gap:10px;
+ margin-bottom:12px
+}
 
-    input {
-      flex: 1;
-      background: #0c1929;
-      border: 1px solid #1b3249;
-      color: white;
-      padding: 14px;
-      border-radius: 10px;
-      outline: none;
-    }
+input{
+ flex:1;
+ background:#0c1929;
+ border:1px solid #1b3249;
+ color:#fff;
+ padding:14px;
+ border-radius:10px
+}
 
-    button {
-      background: #35e0a1;
-      color: #04110c;
-      border: none;
-      padding: 14px 18px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+button{
+ background:#35e0a1;
+ border:0;
+ padding:14px 18px;
+ border-radius:10px;
+ font-weight:bold;
+ cursor:pointer
+}
 
-    .card {
-      background: #0c1929;
-      border: 1px solid #1b3249;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 15px;
-    }
+.filters{
+ display:flex;
+ gap:8px;
+ margin-bottom:20px
+}
 
-    .coin-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
+.filter{
+ background:#0c1929;
+ color:#8fa8bf;
+ border:1px solid #1b3249
+}
 
-    .symbol {
-      font-size: 21px;
-      font-weight: bold;
-    }
+.filter.active{
+ background:#123a31;
+ color:#35e0a1
+}
 
-    .score {
-      background: #123a31;
-      color: #35e0a1;
-      padding: 7px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-    }
+.card{
+ padding:18px;
+ margin-bottom:15px
+}
 
-    .data {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
+.coin-header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:15px
+}
 
-    .box {
-      background: #081522;
-      padding: 12px;
-      border-radius: 9px;
-    }
+.symbol{
+ font-size:21px;
+ font-weight:bold
+}
 
-    .label {
-      color: #7890a7;
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
+.badges{
+ display:flex;
+ gap:8px
+}
 
-    .value {
-      font-weight: bold;
-    }
+.score,.signal{
+ padding:7px 11px;
+ border-radius:20px;
+ font-weight:bold
+}
 
-    .positive {
-      color: #35e0a1;
-    }
+.score{
+ background:#123a31;
+ color:#35e0a1
+}
 
-    .negative {
-      color: #ff5f6d;
-    }
+.long{
+ background:#123a31;
+ color:#35e0a1
+}
 
-    .loading {
-      text-align: center;
-      color: #8fa8bf;
-      padding: 30px;
-    }
+.watch{
+ background:#3b3418;
+ color:#ffd166
+}
 
-    @media (max-width: 650px) {
-      .data {
-        grid-template-columns: repeat(2, 1fr);
-      }
+.avoid{
+ background:#3b1b24;
+ color:#ff7080
+}
 
-      .controls {
-        flex-direction: column;
-      }
-    }
-  </style>
+.data{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:10px
+}
+
+.box{
+ background:#081522;
+ padding:12px;
+ border-radius:9px
+}
+
+.label{
+ color:#7890a7;
+ font-size:11px;
+ margin-bottom:5px
+}
+
+.value{font-weight:bold}
+
+.reason{
+ margin-top:12px;
+ color:#9eb2c5;
+ font-size:13px;
+ line-height:1.5
+}
+
+.loading{
+ text-align:center;
+ color:#8fa8bf;
+ padding:30px
+}
+
+.progress{
+ height:5px;
+ background:#102235;
+ margin-bottom:16px
+}
+
+.progress span{
+ display:block;
+ height:100%;
+ background:#35e0a1;
+ width:0
+}
+
+.foot{
+ text-align:center;
+ color:#647d94;
+ font-size:11px;
+ padding:18px
+}
+
+@media(max-width:650px){
+ .data{grid-template-columns:repeat(2,1fr)}
+ .controls{flex-direction:column}
+ .score,.signal{font-size:12px}
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>DeepRise Scanner</h1>
-  <p>Crypto Spot Opportunity Scanner</p>
+<h1>DeepRise Scanner PRO</h1>
+<p>Crypto Spot Opportunity Scanner • Technical Momentum Engine</p>
 </header>
 
 <div class="container">
 
-  <div class="status">
-    <span>Market Scanner</span>
-    <span class="online">● LIVE</span>
-  </div>
+<div class="status">
+<span>Market Scanner</span>
+<span class="online">● LIVE</span>
+</div>
 
-  <div class="controls">
-    <input
-      id="search"
-      type="text"
-      placeholder="Search BTC, ETH, SOL..."
-    />
-    <button onclick="loadMarket()">SCAN NOW</button>
-  </div>
+<div class="controls">
+<input id="search" placeholder="Search BTC, ETH, SOL...">
+<button onclick="loadMarket()">SCAN NOW</button>
+</div>
 
-  <div id="results">
-    <div class="loading">Loading market data...</div>
-  </div>
+<div class="filters">
+<button class="filter active" data-filter="all">ALL</button>
+<button class="filter" data-filter="long">LONG</button>
+<button class="filter" data-filter="watch">WATCH</button>
+<button class="filter" data-filter="avoid">AVOID</button>
+</div>
+
+<div class="progress">
+<span id="bar"></span>
+</div>
+
+<div id="results">
+<div class="loading">Loading market data...</div>
+</div>
+
+<div class="foot">
+DeepRise Score is a technical screening model — not financial advice.
+</div>
 
 </div>
 
 <script>
-  let marketData = [];
 
-  async function loadMarket() {
-    const results = document.getElementById("results");
+let marketData=[];
+let currentFilter="all";
 
-    results.innerHTML =
-      '<div class="loading">Scanning Binance market...</div>';
+const stableBases=[
+"USDC","FDUSD","TUSD","USDP","DAI","EUR","TRY","BRL"
+];
 
-    try {
 
-      const response = await fetch(
-        "https://api.binance.com/api/v3/ticker/24hr"
-      );
+/* EMA */
 
-      const data = await response.json();
+function ema(values,p){
 
-      marketData = data
-        .filter(c =>
-          c.symbol.endsWith("USDT") &&
-          !c.symbol.includes("UPUSDT") &&
-          !c.symbol.includes("DOWNUSDT")
-        )
-        .sort(
-          (a, b) =>
-            Number(b.quoteVolume) - Number(a.quoteVolume)
-        )
-        .slice(0, 40);
+ const k=2/(p+1);
 
-      renderCoins(marketData);
+ let e=values[0];
 
-    } catch (error) {
+ for(let i=1;i<values.length;i++)
+   e=values[i]*k+e*(1-k);
 
-      results.innerHTML =
-        '<div class="loading">Unable to load market data. Try again.</div>';
+ return e;
+}
 
-      console.error(error);
-    }
-  }
 
-  function calculateScore(coin) {
+/* RSI */
 
-    const change = Number(coin.priceChangePercent);
-    const volume = Number(coin.quoteVolume);
+function rsi(values,p=14){
 
-    let score = 50;
+ if(values.length<=p) return 50;
 
-    if (change > 0) score += 10;
-    if (change > 3) score += 10;
-    if (change > 7) score += 10;
+ let gain=0;
+ let loss=0;
 
-    if (change < -3) score += 5;
+ for(let i=values.length-p;i<values.length;i++){
 
-    if (volume > 100000000) score += 10;
-    if (volume > 500000000) score += 5;
+   const d=values[i]-values[i-1];
 
-    return Math.min(score, 100);
-  }
+   if(d>0) gain+=d;
+   else loss-=d;
+ }
 
-  function formatVolume(volume) {
+ if(loss===0) return 100;
 
-    const value = Number(volume);
+ const rs=(gain/p)/(loss/p);
 
-    if (value >= 1000000000)
-      return "$" + (value / 1000000000).toFixed(2) + "B";
+ return 100-(100/(1+rs));
+}
 
-    if (value >= 1000000)
-      return "$" + (value / 1000000).toFixed(1) + "M";
 
-    return "$" + value.toFixed(0);
-  }
+/* Technical analysis */
 
-  function renderCoins(coins) {
+async function enrich(c){
 
-    const results = document.getElementById("results");
+ try{
 
-    if (!coins.length) {
-      results.innerHTML =
-        '<div class="loading">No coins found.</div>';
-      return;
-    }
+ const response=await fetch(
+ `https://api.binance.com/api/v3/klines?symbol=${c.symbol}&interval=4h&limit=60`
+ );
 
-    results.innerHTML = "";
+ const k=await response.json();
 
-    coins.forEach(coin => {
+ const closes=k.map(x=>+x[4]);
+ const volumes=k.map(x=>+x[7]);
 
-      const change = Number(coin.priceChangePercent);
-      const score = calculateScore(coin);
+ const R=rsi(closes);
 
-      const card = document.createElement("div");
+ const e20=ema(closes.slice(-40),20);
+ const e50=ema(closes,50);
 
-      card.className = "card";
+ const price=+c.lastPrice;
 
-      card.innerHTML = `
+ const low30=Math.min(...closes);
+ const high30=Math.max(...closes);
 
-        <div class="coin-header">
+ const range=Math.max(high30-low30,0.00000001);
 
-          <div class="symbol">
-            ${coin.symbol.replace("USDT", "")}/USDT
-          </div>
+ const bottomPos=
+ ((price-low30)/range)*100;
 
-          <div class="score">
-            Score ${score}
-          </div>
+ const avgVolume=
+ volumes
+ .slice(-21,-1)
+ .reduce((a,b)=>a+b,0)/20;
 
-        </div>
+ const volumeRatio=
+ avgVolume
+ ? volumes[volumes.length-1]/avgVolume
+ :1;
 
-        <div class="data">
 
-          <div class="box">
-            <div class="label">PRICE</div>
-            <div class="value">
-              $${Number(coin.lastPrice).toLocaleString()}
-            </div>
-          </div>
+ let score=35;
 
-          <div class="box">
-            <div class="label">24H CHANGE</div>
+ let reasons=[];
 
-            <div class="value ${
-              change >= 0 ? "positive" : "negative"
-            }">
 
-              ${change >= 0 ? "+" : ""}
-              ${change.toFixed(2)}%
+ /* RSI */
 
-            </div>
-          </div>
+ if(R>=40 && R<=60){
 
-          <div class="box">
-            <div class="label">24H VOLUME</div>
+ score+=15;
+ reasons.push("Healthy RSI");
 
-            <div class="value">
-              ${formatVolume(coin.quoteVolume)}
-            </div>
-          </div>
+ }
 
-          <div class="box">
-            <div class="label">24H LOW</div>
+ else if(R<35){
 
-            <div class="value">
-              $${Number(coin.lowPrice).toLocaleString()}
-            </div>
-          </div>
+ score+=12;
+ reasons.push("Oversold RSI");
 
-        </div>
-      `;
+ }
 
-      results.appendChild(card);
-    });
-  }
+ else if(R>72){
 
-  document
-    .getElementById("search")
-    .addEventListener("input", function () {
+ score-=12;
+ reasons.push("Overbought");
 
-      const q = this.value
-        .toUpperCase()
-        .replace("/", "")
-        .replace("USDT", "");
+ }
 
-      const filtered = marketData.filter(c =>
-        c.symbol.startsWith(q)
-      );
 
-      renderCoins(filtered);
-    });
+ /* EMA */
 
-  loadMarket();
+ if(price>e20){
 
-  setInterval(loadMarket, 60000);
+ score+=10;
+ reasons.push("Above EMA20");
+
+ }else{
+
+ score-=4;
+
+ }
+
+
+ if(e20>e50){
+
+ score+=15;
+ reasons.push("Bullish EMA trend");
+
+ }
+
+
+ /* Bottom detection */
+
+ if(bottomPos<30){
+
+ score+=15;
+ reasons.push("Near range bottom");
+
+ }
+
+ else if(bottomPos>85){
+
+ score-=8;
+
+ }
+
+
+ /* Volume */
+
+ if(volumeRatio>1.2){
+
+ score+=10;
+ reasons.push("Volume expansion");
+
+ }
+
+
+ if(+c.quoteVolume>100000000)
+ score+=5;
+
+
+ /* Avoid chasing pumps */
+
+ if(+c.priceChangePercent>8)
+ score-=5;
+
+
+ score=Math.max(
+ 0,
+ Math.min(100,Math.round(score))
+ );
+
+
+ let signal;
+
+ if(score>=72)
+ signal="LONG";
+
+ else if(score>=55)
+ signal="WATCH";
+
+ else
+ signal="AVOID";
+
+
+ return{
+
+ ...c,
+
+ rsi:R,
+
+ ema20:e20,
+
+ ema50:e50,
+
+ bottomPos,
+
+ volumeRatio,
+
+ score,
+
+ signal,
+
+ reasons:reasons.slice(0,4)
+
+ };
+
+
+ }catch(error){
+
+ return{
+
+ ...c,
+
+ rsi:null,
+
+ bottomPos:null,
+
+ volumeRatio:null,
+
+ score:40,
+
+ signal:"WATCH",
+
+ reasons:["Limited technical data"]
+
+ };
+
+ }
+
+}
+
+
+/* MARKET SCANNER */
+
+async function loadMarket(){
+
+ const results=
+ document.getElementById("results");
+
+ const bar=
+ document.getElementById("bar");
+
+
+ results.innerHTML=
+ '<div class="loading">Scanning Binance market + 4H indicators...</div>';
+
+ bar.style.width="5%";
+
+
+ try{
+
+
+ const response=
+ await fetch(
+ "https://api.binance.com/api/v3/ticker/24hr"
+ );
+
+
+ const data=
+ await response.json();
+
+
+ let base=
+ data
+
+ .filter(c=>
+
+ c.symbol.endsWith("USDT")
+
+ && !c.symbol.includes("UPUSDT")
+
+ && !c.symbol.includes("DOWNUSDT")
+
+ && !stableBases.includes(
+ c.symbol.replace("USDT","")
+ )
+
+ && +c.quoteVolume>5000000
+
+ )
+
+ .sort(
+ (a,b)=>
+ +b.quoteVolume-
+ +a.quoteVolume
+ )
+
+ .slice(0,30);
+
+
+ marketData=[];
+
+
+ for(let i=0;i<base.length;i+=5){
+
+
+ const batch=
+ await Promise.all(
+ base.slice(i,i+5)
+ .map(enrich)
+ );
+
+
+ marketData.push(...batch);
+
+
+ bar.style.width=
+ Math.round(
+ ((i+5)/base.length)*100
+ )+"%";
+
+ }
+
+
+ marketData.sort(
+ (a,b)=>
+ b.score-a.score
+ );
+
+
+ renderCoins();
+
+
+ setTimeout(
+ ()=>bar.style.width="0",
+ 800
+ );
+
+
+ }catch(error){
+
+
+ results.innerHTML=
+ '<div class="loading">Unable to load Binance data. Tap SCAN NOW to retry.</div>';
+
+
+ bar.style.width="0";
+
+ }
+
+}
+
+
+/* PRICE FORMAT */
+
+function money(v){
+
+ v=+v;
+
+ if(v>=1)
+
+ return "$"+
+ v.toLocaleString(
+ undefined,
+ {maximumFractionDigits:4}
+ );
+
+
+ return "$"+
+ v.toLocaleString(
+ undefined,
+ {maximumSignificantDigits:6}
+ );
+
+}
+
+
+/* VOLUME FORMAT */
+
+function volume(v){
+
+ v=+v;
+
+ if(v>=1e9)
+ return "$"+
+ (v/1e9).toFixed(2)+"B";
+
+
+ if(v>=1e6)
+ return "$"+
+ (v/1e6).toFixed(1)+"M";
+
+
+ return "$"+v.toFixed(0);
+
+}
+
+
+/* DISPLAY RESULTS */
+
+function renderCoins(){
+
+ const q=
+ document
+ .getElementById("search")
+ .value
+ .toUpperCase()
+ .replace("/","")
+ .replace("USDT","");
+
+
+ let coins=
+ marketData.filter(c=>
+
+ c.symbol.startsWith(q)
+
+ &&
+
+ (
+ currentFilter==="all"
+
+ ||
+
+ c.signal.toLowerCase()
+ ===currentFilter
+ )
+
+ );
+
+
+ const results=
+ document.getElementById("results");
+
+
+ if(!coins.length){
+
+ results.innerHTML=
+ '<div class="loading">No matching opportunities.</div>';
+
+ return;
+
+ }
+
+
+ results.innerHTML="";
+
+
+ coins.forEach(c=>{
+
+
+ const change=
+ +c.priceChangePercent;
+
+
+ const card=
+ document.createElement("div");
+
+
+ card.className="card";
+
+
+ card.innerHTML=`
+
+ <div class="coin-header">
+
+ <div class="symbol">
+
+ ${c.symbol.replace("USDT","")}/USDT
+
+ </div>
+
+
+ <div class="badges">
+
+ <div class="signal ${c.signal.toLowerCase()}">
+
+ ${c.signal}
+
+ </div>
+
+ <div class="score">
+
+ Score ${c.score}
+
+ </div>
+
+ </div>
+
+ </div>
+
+
+ <div class="data">
+
+
+ <div class="box">
+
+ <div class="label">PRICE</div>
+
+ <div class="value">
+
+ ${money(c.lastPrice)}
+
+ </div>
+
+ </div>
+
+
+ <div class="box">
+
+ <div class="label">24H CHANGE</div>
+
+ <div class="value ${
+ change>=0
+ ?"positive"
+ :"negative"
+ }">
+
+ ${change>=0?"+":""}
+ ${change.toFixed(2)}%
+
+ </div>
+
+ </div>
+
+
+ <div class="box">
+
+ <div class="label">RSI 4H</div>
+
+ <div class="value">
+
+ ${
+ c.rsi===null
+ ?"—"
+ :c.rsi.toFixed(1)
+ }
+
+ </div>
+
+ </div>
+
+
+ <div class="box">
+
+ <div class="label">
+ RANGE POSITION
+ </div>
+
+ <div class="value">
+
+ ${
+ c.bottomPos===null
+ ?"—"
+ :c.bottomPos.toFixed(0)+"%"
+ }
+
+ </div>
+
+ </div>
+
+
+ <div class="box">
+
+ <div class="label">
+ 24H VOLUME
+ </div>
+
+ <div class="value">
+
+ ${volume(c.quoteVolume)}
+
+ </div>
+
+ </div>
+
+
+ <div class="box">
+
+ <div class="label">
+ VOLUME RATIO
+ </div>
+
+ <div class="value">
+
+ ${
+ c.volumeRatio===null
+ ?"—"
+ :c.volumeRatio.toFixed(2)+"×"
+ }
+
+ </div>
+
+ </div>
+
+
+ <div class="box">
+
+ <div class="label">
+ 4H TREND
+ </div>
+
+ <div class="value ${
+ c.ema20>c.ema50
+ ?"positive"
+ :"negative"
+ }">
+
+ ${
+ c.ema20>c.ema50
+ ?"BULLISH"
+ :"BEARISH"
+ }
+
+ </div>
+
+ </div>
+
+
+ <div class="box">
+
+ <div class="label">
+ 24H LOW
+ </div>
+
+ <div class="value">
+
+ ${money(c.lowPrice)}
+
+ </div>
+
+ </div>
+
+
+ </div>
+
+
+ <div class="reason">
+
+ Why:
+ ${c.reasons.join(" • ")}
+
+ </div>
+
+ `;
+
+
+ results.appendChild(card);
+
+ });
+
+}
+
+
+/* SEARCH */
+
+document
+.getElementById("search")
+.addEventListener(
+"input",
+renderCoins
+);
+
+
+/* FILTER BUTTONS */
+
+document
+.querySelectorAll(".filter")
+.forEach(button=>{
+
+ button.addEventListener(
+ "click",
+ ()=>{
+
+ document
+ .querySelectorAll(".filter")
+ .forEach(
+ b=>b.classList.remove("active")
+ );
+
+
+ button.classList.add("active");
+
+
+ currentFilter=
+ button.dataset.filter;
+
+
+ renderCoins();
+
+ });
+
+});
+
+
+/* START */
+
+loadMarket();
+
+
+/* AUTO UPDATE EVERY 3 MIN */
+
+setInterval(
+ loadMarket,
+ 180000
+);
+
 </script>
 
 </body>
