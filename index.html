@@ -3,3309 +3,716 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DeepRise V6 PRO</title>
+<title>DeepRise V7 PRO</title>
 
 <style>
 *{box-sizing:border-box}
-
 :root{
- --bg:#050d18;
- --panel:#0a1827;
- --panel2:#071421;
- --border:#18344c;
- --green:#35e0a1;
- --red:#ff6574;
- --yellow:#ffd166;
- --blue:#65b8ff;
- --purple:#c084fc;
- --muted:#7f99af;
- --text:#edf6ff;
+ --bg:#050d18;--panel:#0a1827;--panel2:#071421;
+ --border:#18344c;--green:#35e0a1;--red:#ff6574;
+ --yellow:#ffd166;--blue:#65b8ff;--purple:#c084fc;
+ --muted:#7f99af;--text:#edf6ff;
 }
-
-body{
- margin:0;
- background:var(--bg);
- color:var(--text);
- font-family:Arial,sans-serif
-}
-
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
 header{
- position:sticky;
- top:0;
- z-index:20;
- background:rgba(5,13,24,.97);
- border-bottom:1px solid var(--border);
- padding:14px 4%
+ position:sticky;top:0;z-index:20;background:rgba(5,13,24,.97);
+ border-bottom:1px solid var(--border);padding:14px 4%
 }
-
-.header-row{
- max-width:1350px;
- margin:auto;
- display:flex;
- align-items:center;
- justify-content:space-between
-}
-
-.brand h1{
- font-size:23px;
- margin:0;
- color:var(--green)
-}
-
+.header-row{max-width:1400px;margin:auto;display:flex;align-items:center;justify-content:space-between}
+.brand h1{font-size:23px;margin:0;color:var(--green)}
 .brand small{color:var(--muted)}
-
-.container{
- width:94%;
- max-width:1350px;
- margin:18px auto
-}
-
-.marketbar,
-.card,
-.hero,
-.warning,
-.chart-panel{
- background:var(--panel);
- border:1px solid var(--border);
- border-radius:14px
-}
-
-.marketbar{
- padding:13px 15px;
- display:flex;
- gap:15px;
- justify-content:space-between;
- flex-wrap:wrap;
- margin-bottom:12px
-}
-
 .live{color:var(--green)}
-
-.controls{
- display:flex;
- gap:8px;
- margin:12px 0
+.container{width:94%;max-width:1400px;margin:18px auto}
+.marketbar,.card,.hero,.chart-panel{
+ background:var(--panel);border:1px solid var(--border);border-radius:14px
 }
-
+.marketbar{
+ padding:13px 15px;display:flex;gap:15px;justify-content:space-between;
+ flex-wrap:wrap;margin-bottom:12px
+}
+.controls{display:flex;gap:8px;margin:12px 0}
 input{
- flex:1;
- padding:14px;
- background:var(--panel);
- border:1px solid var(--border);
- border-radius:10px;
- color:white
+ flex:1;padding:14px;background:var(--panel);border:1px solid var(--border);
+ border-radius:10px;color:white
 }
-
 button{
- padding:12px 15px;
- border:0;
- border-radius:9px;
- background:var(--green);
- color:#04110d;
- font-weight:bold;
- cursor:pointer
+ padding:12px 15px;border:0;border-radius:9px;background:var(--green);
+ color:#04110d;font-weight:bold;cursor:pointer
 }
+.filters{display:flex;gap:7px;overflow:auto;margin-bottom:15px}
+.filter{background:var(--panel);color:#8ba3b7;border:1px solid var(--border);white-space:nowrap}
+.filter.active{background:#123c31;color:var(--green)}
+.progress{height:4px;background:#102236;margin-bottom:15px}
+.progress span{display:block;height:100%;width:0;background:var(--green);transition:.3s}
 
-.filters{
- display:flex;
- gap:7px;
- overflow:auto;
- margin-bottom:15px
-}
+.hero{padding:16px;margin-bottom:16px}
+.hero h2{font-size:17px;color:var(--yellow);margin:0 0 12px}
+.top-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.pick{background:var(--panel2);border:1px solid #1c3a51;border-radius:10px;padding:13px}
+.rank{font-size:10px;color:#6f899e}
+.sym{font-size:19px;font-weight:bold;margin:5px 0}
+.sym-link{cursor:pointer}
+.sym-link:hover{color:var(--green)}
 
-.filter{
- background:var(--panel);
- color:#8ba3b7;
- border:1px solid var(--border);
- white-space:nowrap
-}
+.card{padding:16px;margin-bottom:13px}
+.coin-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+.badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:11px;padding:6px 8px;border-radius:20px;font-weight:bold}
+.long,.safe{background:#123b31;color:var(--green)}
+.short,.danger{background:#3d1922;color:var(--red)}
+.wait,.caution{background:#3a3217;color:var(--yellow)}
+.score{background:#142b3e;color:#afd1e8}
+.pump{background:#30234a;color:#d8b4fe}
 
-.filter.active{
- background:#123c31;
- color:var(--green)
-}
-
-.progress{
- height:4px;
- background:#102236;
- margin-bottom:15px
-}
-
-.progress span{
- display:block;
- height:100%;
- width:0;
- background:var(--green);
- transition:.3s
-}
-
-.hero{
- padding:16px;
- margin-bottom:16px
-}
-
-.hero h2{
- font-size:17px;
- color:var(--yellow);
- margin:0 0 12px
-}
-
-.top-grid{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:9px
-}
-
-.pick{
- background:var(--panel2);
- border:1px solid #1c3a51;
- border-radius:10px;
- padding:13px
-}
-
-.rank{
- font-size:10px;
- color:#6f899e
-}
-
-.sym{
- font-size:19px;
- font-weight:bold;
- margin:5px 0
-}
-
-.sym-link{
- cursor:pointer;
- color:var(--text);
- transition:.2s
-}
-
-.sym-link:hover{
- color:var(--green)
-}
-
-.card{
- padding:16px;
- margin-bottom:13px
-}
-
-.coin-head{
- display:flex;
- justify-content:space-between;
- gap:10px;
- align-items:center;
- margin-bottom:12px
-}
-
-.badges{
- display:flex;
- gap:5px;
- flex-wrap:wrap;
- justify-content:flex-end
-}
-
-.badge{
- font-size:11px;
- padding:6px 8px;
- border-radius:20px;
- font-weight:bold
-}
-
-.long,.safe{
- background:#123b31;
- color:var(--green)
-}
-
-.short,.danger{
- background:#3d1922;
- color:var(--red)
-}
-
-.wait,.caution{
- background:#3a3217;
- color:var(--yellow)
-}
-
-.score{
- background:#142b3e;
- color:#afd1e8
-}
-
-.pump{
- background:#30234a;
- color:#d8b4fe
-}
-
-.data{
- display:grid;
- grid-template-columns:repeat(5,1fr);
- gap:8px
-}
-
-.box{
- background:var(--panel2);
- border-radius:9px;
- padding:10px;
- min-height:63px
-}
-
-.label{
- font-size:9px;
- color:#718ba1;
- text-transform:uppercase;
- margin-bottom:6px
-}
-
-.value{
- font-size:13px;
- font-weight:bold
-}
-
-.green{color:var(--green)}
-.red{color:var(--red)}
-.yellow{color:var(--yellow)}
-.blue{color:var(--blue)}
+.data{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.box{background:var(--panel2);border-radius:9px;padding:10px;min-height:65px}
+.label{font-size:9px;color:#718ba1;text-transform:uppercase;margin-bottom:6px}
+.value{font-size:13px;font-weight:bold}
+.green{color:var(--green)} .red{color:var(--red)}
+.yellow{color:var(--yellow)} .blue{color:var(--blue)}
 .purple{color:var(--purple)}
 
-.confirm,
-.decision,
-.early{
- margin-top:10px;
- padding:11px;
- border-radius:10px;
- background:#071421
+.confirm,.decision,.early{
+ margin-top:10px;padding:11px;border-radius:10px;background:#071421
 }
-
 .confirm{border-left:3px solid var(--blue)}
 .early{border-left:3px solid var(--purple)}
 .decision{border-left:3px solid var(--green)}
+.small{font-size:11px;color:#8ba2b6;line-height:1.65;margin-top:5px}
+.loading{text-align:center;padding:35px;color:var(--muted)}
+.footer{text-align:center;color:#5e788e;font-size:10px;padding:25px}
 
-.small{
- font-size:11px;
- color:#8ba2b6;
- line-height:1.65;
- margin-top:5px
-}
-
-.loading{
- text-align:center;
- padding:35px;
- color:var(--muted)
-}
-
-.footer{
- text-align:center;
- color:#5e788e;
- font-size:10px;
- padding:25px
-}
-
-/* LIVE CHART */
-
-.chart-panel{
- display:none;
- margin-bottom:16px;
- overflow:hidden
-}
-
-.chart-panel.active{
- display:block
-}
-
+.chart-panel{display:none;margin-bottom:16px;overflow:hidden}
+.chart-panel.active{display:block}
 .chart-head{
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:10px;
- padding:13px 15px;
- border-bottom:1px solid var(--border);
- flex-wrap:wrap
+ display:flex;justify-content:space-between;align-items:center;gap:10px;
+ padding:13px 15px;border-bottom:1px solid var(--border);flex-wrap:wrap
 }
-
-.chart-title{
- font-size:18px;
- font-weight:bold;
- color:var(--green)
-}
-
-.chart-actions{
- display:flex;
- gap:6px;
- flex-wrap:wrap
-}
-
-.chart-btn{
- background:#102236;
- color:#9eb5c8;
- border:1px solid var(--border);
- padding:8px 11px
-}
-
-.chart-btn.active{
- background:#123c31;
- color:var(--green)
-}
-
-.chart-close{
- background:#3d1922;
- color:var(--red)
-}
-
-#tradingview_chart{
- height:520px
-}
-
-.risk-good{color:var(--green)}
-.risk-mid{color:var(--yellow)}
-.risk-high{color:var(--red)}
+.chart-title{font-size:18px;font-weight:bold;color:var(--green)}
+.chart-actions{display:flex;gap:6px;flex-wrap:wrap}
+.chart-btn{background:#102236;color:#9eb5c8;border:1px solid var(--border);padding:8px 11px}
+.chart-btn.active{background:#123c31;color:var(--green)}
+.chart-close{background:#3d1922;color:var(--red)}
+#tradingview_chart{height:520px}
 
 @media(max-width:900px){
-
- .data{
-  grid-template-columns:repeat(2,1fr)
- }
-
- .top-grid{
-  grid-template-columns:1fr
- }
-
- .controls{
-  flex-direction:column
- }
-
- .brand small{
-  display:none
- }
-
-}
-
-@media(max-width:700px){
-
- #tradingview_chart{
-  height:440px
- }
-
+ .data{grid-template-columns:repeat(2,1fr)}
+ .top-grid{grid-template-columns:1fr}
+ .controls{flex-direction:column}
+ .brand small{display:none}
 }
 </style>
 </head>
 
 <body>
-
 <header>
-
 <div class="header-row">
-
  <div class="brand">
-
-  <h1>DeepRise V6 PRO</h1>
-
-  <small>
-   Liquidity • Momentum • Pump Radar • Trade Timing • Live Charts
-  </small>
-
+  <h1>⚡ DeepRise V7 PRO</h1>
+  <small>Liquidity • Futures • Pump Radar • Confirmation • Trade Engine</small>
  </div>
-
  <span class="live">● LIVE</span>
-
 </div>
-
 </header>
 
 <div class="container">
 
 <div class="marketbar">
-
- <span id="marketRegime">
-  Market: <b>SCANNING...</b>
- </span>
-
- <span id="btcStatus">
-  BTC: —
- </span>
-
- <span>
-  Engine: <b>V6 PRO</b>
- </span>
-
+ <span id="marketRegime">Market: <b>SCANNING...</b></span>
+ <span id="btcStatus">BTC: —</span>
+ <span>Engine: <b>V7 PRO</b></span>
 </div>
 
 <div class="marketbar">
-
- <span>
-  Price: <b>Binance</b>
- </span>
-
- <span>
-  Liquidity: <b>Order Book</b>
- </span>
-
- <span>
-  Futures: <b>Funding + OI</b>
- </span>
-
- <span id="lastUpdate">
-  Updated: —
- </span>
-
+ <span>Price: <b>Binance Spot</b></span>
+ <span>Liquidity: <b>24H Quote Volume</b></span>
+ <span>Futures: <b>Funding + OI</b></span>
+ <span id="lastUpdate">Updated: —</span>
 </div>
 
 <div class="controls">
-
- <input
-  id="search"
-  placeholder="Search BTC, ETH, SOL, ENA..."
- >
-
- <button onclick="loadMarket()">
-  DEEP SCAN
- </button>
-
+ <input id="search" placeholder="Search BTC, ETH, SOL, ENA...">
+ <button onclick="loadMarket()">⚡ DEEP SCAN</button>
 </div>
 
 <div class="filters">
-
- <button
-  class="filter active"
-  data-filter="all">
-  ALL
- </button>
-
- <button
-  class="filter"
-  data-filter="long">
-  LONG
- </button>
-
- <button
-  class="filter"
-  data-filter="short">
-  SHORT
- </button>
-
- <button
-  class="filter"
-  data-filter="wait">
-  WAIT
- </button>
-
- <button
-  class="filter"
-  data-filter="pump">
-  🔥 PUMP RADAR
- </button>
-
+ <button class="filter active" data-filter="all">ALL</button>
+ <button class="filter" data-filter="long">🟢 LONG</button>
+ <button class="filter" data-filter="short">🔴 SHORT</button>
+ <button class="filter" data-filter="wait">🟡 WAIT</button>
+ <button class="filter" data-filter="pump">🔥 PUMP RADAR</button>
 </div>
 
-<div class="progress">
- <span id="bar"></span>
-</div>
+<div class="progress"><span id="bar"></span></div>
 
-
-<!-- LIVE CHART -->
-
-<div
- id="chartPanel"
- class="chart-panel"
->
-
+<div id="chartPanel" class="chart-panel">
  <div class="chart-head">
-
   <div>
-
-   <div
-    id="chartTitle"
-    class="chart-title">
-
-    BTC/USDT LIVE CHART
-
-   </div>
-
-   <div class="small">
-    TradingView live market chart
-   </div>
-
+   <div id="chartTitle" class="chart-title">BTC/USDT LIVE CHART</div>
+   <div class="small">TradingView live chart</div>
   </div>
-
   <div class="chart-actions">
-
-   <button
-    class="chart-btn"
-    data-tf="5"
-    onclick="changeChartTF('5')">
-    5m
-   </button>
-
-   <button
-    class="chart-btn active"
-    data-tf="15"
-    onclick="changeChartTF('15')">
-    15m
-   </button>
-
-   <button
-    class="chart-btn"
-    data-tf="60"
-    onclick="changeChartTF('60')">
-    1H
-   </button>
-
-   <button
-    class="chart-btn"
-    data-tf="240"
-    onclick="changeChartTF('240')">
-    4H
-   </button>
-
-   <button
-    class="chart-btn"
-    data-tf="D"
-    onclick="changeChartTF('D')">
-    1D
-   </button>
-
-   <button
-    class="chart-btn chart-close"
-    onclick="closeChart()">
-
-    ✕ CLOSE
-
-   </button>
-
+   <button class="chart-btn" data-tf="5" onclick="changeChartTF('5')">5m</button>
+   <button class="chart-btn active" data-tf="15" onclick="changeChartTF('15')">15m</button>
+   <button class="chart-btn" data-tf="60" onclick="changeChartTF('60')">1H</button>
+   <button class="chart-btn" data-tf="240" onclick="changeChartTF('240')">4H</button>
+   <button class="chart-btn" data-tf="D" onclick="changeChartTF('D')">1D</button>
+   <button class="chart-btn chart-close" onclick="closeChart()">✕ CLOSE</button>
   </div>
-
  </div>
-
  <div id="tradingview_chart"></div>
-
 </div>
-
-
-<!-- TOP SETUPS -->
 
 <div class="hero">
-
- <h2>
-  🏆 DEEPRISE TOP SETUPS
- </h2>
-
- <div
-  id="top3"
-  class="top-grid">
-
-  <div class="loading">
-   Building market model...
-  </div>
-
+ <h2>🏆 DEEPRISE TOP SETUPS</h2>
+ <div id="top3" class="top-grid">
+  <div class="loading">Building market model...</div>
  </div>
-
 </div>
-
 
 <div id="results">
-
- <div class="loading">
-  Connecting to Binance...
- </div>
-
+ <div class="loading">Connecting to Binance...</div>
 </div>
-
 
 <div class="footer">
-
- DeepRise V6 PRO analyses public market data.
- Signals and scores are probabilistic indicators,
- not guarantees or financial advice.
-
+DeepRise V7 PRO analyses public market data. Signals are probabilistic,
+not guarantees or financial advice.
 </div>
-
 </div>
-
-
-<!-- TRADINGVIEW -->
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 
-
 <script>
-
-/* ========================================
-   API
-======================================== */
-
-const API=
-"https://api.binance.com";
-
-const FAPI=
-"https://fapi.binance.com";
-
+const API="https://api.binance.com";
+const FAPI="https://fapi.binance.com";
 
 let marketData=[];
-
 let currentFilter="all";
-
-
-/* ========================================
-   LIVE CHART ENGINE
-======================================== */
-
 let chartSymbol="BTCUSDT";
-
 let chartInterval="15";
 
+const fmt=n=>{
+ if(!isFinite(n)) return "—";
+ if(Math.abs(n)>=1e9) return (n/1e9).toFixed(2)+"B";
+ if(Math.abs(n)>=1e6) return (n/1e6).toFixed(2)+"M";
+ if(Math.abs(n)>=1e3) return (n/1e3).toFixed(2)+"K";
+ return n.toFixed(2);
+};
 
-function openChart(symbol){
-
- chartSymbol=symbol;
-
- document
- .getElementById("chartPanel")
- .classList.add("active");
-
-
- document
- .getElementById("chartTitle")
- .textContent=
- symbol.replace("USDT","")+
- "/USDT LIVE CHART";
-
-
- loadTradingView();
-
-
- setTimeout(()=>{
-
-  document
-  .getElementById("chartPanel")
-  .scrollIntoView({
-
-   behavior:"smooth",
-
-   block:"start"
-
-  });
-
- },100);
-
+function priceFmt(n){
+ if(n>=1000)return n.toFixed(2);
+ if(n>=1)return n.toFixed(4);
+ if(n>=.01)return n.toFixed(5);
+ return n.toFixed(8);
 }
-
-
-function loadTradingView(){
-
- const container=
- document.getElementById(
-  "tradingview_chart"
- );
-
-
- container.innerHTML="";
-
-
- if(
-  typeof TradingView===
-  "undefined"
- ){
-
-  container.innerHTML=
-
-  `<div class="loading red">
-   TradingView chart failed to load.
-   </div>`;
-
-  return;
-
- }
-
-
- new TradingView.widget({
-
-  autosize:true,
-
-  symbol:
-  "BINANCE:"+chartSymbol,
-
-  interval:
-  chartInterval,
-
-  timezone:
-  "Etc/UTC",
-
-  theme:
-  "dark",
-
-  style:
-  "1",
-
-  locale:
-  "en",
-
-  toolbar_bg:
-  "#071421",
-
-  enable_publishing:
-  false,
-
-  hide_top_toolbar:
-  false,
-
-  hide_side_toolbar:
-  false,
-
-  allow_symbol_change:
-  true,
-
-  save_image:
-  false,
-
-  container_id:
-  "tradingview_chart"
-
- });
-
-}
-
-
-function changeChartTF(tf){
-
- chartInterval=tf;
-
-
- document
- .querySelectorAll(
-  ".chart-btn[data-tf]"
- )
- .forEach(btn=>{
-
-  btn.classList.toggle(
-   "active",
-   btn.dataset.tf===tf
-  );
-
- });
-
-
- loadTradingView();
-
-}
-
-
-function closeChart(){
-
- document
- .getElementById(
-  "chartPanel"
- )
- .classList.remove(
-  "active"
- );
-
-}
-
-
-/* ========================================
-   EMA
-======================================== */
 
 function ema(arr,p){
-
- if(!arr.length)
-  return 0;
-
-
- let e=arr[0];
-
- let k=
- 2/(p+1);
-
-
- for(
-  let i=1;
-  i<arr.length;
-  i++
- ){
-
-  e=
-  arr[i]*k+
-  e*(1-k);
-
- }
-
-
+ if(!arr.length)return 0;
+ let e=arr[0],k=2/(p+1);
+ for(let i=1;i<arr.length;i++)e=arr[i]*k+e*(1-k);
  return e;
-
 }
-
-
-/* ========================================
-   RSI
-======================================== */
 
 function RSI(a,p=14){
-
- if(a.length<=p)
-  return 50;
-
-
- let g=0;
-
- let l=0;
-
-
- for(
-  let i=a.length-p;
-  i<a.length;
-  i++
- ){
-
-  let d=
-  a[i]-a[i-1];
-
-
-  if(d>0)
-   g+=d;
-
-  else
-   l-=d;
-
+ if(a.length<=p)return 50;
+ let g=0,l=0;
+ for(let i=a.length-p;i<a.length;i++){
+  const d=a[i]-a[i-1];
+  if(d>0)g+=d;else l-=d;
  }
-
-
- if(!l)
-  return 100;
-
-
- let rs=
- (g/p)/(l/p);
-
-
- return
- 100-
- (100/(1+rs));
-
+ if(l===0)return 100;
+ const rs=(g/p)/(l/p);
+ return 100-(100/(1+rs));
 }
-
-
-/* ========================================
-   ATR
-======================================== */
 
 function ATR(k,p=14){
-
- if(k.length<p+1)
-  return 0;
-
-
- let t=[];
-
-
- for(
-  let i=1;
-  i<k.length;
-  i++
- ){
-
-  let h=+k[i][2];
-
-  let l=+k[i][3];
-
-  let pc=
-  +k[i-1][4];
-
-
-  t.push(
-
-   Math.max(
-
-    h-l,
-
-    Math.abs(
-     h-pc
-    ),
-
-    Math.abs(
-     l-pc
-    )
-
-   )
-
-  );
-
+ if(k.length<p+1)return 0;
+ let tr=[];
+ for(let i=1;i<k.length;i++){
+  let h=+k[i][2],l=+k[i][3],pc=+k[i-1][4];
+  tr.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc)));
  }
-
-
- return
- t
- .slice(-p)
- .reduce(
-  (a,b)=>a+b,
-  0
- )/p;
-
+ return tr.slice(-p).reduce((a,b)=>a+b,0)/p;
 }
-
-
-/* ========================================
-   CANDLE SIGNAL
-======================================== */
 
 function candleSignal(k){
+ if(k.length<3)return {name:"NONE",bull:false,bear:false};
 
- if(k.length<3)
+ let x=k[k.length-1],p=k[k.length-2];
+ let o=+x[1],h=+x[2],l=+x[3],c=+x[4];
+ let po=+p[1],pc=+p[4];
 
-  return{
+ let body=Math.abs(c-o);
+ let range=Math.max(h-l,0.00000001);
+ let upper=h-Math.max(o,c);
+ let lower=Math.min(o,c)-l;
 
-   name:"NONE",
+ if(c>o && lower>body*1.5 && body/range>.2)
+  return {name:"Bullish Hammer",bull:true,bear:false};
 
-   bull:false,
+ if(c<o && upper>body*1.5 && body/range>.2)
+  return {name:"Bearish Shooting Star",bull:false,bear:true};
 
-   bear:false
+ if(c>o && pc<po && c>po && o<pc)
+  return {name:"Bullish Engulfing",bull:true,bear:false};
 
-  };
+ if(c<o && pc>po && o>pc && c<po)
+  return {name:"Bearish Engulfing",bull:false,bear:true};
 
+ if(body/range<.12)
+  return {name:"Doji / Indecision",bull:false,bear:false};
 
- let x=
- k[k.length-2];
-
-
- let p=
- k[k.length-3];
-
-
- let o=+x[1];
-
- let h=+x[2];
-
- let l=+x[3];
-
- let c=+x[4];
-
-
- let po=+p[1];
-
- let pc=+p[4];
-
-
- let body=
- Math.abs(c-o);
-
-
- let lower=
- Math.min(o,c)-l;
-
-
- let upper=
- h-Math.max(o,c);
-
-
- if(
-  c>o &&
-  pc<po &&
-  o<=pc &&
-  c>=po
- )
-
- return{
-
-  name:
-  "BULLISH ENGULFING",
-
-  bull:true,
-
-  bear:false
-
- };
-
-
- if(
-  c<o &&
-  pc>po &&
-  o>=pc &&
-  c<=po
- )
-
- return{
-
-  name:
-  "BEARISH ENGULFING",
-
-  bull:false,
-
-  bear:true
-
- };
-
-
- if(
-  body>0 &&
-  lower>body*2 &&
-  upper<body
- )
-
- return{
-
-  name:
-  "HAMMER / REJECTION",
-
-  bull:true,
-
-  bear:false
-
- };
-
-
- if(
-  body>0 &&
-  upper>body*2 &&
-  lower<body
- )
-
- return{
-
-  name:
-  "BEARISH REJECTION",
-
-  bull:false,
-
-  bear:true
-
- };
-
-
- return{
-
-  name:
-  c>o
-  ?"BULLISH CLOSE"
-  :"BEARISH CLOSE",
-
+ return {
+  name:c>o?"Bullish Candle":"Bearish Candle",
   bull:c>o,
-
   bear:c<o
-
  };
-
 }
 
-
-/* ========================================
-   KLINES
-======================================== */
-
-async function klines(
- symbol,
- interval,
- limit=100
-){
-
- try{
-
-  let r=
-  await fetch(
-
-   `${API}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
-
-  );
-
-
-  let d=
-  await r.json();
-
-
-  return
-  Array.isArray(d)
-  ?d
-  :[];
-
- }
-
- catch(e){
-
-  return [];
-
- }
-
+function tradeDuration(atrPct,volumeRatio,score){
+ if(score>=85 && volumeRatio>=2)return "15m – 2h";
+ if(score>=75 && atrPct>=2)return "1h – 6h";
+ if(score>=65)return "4h – 24h";
+ return "WAIT / No clear timing";
 }
 
+function pumpRadar({rsi,volumeRatio,change,emaFast,emaSlow,price}){
+ let p=0,reasons=[];
 
-/* ========================================
-   ORDER BOOK
-======================================== */
+ if(volumeRatio>=2){p+=30;reasons.push("Volume explosion")}
+ else if(volumeRatio>=1.4){p+=18;reasons.push("Volume building")}
 
-async function orderBook(
- symbol,
- price
-){
+ if(rsi>=52&&rsi<=68){p+=18;reasons.push("RSI momentum zone")}
+ if(price>emaFast){p+=15;reasons.push("Above EMA20")}
+ if(emaFast>emaSlow){p+=15;reasons.push("EMA trend bullish")}
+ if(change>0&&change<8){p+=12;reasons.push("Positive acceleration")}
+ if(change>=8){p+=5;reasons.push("Already extended")}
 
- try{
-
-  let r=
-  await fetch(
-
-   `${API}/api/v3/depth?symbol=${symbol}&limit=100`
-
-  );
-
-
-  let d=
-  await r.json();
-
-
-  let bids=0;
-
-  let asks=0;
-
-
-  (d.bids||[])
-  .forEach(x=>{
-
-   let p=+x[0];
-
-   let q=+x[1];
-
-
-   if(
-    p>=price*.99
-   )
-
-   bids+=p*q;
-
-  });
-
-
-  (d.asks||[])
-  .forEach(x=>{
-
-   let p=+x[0];
-
-   let q=+x[1];
-
-
-   if(
-    p<=price*1.01
-   )
-
-   asks+=p*q;
-
-  });
-
-
-  let total=
-  bids+asks;
-
-
-  return{
-
-   bids,
-
-   asks,
-
-   total,
-
-   buyPressure:
-   total
-   ?bids/total*100
-   :50
-
-  };
-
- }
-
- catch(e){
-
-  return{
-
-   bids:0,
-
-   asks:0,
-
-   total:0,
-
-   buyPressure:50
-
-  };
-
- }
-
+ return {
+  score:Math.min(100,p),
+  reasons:reasons.length?reasons.join(" • "):"No strong pre-pump evidence"
+ };
 }
 
+async function getJSON(url){
+ const r=await fetch(url);
+ if(!r.ok)throw new Error("API "+r.status);
+ return r.json();
+}
 
-/* ========================================
-   FUTURES
-======================================== */
-
-async function futuresData(
- symbol
-){
-
+async function futuresData(symbol){
  try{
-
-  let [
-   fund,
-   oi
-  ]=
-
-  await Promise.all([
-
-   fetch(
-
-    `${FAPI}/fapi/v1/premiumIndex?symbol=${symbol}`
-
-   )
-   .then(
-    r=>r.json()
-   ),
-
-
-   fetch(
-
-    `${FAPI}/fapi/v1/openInterest?symbol=${symbol}`
-
-   )
-   .then(
-    r=>r.json()
-   )
-
+  const [fund,oi]=await Promise.all([
+   getJSON(`${FAPI}/fapi/v1/premiumIndex?symbol=${symbol}`),
+   getJSON(`${FAPI}/fapi/v1/openInterest?symbol=${symbol}`)
   ]);
 
-
-  return{
-
-   funding:
-
-   fund.lastFundingRate
-   !==undefined
-
-   ?+fund.lastFundingRate*100
-
-   :null,
-
-
-   oi:
-
-   oi.openInterest
-   !==undefined
-
-   ?+oi.openInterest
-
-   :null
-
+  return {
+   funding:+fund.lastFundingRate*100,
+   oi:+oi.openInterest
   };
-
+ }catch(e){
+  return {funding:0,oi:0};
  }
-
- catch(e){
-
-  return{
-
-   funding:null,
-
-   oi:null
-
-  };
-
- }
-
 }
 
-
-/* ========================================
-   PUMP / DUMP RADAR
-======================================== */
-
-function pumpRadar(
-
- volumeRatio,
-
- volumeAccel,
-
- buyPressure,
-
- rsi,
-
- trend,
-
- change,
-
- candle
-
-){
-
- let pump=0;
-
- let dump=0;
-
-
- if(volumeRatio>1.15){
-
-  pump+=10;
-
-  dump+=10;
-
- }
-
-
- if(volumeRatio>1.5){
-
-  pump+=15;
-
-  dump+=15;
-
- }
-
-
- if(volumeRatio>2){
-
-  pump+=10;
-
-  dump+=10;
-
- }
-
-
- if(volumeAccel>1.15){
-
-  pump+=15;
-
-  dump+=15;
-
- }
-
-
- if(volumeAccel>1.5){
-
-  pump+=10;
-
-  dump+=10;
-
- }
-
-
- if(buyPressure>=55)
-  pump+=15;
-
-
- if(buyPressure>=62)
-  pump+=15;
-
-
- if(buyPressure<=45)
-  dump+=15;
-
-
- if(buyPressure<=38)
-  dump+=15;
-
-
- if(trend)
-  pump+=10;
-
- else
-  dump+=10;
-
-
- if(
-  rsi>=52 &&
-  rsi<=68
- )
- pump+=10;
-
-
- if(
-  rsi<=48 &&
-  rsi>=30
- )
- dump+=10;
-
-
- if(candle.bull)
-  pump+=10;
-
-
- if(candle.bear)
-  dump+=10;
-
-
- if(change>2)
-  pump+=5;
-
-
- if(change<-2)
-  dump+=5;
-
-
- pump=
- Math.min(
-  100,
-  pump
- );
-
-
- dump=
- Math.min(
-  100,
-  dump
- );
-
-
- let direction=
-
- pump>=dump
- ?"PUMP"
- :"DUMP";
-
-
- let score=
-
- Math.max(
-  pump,
-  dump
- );
-
-
- let level=
-
- score>=80
- ?"EXTREME"
-
- :score>=65
- ?"HIGH"
-
- :score>=45
- ?"BUILDING"
-
- :"LOW";
-
-
- return{
-
-  direction,
-
-  score,
-
-  level
-
- };
-
-}
-
-
-/* ========================================
-   DURATION
-======================================== */
-
-function durationEstimate(
-
- atrPct,
-
- volumeRatio,
-
- score
-
-){
-
- if(
-  score>=80 &&
-  volumeRatio>=1.7
- )
-
- return "15m – 2h";
-
-
- if(score>=70)
-
- return "30m – 4h";
-
-
- if(atrPct>=4)
-
- return "1h – 6h";
-
-
- if(score>=60)
-
- return "2h – 12h";
-
-
- return "4h – 24h";
-
-}
-
-
-/* ========================================
-   FORMAT
-======================================== */
-
-function fmtMoney(v){
-
- if(!v)
-  return "$0";
-
-
- if(v>=1e9)
-
- return
- "$"+
- (v/1e9)
- .toFixed(2)+
- "B";
-
-
- if(v>=1e6)
-
- return
- "$"+
- (v/1e6)
- .toFixed(2)+
- "M";
-
-
- if(v>=1e3)
-
- return
- "$"+
- (v/1e3)
- .toFixed(1)+
- "K";
-
-
- return
- "$"+
- v.toFixed(0);
-
-}
-
-
-function fmtPrice(v){
-
- if(v>=1000)
-  return v.toFixed(2);
-
-
- if(v>=1)
-  return v.toFixed(4);
-
-
- if(v>=.01)
-  return v.toFixed(5);
-
-
- return v.toFixed(7);
-
-}
-
-
-/* ========================================
-   ANALYSIS ENGINE
-======================================== */
-
-async function analyze(t){
-
- let symbol=
- t.symbol;
-
-
- let price=
- +t.lastPrice;
-
-
- let change=
- +t.priceChangePercent;
-
-
- let quoteVolume=
- +t.quoteVolume;
-
-
- let [
-
-  k15,
-
-  k1h,
-
-  book,
-
-  futures
-
- ]=
-
- await Promise.all([
-
-  klines(
-   symbol,
-   "15m",
-   80
-  ),
-
-  klines(
-   symbol,
-   "1h",
-   80
-  ),
-
-  orderBook(
-   symbol,
-   price
-  ),
-
-  futuresData(
-   symbol
-  )
-
- ]);
-
-
- if(
-  k15.length<30 ||
-  k1h.length<30
- )
-
- return null;
-
-
- let closes15=
- k15.map(
-  x=>+x[4]
- );
-
-
- let closes1h=
- k1h.map(
-  x=>+x[4]
- );
-
-
- let volumes=
- k15.map(
-  x=>+x[5]
- );
-
-
- let rsi=
- RSI(closes15);
-
-
- let atr=
- ATR(k15);
-
-
- let atrPct=
-
- price
- ?atr/price*100
- :0;
-
-
- let e20=
-
- ema(
-  closes15.slice(-50),
-  20
- );
-
-
- let e50=
-
- ema(
-  closes1h.slice(-70),
-  50
- );
-
-
- let trend=
-
- price>e20 &&
- price>e50;
-
-
- let recentVol=
-
- volumes
- .slice(-4)
- .reduce(
-  (a,b)=>a+b,
-  0
- )/4;
-
-
- let baseVol=
-
- volumes
- .slice(-24,-4)
- .reduce(
-  (a,b)=>a+b,
-  0
- )/20;
-
-
- let volumeRatio=
-
- baseVol
- ?recentVol/baseVol
- :1;
-
-
- let lastVol=
-
- volumes
- .slice(-2)
- .reduce(
-  (a,b)=>a+b,
-  0
- )/2;
-
-
- let previousVol=
-
- volumes
- .slice(-6,-2)
- .reduce(
-  (a,b)=>a+b,
-  0
- )/4;
-
-
- let volumeAccel=
-
- previousVol
- ?lastVol/previousVol
- :1;
-
-
- let candle=
- candleSignal(k15);
-
-
- /* NEW V6:
-    ORDER BOOK IMBALANCE
- */
-
- let imbalance=
-
- book.total
-
- ?(
-   (
-    book.bids-
-    book.asks
-   )
-   /
-   book.total
-  )*100
-
- :0;
-
-
- let radar=
-
- pumpRadar(
-
-  volumeRatio,
-
-  volumeAccel,
-
-  book.buyPressure,
-
-  rsi,
-
-  trend,
-
-  change,
-
-  candle
-
- );
-
-
- let longScore=0;
-
- let shortScore=0;
-
-
- if(trend)
-  longScore+=20;
-
- else
-  shortScore+=20;
-
-
- if(
-  rsi>50 &&
-  rsi<70
- )
-
- longScore+=15;
-
-
- if(
-  rsi<50 &&
-  rsi>28
- )
-
- shortScore+=15;
-
-
- if(
-  book.buyPressure>55
- )
-
- longScore+=20;
-
-
- if(
-  book.buyPressure<45
- )
-
- shortScore+=20;
-
-
- if(
-  volumeRatio>1.25
- ){
-
-  longScore+=10;
-
-  shortScore+=10;
-
- }
-
-
- if(candle.bull)
-  longScore+=15;
-
-
- if(candle.bear)
-  shortScore+=15;
-
-
- if(change>0)
-  longScore+=10;
-
- else
-  shortScore+=10;
-
-
- if(
-  radar.direction===
-  "PUMP"
- )
-
- longScore+=10;
-
- else
-  shortScore+=10;
-
-
- longScore=
- Math.min(
-  100,
-  longScore
- );
-
-
- shortScore=
- Math.min(
-  100,
-  shortScore
- );
-
-
- let side="WAIT";
-
-
- let confidence=
-
- Math.max(
-  longScore,
-  shortScore
- );
-
-
- if(
-
-  longScore>=65 &&
-
-  longScore>
-  shortScore+10
-
- )
-
- side="LONG";
-
-
- if(
-
-  shortScore>=65 &&
-
-  shortScore>
-  longScore+10
-
- )
-
- side="SHORT";
-
-
- let stop;
-
- let tp1;
-
- let tp2;
-
- let tp3;
-
-
- if(side==="SHORT"){
-
-  stop=
-  price+
-  atr*1.35;
-
-
-  tp1=
-  price-
-  atr*1.2;
-
-
-  tp2=
-  price-
-  atr*2.1;
-
-
-  tp3=
-  price-
-  atr*3.2;
-
- }
-
- else{
-
-  stop=
-  price-
-  atr*1.35;
-
-
-  tp1=
-  price+
-  atr*1.2;
-
-
-  tp2=
-  price+
-  atr*2.1;
-
-
-  tp3=
-  price+
-  atr*3.2;
-
- }
-
-
- let duration=
-
- durationEstimate(
-
-  atrPct,
-
-  volumeRatio,
-
-  confidence
-
- );
-
-
- /* =================================
-    V6 RISK / REWARD
- ================================= */
-
- let risk=
-
- Math.abs(
-  price-stop
- );
-
-
- let reward=
-
- Math.abs(
-  tp2-price
- );
-
-
- let rr=
-
- risk
- ?reward/risk
- :0;
-
-
- /* =================================
-    V6 RISK GRADE
- ================================= */
-
- let riskPoints=0;
-
-
- if(confidence<70)
-  riskPoints+=2;
-
-
- if(atrPct>3)
-  riskPoints+=2;
-
-
- if(atrPct>5)
-  riskPoints+=2;
-
-
- if(volumeRatio<1)
-  riskPoints+=1;
-
-
- if(
-
-  book.buyPressure>47 &&
-
-  book.buyPressure<53
-
- )
-
- riskPoints+=1;
-
-
- if(side==="WAIT")
-  riskPoints+=3;
-
-
- let riskGrade=
-
- riskPoints<=2
- ?"LOW"
-
- :riskPoints<=5
- ?"MEDIUM"
-
- :"HIGH";
-
-
- return{
-
-  symbol:
-  symbol.replace(
-   "USDT",
-   ""
-  ),
-
-  pair:symbol,
-
-  price,
-
-  change,
-
-  quoteVolume,
-
-  rsi,
-
-  atr,
-
-  atrPct,
-
-  volumeRatio,
-
-  volumeAccel,
-
-  liquidity:
-  book.total,
-
-  bids:
-  book.bids,
-
-  asks:
-  book.asks,
-
-  buyPressure:
-  book.buyPressure,
-
-  imbalance,
-
-  funding:
-  futures.funding,
-
-  oi:
-  futures.oi,
-
-  candle,
-
-  radar,
-
-  side,
-
-  confidence,
-
-  duration,
-
-  stop,
-
-  tp1,
-
-  tp2,
-
-  tp3,
-
-  rr,
-
-  riskGrade
-
- };
-
-}
-
-
-/* ========================================
-   RENDER COINS
-======================================== */
-
-function render(){
-
- let search=
-
- document
- .getElementById("search")
- .value
- .toUpperCase()
- .trim();
-
-
- let list=
-
- marketData
- .filter(x=>{
-
-  if(
-
-   search &&
-
-   !x.symbol.includes(
-    search
-   )
-
-  )
-
-  return false;
-
-
-  if(
-   currentFilter==="long"
-  )
-
-  return
-  x.side==="LONG";
-
-
-  if(
-   currentFilter==="short"
-  )
-
-  return
-  x.side==="SHORT";
-
-
-  if(
-   currentFilter==="wait"
-  )
-
-  return
-  x.side==="WAIT";
-
-
-  if(
-   currentFilter==="pump"
-  )
-
-  return
-
-  x.radar.direction===
-  "PUMP"
-
-  &&
-
-  x.radar.score>=60;
-
-
-  return true;
-
- });
-
-
- let html="";
-
-
- list.forEach(x=>{
-
-
-  let sideClass=
-
-  x.side==="LONG"
-  ?"long"
-
-  :x.side==="SHORT"
-  ?"short"
-
-  :"wait";
-
-
-  let pressureClass=
-
-  x.buyPressure>=55
-  ?"green"
-
-  :x.buyPressure<=45
-  ?"red"
-
-  :"yellow";
-
-
-  let radarClass=
-
-  x.radar.direction===
-  "PUMP"
-
-  ?"purple"
-
-  :"red";
-
-
-  let funding=
-
-  x.funding===null
-
-  ?"N/A"
-
-  :x.funding
-   .toFixed(4)+
-   "%";
-
-
-  let confirmation=
-
-  x.side==="LONG"
-
-  ?(
-
-   x.candle.bull
-
-   ?"CONFIRMED LONG CANDLE"
-
-   :"WAIT FOR BULLISH CLOSE"
-
-  )
-
-  :x.side==="SHORT"
-
-  ?(
-
-   x.candle.bear
-
-   ?"CONFIRMED SHORT CANDLE"
-
-   :"WAIT FOR BEARISH CLOSE"
-
-  )
-
-  :"NO CLEAN ENTRY YET";
-
-
-  html+=`
-
-  <div
-   class="card"
-   data-side="${x.side.toLowerCase()}">
-
-
-   <div class="coin-head">
-
-
-    <div>
-
-
-     <div
-      class="sym sym-link"
-      onclick="openChart('${x.pair}')"
-      title="Open live chart">
-
-      📊 ${x.symbol}/USDT
-
-     </div>
-
-
-     <div class="small">
-
-      $${fmtPrice(x.price)}
-
-      •
-
-      <span
-       class="${x.change>=0?'green':'red'}">
-
-       ${x.change.toFixed(2)}%
-
-      </span>
-
-     </div>
-
-
-    </div>
-
-
-    <div class="badges">
-
-
-     <span
-      class="badge ${sideClass}">
-
-      ${x.side}
-
-     </span>
-
-
-     <span
-      class="badge score">
-
-      ${x.confidence}%
-      CONF
-
-     </span>
-
-
-     <span
-      class="badge pump">
-
-      ${x.radar.direction}
-
-      ${x.radar.score}%
-
-     </span>
-
-
-    </div>
-
-
-   </div>
-
-
-   <div class="data">
-
-
-    <div class="box">
-
-     <div class="label">
-      Liquidity ±1%
-     </div>
-
-     <div class="value blue">
-
-      ${fmtMoney(
-       x.liquidity
-      )}
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      Buy Pressure
-     </div>
-
-     <div
-      class="value ${pressureClass}">
-
-      ${x.buyPressure.toFixed(1)}%
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      Order Book Imbalance
-     </div>
-
-     <div
-      class="value ${
-       x.imbalance>8
-       ?'green'
-       :x.imbalance<-8
-       ?'red'
-       :'yellow'
-      }">
-
-      ${
-       x.imbalance>=0
-       ?'+'
-       :''
-      }
-
-      ${x.imbalance.toFixed(1)}%
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      24H Volume
-     </div>
-
-     <div class="value">
-
-      ${fmtMoney(
-       x.quoteVolume
-      )}
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      Volume Ratio
-     </div>
-
-     <div
-      class="value ${
-       x.volumeRatio>1.4
-       ?'green'
-       :''
-      }">
-
-      ${x.volumeRatio.toFixed(2)}x
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      Volume Acceleration
-     </div>
-
-     <div
-      class="value ${
-       x.volumeAccel>1.3
-       ?'purple'
-       :''
-      }">
-
-      ${x.volumeAccel.toFixed(2)}x
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      RSI 15M
-     </div>
-
-     <div class="value">
-
-      ${x.rsi.toFixed(1)}
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      ATR
-     </div>
-
-     <div class="value">
-
-      ${x.atrPct.toFixed(2)}%
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      Funding
-     </div>
-
-     <div class="value">
-
-      ${funding}
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      Open Interest
-     </div>
-
-     <div class="value">
-
-      ${
-       x.oi===null
-       ?"N/A"
-       :x.oi.toLocaleString()
-      }
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      Risk / Reward
-     </div>
-
-     <div
-      class="value ${
-       x.rr>=1.8
-       ?'green'
-       :x.rr>=1.2
-       ?'yellow'
-       :'red'
-      }">
-
-      1:${x.rr.toFixed(2)}
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      Risk Grade
-     </div>
-
-     <div
-      class="value ${
-       x.riskGrade==="LOW"
-       ?'risk-good'
-       :x.riskGrade==="MEDIUM"
-       ?'risk-mid'
-       :'risk-high'
-      }">
-
-      ${x.riskGrade}
-
-     </div>
-
-    </div>
-
-
-    <div class="box">
-
-     <div class="label">
-      Expected Duration
-     </div>
-
-     <div class="value yellow">
-
-      ${x.duration}
-
-     </div>
-
-    </div>
-
-
-   </div>
-
-
-   <div class="early">
-
-
-    <b class="${radarClass}">
-
-     🔥 EARLY
-     ${x.radar.direction}
-     RADAR:
-
-     ${x.radar.score}%
-
-     •
-
-     ${x.radar.level}
-
-    </b>
-
-
-    <div class="small">
-
-     Volume:
-
-     ${x.volumeRatio.toFixed(2)}x
-
-     •
-
-     Acceleration:
-
-     ${x.volumeAccel.toFixed(2)}x
-
-     •
-
-     Buy Pressure:
-
-     ${x.buyPressure.toFixed(1)}%
-
-     •
-
-     Imbalance:
-
-     ${x.imbalance.toFixed(1)}%
-
-    </div>
-
-
-   </div>
-
-
-   <div class="confirm">
-
-
-    <b>
-
-     🕯 CONFIRMATION:
-
-     ${confirmation}
-
-    </b>
-
-
-    <div class="small">
-
-     Current pattern:
-
-     ${x.candle.name}
-
-    </div>
-
-
-   </div>
-
-
-   <div class="decision">
-
-
-    <b>
-     🎯 TRADE PLAN
-    </b>
-
-
-    <div class="small">
-
-
-     Entry:
-
-     $${fmtPrice(
-      x.price
-     )}
-
-
-     • Stop:
-
-     $${fmtPrice(
-      x.stop
-     )}
-
-
-     <br>
-
-
-     TP1:
-
-     $${fmtPrice(
-      x.tp1
-     )}
-
-
-     • TP2:
-
-     $${fmtPrice(
-      x.tp2
-     )}
-
-
-     • TP3:
-
-     $${fmtPrice(
-      x.tp3
-     )}
-
-
-     <br>
-
-
-     Risk/Reward:
-
-     1:${x.rr.toFixed(2)}
-
-
-     • Risk:
-
-     ${x.riskGrade}
-
-
-     • Duration:
-
-     ${x.duration}
-
-
-    </div>
-
-
-   </div>
-
-
-  </div>
-
-  `;
-
- });
-
-
- document
- .getElementById("results")
- .innerHTML=
-
- html ||
-
- `<div class="loading">
-  No setups match this filter.
-  </div>`;
-
-
- renderTop();
-
-}
-
-
-/* ========================================
-   TOP 3
-======================================== */
-
-function renderTop(){
-
- let top=
-
- [...marketData]
-
- .filter(
-  x=>x.side!=="WAIT"
- )
-
- .sort(
-  (a,b)=>
-  b.confidence-
-  a.confidence
- )
-
- .slice(0,3);
-
-
- if(!top.length){
-
-  document
-  .getElementById("top3")
-  .innerHTML=
-
-  `<div class="loading">
-   No high-confidence setup yet.
-   </div>`;
-
-  return;
-
- }
-
-
- document
- .getElementById("top3")
- .innerHTML=
-
- top
- .map(
-  (x,i)=>`
-
-
- <div class="pick">
-
-
-  <div class="rank">
-
-   #${i+1}
-   SETUP
-
-  </div>
-
-
-  <div
-   class="sym sym-link"
-   onclick="openChart('${x.pair}')">
-
-   📊 ${x.symbol}/USDT
-
-  </div>
-
-
-  <div
-   class="${
-    x.side==="LONG"
-    ?'green'
-    :'red'
-   }">
-
-   <b>
-    ${x.side}
-   </b>
-
-  </div>
-
-
-  <div class="small">
-
-
-   Confidence:
-
-   ${x.confidence}%
-
-
-   <br>
-
-
-   ${x.radar.direction}
-   Radar:
-
-   ${x.radar.score}%
-
-
-   <br>
-
-
-   Liquidity:
-
-   ${fmtMoney(
-    x.liquidity
-   )}
-
-
-   <br>
-
-
-   R/R:
-
-   1:${x.rr.toFixed(2)}
-
-
-   • Risk:
-
-   ${x.riskGrade}
-
-
-   <br>
-
-
-   Duration:
-
-   ${x.duration}
-
-
-  </div>
-
-
- </div>
-
-
- `)
- .join("");
-
-}
-
-
-/* ========================================
-   DEEP MARKET SCAN
-======================================== */
-
-async function loadMarket(){
-
- let bar=
- document
- .getElementById("bar");
-
-
- bar.style.width=
- "5%";
-
-
- document
- .getElementById("results")
- .innerHTML=
-
- `<div class="loading">
-  Deep scanning Binance market...
-  </div>`;
-
+async function analyseCoin(t){
+ const symbol=t.symbol;
 
  try{
-
-
-  let tickers=
-
-  await fetch(
-
-   `${API}/api/v3/ticker/24hr`
-
-  )
-  .then(
-   r=>r.json()
+  const k=await getJSON(
+   `${API}/api/v3/klines?symbol=${symbol}&interval=15m&limit=100`
   );
 
+  const closes=k.map(x=>+x[4]);
+  const volumes=k.map(x=>+x[5]);
 
-  let candidates=
+  const price=closes[closes.length-1];
+  const rsi=RSI(closes);
+  const e20=ema(closes.slice(-60),20);
+  const e50=ema(closes.slice(-80),50);
+  const atr=ATR(k);
+  const atrPct=atr/price*100;
 
-  tickers
+  const recentVol=volumes.slice(-4).reduce((a,b)=>a+b,0)/4;
+  const oldVol=volumes.slice(-24,-4);
+  const avgVol=oldVol.reduce((a,b)=>a+b,0)/Math.max(1,oldVol.length);
+  const volumeRatio=avgVol?recentVol/avgVol:1;
 
-  .filter(x=>
+  const change=+t.priceChangePercent;
+  const quoteVolume=+t.quoteVolume;
+  const candle=candleSignal(k);
+  const fut=await futuresData(symbol);
 
-   x.symbol.endsWith(
-    "USDT"
-   )
+  let longPoints=0,shortPoints=0;
 
-   &&
+  if(price>e20)longPoints+=15;else shortPoints+=15;
+  if(e20>e50)longPoints+=18;else shortPoints+=18;
 
-   ![
+  if(rsi>=50&&rsi<=68)longPoints+=15;
+  if(rsi>=32&&rsi<50)shortPoints+=7;
+  if(rsi>=72)shortPoints+=15;
+  if(rsi<=28)longPoints+=12;
 
-    "USDCUSDT",
-
-    "FDUSDUSDT",
-
-    "TUSDUSDT",
-
-    "USDPUSDT",
-
-    "DAIUSDT"
-
-   ]
-   .includes(
-    x.symbol
-   )
-
-   &&
-
-   +x.quoteVolume>
-   5000000
-
-  )
-
-
-  .sort(
-   (a,b)=>
-
-   +b.quoteVolume-
-   +a.quoteVolume
-  )
-
-
-  .slice(
-   0,
-   25
-  );
-
-
-  bar.style.width=
-  "20%";
-
-
-  let results=[];
-
-
-  /*
-   Process in small batches
-   to reduce Binance
-   API rate pressure.
-  */
-
-
-  for(
-   let i=0;
-   i<candidates.length;
-   i+=4
-  ){
-
-
-   let batch=
-
-   candidates
-   .slice(
-    i,
-    i+4
-   );
-
-
-   let r=
-
-   await Promise.all(
-
-    batch.map(
-     analyze
-    )
-
-   );
-
-
-   results.push(
-
-    ...r.filter(
-     Boolean
-    )
-
-   );
-
-
-   bar.style.width=
-
-   (
-
-    20+
-
-    (
-     i/
-     candidates.length
-    )*70
-
-   )+"%";
-
+  if(volumeRatio>=1.5){
+   if(change>=0)longPoints+=18;
+   else shortPoints+=18;
   }
 
+  if(candle.bull)longPoints+=14;
+  if(candle.bear)shortPoints+=14;
 
-  marketData=
+  if(change>1)longPoints+=8;
+  if(change<-1)shortPoints+=8;
 
-  results.sort(
+  if(fut.funding<-.03)longPoints+=7;
+  if(fut.funding>.05)shortPoints+=7;
 
-   (a,b)=>
+  let direction="WAIT";
+  if(longPoints-shortPoints>=15)direction="LONG";
+  if(shortPoints-longPoints>=15)direction="SHORT";
 
-   b.confidence-
-   a.confidence
+  let score=Math.min(99,Math.max(longPoints,shortPoints)+20);
 
-  );
+  if(direction==="WAIT")score=Math.min(score,64);
 
+  const pump=pumpRadar({
+   rsi,volumeRatio,change,
+   emaFast:e20,emaSlow:e50,price
+  });
 
-  let btc=
+  const risk=atrPct>=4?"HIGH":atrPct>=2?"MEDIUM":"CONTROLLED";
 
-  marketData.find(
+  let entry=price,sl,tp1,tp2;
 
-   x=>
-   x.symbol==="BTC"
-
-  );
-
-
-  if(btc){
-
-
-   document
-   .getElementById(
-    "btcStatus"
-   )
-   .innerHTML=
-
-   `BTC:
-
-   <b
-    class="${
-     btc.change>=0
-     ?'green'
-     :'red'
-    }">
-
-    ${btc.change.toFixed(2)}%
-
-   </b>`;
-
-
-   document
-   .getElementById(
-    "marketRegime"
-   )
-   .innerHTML=
-
-
-   btc.change>1
-
-   ?"Market: <b class='green'>RISK ON</b>"
-
-
-   :btc.change<-1
-
-   ?"Market: <b class='red'>RISK OFF</b>"
-
-
-   :"Market: <b class='yellow'>NEUTRAL</b>";
-
+  if(direction==="SHORT"){
+   sl=price+atr*1.5;
+   tp1=price-atr*1.5;
+   tp2=price-atr*3;
+  }else{
+   sl=price-atr*1.5;
+   tp1=price+atr*1.5;
+   tp2=price+atr*3;
   }
 
+  return {
+   symbol,
+   base:symbol.replace("USDT",""),
+   price,
+   change,
+   quoteVolume,
+   rsi,
+   e20,e50,
+   atr,atrPct,
+   volumeRatio,
+   funding:fut.funding,
+   oi:fut.oi,
+   candle,
+   direction,
+   score,
+   pump,
+   risk,
+   entry,sl,tp1,tp2,
+   duration:tradeDuration(atrPct,volumeRatio,score)
+  };
 
-  document
-  .getElementById(
-   "lastUpdate"
-  )
-  .innerHTML=
-
-  "Updated: "+
-
-  new Date()
-  .toLocaleTimeString();
-
-
-  bar.style.width=
-  "100%";
-
-
-  render();
-
-
-  setTimeout(()=>{
-
-   bar.style.width=
-   "0";
-
-  },700);
-
-
+ }catch(e){
+  return null;
  }
-
- catch(e){
-
-
-  console.error(e);
-
-
-  document
-  .getElementById(
-   "results"
-  )
-  .innerHTML=
-
-  `<div class="loading red">
-
-   Binance connection failed.
-
-   Tap DEEP SCAN to retry.
-
-   </div>`;
-
-
-  bar.style.width=
-  "0";
-
- }
-
 }
 
+async function loadMarket(){
+ const bar=document.getElementById("bar");
+ const results=document.getElementById("results");
 
-/* ========================================
-   FILTER BUTTONS
-======================================== */
+ bar.style.width="5%";
+ results.innerHTML='<div class="loading">Deep scanning Binance market...</div>';
 
-document
-.querySelectorAll(
- ".filter"
-)
-.forEach(btn=>{
+ try{
+  const ticks=await getJSON(`${API}/api/v3/ticker/24hr`);
 
+  bar.style.width="15%";
 
- btn.onclick=()=>{
-
-
-  document
-  .querySelectorAll(
-   ".filter"
-  )
-  .forEach(x=>
-
-   x.classList.remove(
-    "active"
+  let universe=ticks
+   .filter(x=>
+    x.symbol.endsWith("USDT") &&
+    !x.symbol.includes("UPUSDT") &&
+    !x.symbol.includes("DOWNUSDT") &&
+    !x.symbol.includes("BULLUSDT") &&
+    !x.symbol.includes("BEARUSDT") &&
+    +x.quoteVolume>10000000
    )
+   .sort((a,b)=>+b.quoteVolume-+a.quoteVolume)
+   .slice(0,35);
 
-  );
+  let output=[];
 
+  for(let i=0;i<universe.length;i++){
+   const a=await analyseCoin(universe[i]);
+   if(a)output.push(a);
+   bar.style.width=(15+(i+1)/universe.length*75)+"%";
+  }
 
-  btn.classList.add(
-   "active"
-  );
+  marketData=output.sort((a,b)=>b.score-a.score);
 
-
-  currentFilter=
-  btn.dataset.filter;
-
-
+  updateBTC();
   render();
+  renderTop();
 
- };
+  document.getElementById("lastUpdate").innerHTML=
+   "Updated: <b>"+new Date().toLocaleTimeString()+"</b>";
 
+  const longs=marketData.filter(x=>x.direction==="LONG").length;
+  const shorts=marketData.filter(x=>x.direction==="SHORT").length;
 
+  let regime="NEUTRAL";
+  if(longs>shorts*1.4)regime="BULLISH";
+  if(shorts>longs*1.4)regime="BEARISH";
+
+  document.getElementById("marketRegime").innerHTML=
+   `Market: <b class="${regime==="BULLISH"?"green":regime==="BEARISH"?"red":"yellow"}">${regime}</b>`;
+
+  bar.style.width="100%";
+  setTimeout(()=>bar.style.width="0",800);
+
+ }catch(e){
+  results.innerHTML=
+   `<div class="loading red">Binance connection error. Tap DEEP SCAN to retry.<br>${e.message}</div>`;
+  bar.style.width="0";
+ }
+}
+
+function updateBTC(){
+ const b=marketData.find(x=>x.symbol==="BTCUSDT");
+ if(!b)return;
+ document.getElementById("btcStatus").innerHTML=
+ `BTC: <b>$${priceFmt(b.price)}</b>
+ <span class="${b.change>=0?"green":"red"}">${b.change.toFixed(2)}%</span>`;
+}
+
+function renderTop(){
+ const top=[...marketData]
+ .filter(x=>x.direction!=="WAIT")
+ .sort((a,b)=>b.score-a.score)
+ .slice(0,3);
+
+ document.getElementById("top3").innerHTML=top.length?
+ top.map((x,i)=>`
+ <div class="pick">
+  <div class="rank">#${i+1} SETUP</div>
+  <div class="sym sym-link" onclick="openChart('${x.symbol}')">${x.base}/USDT</div>
+  <span class="badge ${x.direction.toLowerCase()}">${x.direction}</span>
+  <span class="badge score">${x.score}/100</span>
+  ${x.pump.score>=60?`<span class="badge pump">🔥 PUMP ${x.pump.score}</span>`:""}
+  <div class="small">
+   Entry $${priceFmt(x.entry)}<br>
+   TP1 $${priceFmt(x.tp1)} • TP2 $${priceFmt(x.tp2)}<br>
+   SL $${priceFmt(x.sl)} • ${x.duration}
+  </div>
+ </div>
+ `).join(""):'<div class="loading">No high-quality setups.</div>';
+}
+
+function render(){
+ const q=document.getElementById("search").value.trim().toUpperCase();
+
+ let data=marketData.filter(x=>{
+  if(q && !x.symbol.includes(q))return false;
+  if(currentFilter==="long"&&x.direction!=="LONG")return false;
+  if(currentFilter==="short"&&x.direction!=="SHORT")return false;
+  if(currentFilter==="wait"&&x.direction!=="WAIT")return false;
+  if(currentFilter==="pump"&&x.pump.score<55)return false;
+  return true;
+ });
+
+ document.getElementById("results").innerHTML=data.map(x=>{
+  const d=x.direction.toLowerCase();
+
+  let confirmText="WAIT FOR CONFIRMATION";
+  if(x.direction==="LONG"&&x.candle.bull)
+   confirmText="✅ LONG CONFIRMATION DETECTED";
+  if(x.direction==="SHORT"&&x.candle.bear)
+   confirmText="✅ SHORT CONFIRMATION DETECTED";
+
+  return `
+  <div class="card">
+   <div class="coin-head">
+    <div>
+     <div class="sym sym-link" onclick="openChart('${x.symbol}')">
+      ${x.base}/USDT
+     </div>
+     <div class="small">
+      $${priceFmt(x.price)}
+      <span class="${x.change>=0?"green":"red"}">
+       ${x.change>=0?"+":""}${x.change.toFixed(2)}%
+      </span>
+     </div>
+    </div>
+
+    <div class="badges">
+     <span class="badge ${d}">${x.direction}</span>
+     <span class="badge score">SCORE ${x.score}</span>
+     <span class="badge pump">🔥 ${x.pump.score}%</span>
+    </div>
+   </div>
+
+   <div class="data">
+    <div class="box">
+     <div class="label">Liquidity 24H</div>
+     <div class="value blue">$${fmt(x.quoteVolume)}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">Volume Surge</div>
+     <div class="value ${x.volumeRatio>=1.5?"purple":""}">
+      ${x.volumeRatio.toFixed(2)}×
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">RSI 15m</div>
+     <div class="value">${x.rsi.toFixed(1)}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">Funding</div>
+     <div class="value ${x.funding>0.05?"red":x.funding<-.03?"green":""}">
+      ${x.funding.toFixed(4)}%
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">Open Interest</div>
+     <div class="value">${
+      x.oi?fmt(x.oi):"—"
+     }</div>
+    </div>
+
+    <div class="box">
+     <div class="label">EMA20</div>
+     <div class="value ${x.price>x.e20?"green":"red"}">
+      ${x.price>x.e20?"ABOVE":"BELOW"}
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">EMA Trend</div>
+     <div class="value ${x.e20>x.e50?"green":"red"}">
+      ${x.e20>x.e50?"BULLISH":"BEARISH"}
+     </div>
+    </div>
+
+    <div class="box">
+     <div class="label">Volatility ATR</div>
+     <div class="value">${x.atrPct.toFixed(2)}%</div>
+    </div>
+
+    <div class="box">
+     <div class="label">Expected Duration</div>
+     <div class="value yellow">${x.duration}</div>
+    </div>
+
+    <div class="box">
+     <div class="label">Risk</div>
+     <div class="value ${x.risk==="HIGH"?"red":x.risk==="MEDIUM"?"yellow":"green"}">
+      ${x.risk}
+     </div>
+    </div>
+   </div>
+
+   <div class="early">
+    <b class="purple">🔥 EARLY PUMP RADAR: ${x.pump.score}/100</b>
+    <div class="small">${x.pump.reasons}</div>
+   </div>
+
+   <div class="confirm">
+    <b class="blue">🕯 CONFIRMATION CANDLE</b>
+    <div class="small">
+     ${x.candle.name} • ${confirmText}
+    </div>
+   </div>
+
+   <div class="decision">
+    <b class="${x.direction==="LONG"?"green":x.direction==="SHORT"?"red":"yellow"}">
+     ${x.direction==="LONG"?"🟢":x.direction==="SHORT"?"🔴":"🟡"}
+     DEEPRISE DECISION: ${x.direction}
+    </b>
+
+    <div class="small">
+     ENTRY: $${priceFmt(x.entry)}<br>
+     STOP: $${priceFmt(x.sl)}<br>
+     TP1: $${priceFmt(x.tp1)}<br>
+     TP2: $${priceFmt(x.tp2)}<br>
+     EXPECTED TRADE: ${x.duration}
+    </div>
+   </div>
+  </div>
+  `;
+ }).join("") || '<div class="loading">No coins match this filter.</div>';
+}
+
+document.querySelectorAll(".filter").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+  document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  currentFilter=btn.dataset.filter;
+  render();
+ });
 });
 
+document.getElementById("search").addEventListener("input",render);
 
-/* SEARCH */
+function openChart(symbol){
+ chartSymbol=symbol;
+ document.getElementById("chartPanel").classList.add("active");
+ document.getElementById("chartTitle").textContent=
+  symbol.replace("USDT","")+"/USDT LIVE CHART";
+ loadTradingView();
+ setTimeout(()=>document.getElementById("chartPanel").scrollIntoView({
+  behavior:"smooth",block:"start"
+ }),100);
+}
 
-document
-.getElementById(
- "search"
-)
-.addEventListener(
+function loadTradingView(){
+ const c=document.getElementById("tradingview_chart");
+ c.innerHTML="";
 
- "input",
+ if(typeof TradingView==="undefined"){
+  c.innerHTML='<div class="loading red">TradingView failed to load.</div>';
+  return;
+ }
 
- render
+ new TradingView.widget({
+  autosize:true,
+  symbol:"BINANCE:"+chartSymbol,
+  interval:chartInterval,
+  timezone:"Etc/UTC",
+  theme:"dark",
+  style:"1",
+  locale:"en",
+  enable_publishing:false,
+  allow_symbol_change:true,
+  container_id:"tradingview_chart"
+ });
+}
 
-);
+function changeChartTF(tf){
+ chartInterval=tf;
+ document.querySelectorAll(".chart-btn[data-tf]").forEach(b=>
+  b.classList.toggle("active",b.dataset.tf===tf)
+ );
+ loadTradingView();
+}
 
+function closeChart(){
+ document.getElementById("chartPanel").classList.remove("active");
+}
 
 /* INITIAL SCAN */
-
 loadMarket();
 
-
-/*
- Auto refresh
- every 60 seconds
-*/
-
-setInterval(
-
- loadMarket,
-
- 60000
-
-);
-
+/* AUTO REFRESH EVERY 60 SECONDS */
+setInterval(loadMarket,60000);
 </script>
-
 </body>
 </html>
