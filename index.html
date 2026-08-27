@@ -3,257 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DeepRise Scanner V3 PRO</title>
+<title>DeepRise V4 PRO</title>
 
 <style>
 *{box-sizing:border-box}
-
+:root{
+ --bg:#050d18;
+ --panel:#0a1827;
+ --panel2:#071421;
+ --border:#18344c;
+ --green:#35e0a1;
+ --red:#ff6574;
+ --yellow:#ffd166;
+ --blue:#65b8ff;
+ --muted:#7f99af;
+ --text:#edf6ff;
+}
 body{
- margin:0;
- background:#06111f;
- color:#eef6ff;
- font-family:Arial,sans-serif;
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Arial,sans-serif
 }
-
 header{
- padding:28px 15px;
- text-align:center;
- border-bottom:1px solid #193149;
+ position:sticky;top:0;z-index:20;
+ background:rgba(5,13,24,.96);
+ border-bottom:1px solid var(--border);
+ padding:14px 4%
 }
-
-h1{
- margin:0;
- color:#35e0a1;
- font-size:30px;
+.header-row{
+ max-width:1300px;margin:auto;
+ display:flex;align-items:center;justify-content:space-between
 }
-
-.subtitle{
- color:#8299ae;
- margin-top:8px;
- line-height:1.5;
+.brand h1{font-size:23px;margin:0;color:var(--green)}
+.brand small{color:var(--muted)}
+.menu-btn{
+ font-size:23px;background:#102437;color:white;
+ border:1px solid var(--border);padding:8px 13px
 }
-
-.container{
- width:95%;
- max-width:1200px;
- margin:20px auto;
+.menu{
+ display:none;position:absolute;right:4%;top:65px;
+ width:260px;background:#0b1a29;border:1px solid var(--border);
+ border-radius:12px;padding:8px;box-shadow:0 15px 40px #0008
 }
-
-.panel,.card,.hero{
- background:#0b1928;
- border:1px solid #19334b;
- border-radius:14px;
+.menu.open{display:block}
+.menu div{
+ padding:12px;border-radius:8px;color:#a9bfd1;cursor:pointer
 }
-
-.panel{
- padding:14px 16px;
- display:flex;
- justify-content:space-between;
- margin-bottom:15px;
+.menu div:hover{background:#11283b;color:white}
+.container{width:94%;max-width:1300px;margin:18px auto}
+.marketbar,.card,.hero,.avoid-box{
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:14px
 }
-
-.green,.positive{color:#35e0a1}
-.negative{color:#ff6574}
-.yellow{color:#ffd166}
-
-.controls{
- display:flex;
- gap:8px;
- margin-bottom:12px;
+.marketbar{
+ padding:13px 15px;display:flex;gap:15px;
+ justify-content:space-between;flex-wrap:wrap;margin-bottom:12px
 }
-
+.live{color:var(--green)}
+.controls{display:flex;gap:8px;margin:12px 0}
 input{
- flex:1;
- padding:14px;
- background:#0b1928;
- color:white;
- border:1px solid #1c3852;
- border-radius:10px;
- font-size:16px;
+ flex:1;padding:14px;background:var(--panel);
+ border:1px solid var(--border);border-radius:10px;color:white
 }
-
 button{
- padding:13px 16px;
- border:0;
- border-radius:10px;
- background:#35e0a1;
- font-weight:bold;
- cursor:pointer;
+ padding:12px 15px;border:0;border-radius:9px;
+ background:var(--green);font-weight:bold;cursor:pointer
 }
-
-.filters{
- display:flex;
- gap:7px;
- overflow:auto;
- margin-bottom:17px;
-}
-
+.filters{display:flex;gap:7px;overflow:auto;margin-bottom:15px}
 .filter{
- background:#0b1928;
- color:#8da5ba;
- border:1px solid #19334b;
- white-space:nowrap;
+ background:var(--panel);color:#8ba3b7;
+ border:1px solid var(--border);white-space:nowrap
 }
-
-.filter.active{
- background:#123b31;
- color:#35e0a1;
-}
-
-.progress{
- height:5px;
- background:#102237;
- margin-bottom:15px;
-}
-
-.progress span{
- display:block;
- height:100%;
- width:0;
- background:#35e0a1;
- transition:.2s;
-}
-
-.hero,.card{
- padding:17px;
- margin-bottom:16px;
-}
-
-.hero h2{
- margin:0 0 12px;
- color:#ffd166;
-}
-
-.top-grid{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:10px;
-}
-
-.pick,.box,.confirm{
- background:#071522;
- border-radius:10px;
- padding:11px;
-}
-
+.filter.active{background:#123c31;color:var(--green)}
+.progress{height:4px;background:#102236;margin-bottom:15px}
+.progress span{display:block;height:100%;width:0;background:var(--green)}
+.hero{padding:16px;margin-bottom:16px}
+.hero h2{font-size:17px;color:var(--yellow);margin:0 0 12px}
+.top-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .pick{
- border:1px solid #20374d;
+ background:var(--panel2);border:1px solid #1c3a51;
+ border-radius:10px;padding:13px
 }
-
-.pick small{
- color:#718ba1;
+.rank{font-size:10px;color:#6f899e}
+.sym{font-size:19px;font-weight:bold;margin:5px 0}
+.card{padding:16px;margin-bottom:13px}
+.coin-head{
+ display:flex;justify-content:space-between;gap:10px;
+ align-items:center;margin-bottom:12px
 }
-
-.symbol{
- font-size:20px;
- font-weight:bold;
- margin:5px 0;
-}
-
-.coin-header{
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:8px;
- margin-bottom:14px;
-}
-
-.badges{
- display:flex;
- gap:6px;
- flex-wrap:wrap;
- justify-content:flex-end;
-}
-
+.badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
 .badge{
- padding:6px 9px;
- border-radius:20px;
- font-size:12px;
- font-weight:bold;
+ font-size:11px;padding:6px 8px;border-radius:20px;font-weight:bold
 }
-
-.long{
- background:#123b31;
- color:#35e0a1;
+.long,.safe{background:#123b31;color:var(--green)}
+.short,.avoid{background:#3d1922;color:var(--red)}
+.wait,.caution{background:#3a3217;color:var(--yellow)}
+.score{background:#142b3e;color:#afd1e8}
+.data{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.box{
+ background:var(--panel2);border-radius:9px;padding:10px;
+ min-height:61px
 }
-
-.short{
- background:#3c1922;
- color:#ff6574;
-}
-
-.watch{
- background:#3a3317;
- color:#ffd166;
-}
-
-.score{
- background:#142a3d;
- color:#a9c8df;
-}
-
-.data{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:9px;
-}
-
 .label{
- color:#718ba1;
- font-size:10px;
- margin-bottom:6px;
- text-transform:uppercase;
+ font-size:9px;color:#718ba1;text-transform:uppercase;
+ margin-bottom:6px
 }
-
-.value{
- font-weight:bold;
- font-size:13px;
- overflow-wrap:anywhere;
+.value{font-size:13px;font-weight:bold}
+.green{color:var(--green)}
+.red{color:var(--red)}
+.yellow{color:var(--yellow)}
+.blue{color:var(--blue)}
+.confirm,.decision,.fomo{
+ margin-top:10px;padding:11px;border-radius:10px;background:#071421
 }
-
-.confirm{
- margin-top:10px;
+.confirm{border-left:3px solid var(--blue)}
+.fomo{border-left:3px solid var(--yellow)}
+.decision{border-left:3px solid var(--green)}
+.small{font-size:11px;color:#8ba2b6;line-height:1.65;margin-top:5px}
+.avoid-box{padding:16px;margin:16px 0;border-color:#512631}
+.avoid-box h2{color:var(--red);font-size:17px;margin-top:0}
+.avoid-row{
+ padding:9px;background:#100f18;border-radius:8px;
+ margin:6px 0;font-size:12px
 }
-
-.reason{
- margin-top:12px;
- padding-top:11px;
- border-top:1px solid #172b3e;
- color:#9db1c3;
- font-size:12px;
- line-height:1.6;
+.loading{text-align:center;padding:35px;color:var(--muted)}
+.footer{text-align:center;color:#5e788e;font-size:10px;padding:25px}
+.modal{
+ display:none;position:fixed;inset:0;background:#000b;z-index:50;
+ align-items:center;justify-content:center;padding:15px
 }
-
-.loading{
- text-align:center;
- padding:35px;
- color:#8299ae;
+.modal.open{display:flex}
+.modal-box{
+ max-width:600px;width:100%;background:#0b1928;
+ border:1px solid var(--border);border-radius:14px;padding:20px;
+ max-height:80vh;overflow:auto
 }
-
-.footer{
- text-align:center;
- color:#61798e;
- font-size:10px;
- padding:20px;
- line-height:1.5;
-}
-
-@media(max-width:750px){
- .data{
-  grid-template-columns:repeat(2,1fr);
- }
-
- .top-grid{
-  grid-template-columns:1fr;
- }
-
- .controls{
-  flex-direction:column;
- }
-
- h1{
-  font-size:27px;
- }
+.close{float:right;background:#172c3e;color:white}
+@media(max-width:850px){
+ .data{grid-template-columns:repeat(2,1fr)}
+ .top-grid{grid-template-columns:1fr}
+ .controls{flex-direction:column}
+ .brand small{display:none}
 }
 </style>
 </head>
@@ -261,1880 +150,1226 @@ button{
 <body>
 
 <header>
-<h1>DeepRise Scanner V3 PRO</h1>
+ <div class="header-row">
+  <div class="brand">
+   <h1>DeepRise V4 PRO</h1>
+   <small>Real-Time Crypto Decision Engine</small>
+  </div>
 
-<div class="subtitle">
-Pump Radar • Futures Intelligence • Liquidity •
-Multi-Timeframe Confirmation • Trade Planner
-</div>
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+  <div id="menu" class="menu">
+   <div onclick="scrollTopPage()">📡 Scanner</div>
+   <div onclick="goTo('topSection')">🏆 Top Setups</div>
+   <div onclick="goTo('avoidSection')">⛔ AVOID List</div>
+   <div onclick="openInfo('method')">🧠 Methodology</div>
+   <div onclick="openInfo('risk')">🛡 Risk Rules</div>
+   <div onclick="openInfo('fomo')">🔥 FOMO Radar</div>
+   <div onclick="openInfo('about')">ℹ️ About V4</div>
+  </div>
+ </div>
 </header>
 
 <div class="container">
 
-<div class="panel">
-<span>DeepRise Market Engine</span>
-<span class="green">● LIVE</span>
+ <div class="marketbar">
+  <span id="marketRegime">Market Regime: <b>SCANNING...</b></span>
+  <span id="btcStatus">BTC: —</span>
+  <span class="live">● LIVE</span>
+ </div>
+
+ <div class="marketbar">
+  <span>Price Pulse: <b>~2s</b></span>
+  <span>Order Book: <b>Scan Cycle</b></span>
+  <span>Signals: <b>~60s</b></span>
+  <span id="lastUpdate">Updated: —</span>
+ </div>
+
+ <div class="controls">
+  <input id="search" placeholder="Search BTC, ETH, ENA, SOL...">
+  <button onclick="loadMarket()">DEEP SCAN</button>
+ </div>
+
+ <div class="filters">
+  <button class="filter active" data-filter="all">ALL</button>
+  <button class="filter" data-filter="long">LONG</button>
+  <button class="filter" data-filter="short">SHORT</button>
+  <button class="filter" data-filter="wait">WAIT</button>
+  <button class="filter" data-filter="avoid">⛔ AVOID</button>
+ </div>
+
+ <div class="progress"><span id="bar"></span></div>
+
+ <div id="topSection" class="hero">
+  <h2>🏆 BEST CURRENT SETUPS</h2>
+  <div id="top3" class="top-grid">
+   <div class="loading">Building market model...</div>
+  </div>
+ </div>
+
+ <div id="results">
+  <div class="loading">Connecting to Binance...</div>
+ </div>
+
+ <div id="avoidSection" class="avoid-box">
+  <h2>⛔ AVOID NOW</h2>
+  <div id="avoidList">Scanning risk conditions...</div>
+ </div>
+
+ <div class="footer">
+  DeepRise V4 is a quantitative market scanner.
+  Confidence and FOMO scores measure model conditions, not guaranteed future outcomes.
+  Always verify execution price, liquidity and risk before trading.
+ </div>
 </div>
 
-<div class="controls">
-<input
- id="search"
- placeholder="Search BTC, ETH, SOL..."
->
-<button onclick="loadMarket()">SCAN NOW</button>
-</div>
-
-<div class="filters">
-
-<button
- class="filter active"
- data-filter="all">
-ALL
-</button>
-
-<button
- class="filter"
- data-filter="long">
-LONG
-</button>
-
-<button
- class="filter"
- data-filter="short">
-SHORT
-</button>
-
-<button
- class="filter"
- data-filter="watch">
-WATCH
-</button>
-
-</div>
-
-<div class="progress">
-<span id="bar"></span>
-</div>
-
-<div class="hero">
-
-<h2>🔥 TOP 3 DEEPRISE PICKS</h2>
-
-<div id="top3" class="top-grid">
-<div class="loading">
-Scanning...
-</div>
-</div>
-
-</div>
-
-<div id="results">
-<div class="loading">
-Loading live market data...
-</div>
-</div>
-
-<div class="footer">
-DeepRise V3 provides quantitative screening signals only.
-Signals are probabilities, not guaranteed predictions or financial advice.
-</div>
-
+<div id="modal" class="modal">
+ <div class="modal-box">
+  <button class="close" onclick="closeInfo()">✕</button>
+  <div id="modalContent"></div>
+ </div>
 </div>
 
 <script>
-
 let marketData=[];
 let currentFilter="all";
+let priceSocket=null;
 
 const API="https://api.binance.com";
 const FAPI="https://fapi.binance.com";
+const WS="wss://stream.binance.com:9443/ws/!miniTicker@arr";
 
 const stable=[
- "USDC",
- "FDUSD",
- "TUSD",
- "USDP",
- "DAI",
- "EUR",
- "TRY",
- "BRL"
+ "USDC","FDUSD","TUSD","USDP","DAI","EUR","TRY","BRL"
 ];
 
-
-/* ==========================
-   EMA
-========================== */
-
 function ema(a,p){
-
- if(!a.length) return 0;
-
- let e=a[0];
- let k=2/(p+1);
-
- for(let i=1;i<a.length;i++){
-  e=a[i]*k+e*(1-k);
- }
-
+ if(!a.length)return 0;
+ let e=a[0],k=2/(p+1);
+ for(let i=1;i<a.length;i++) e=a[i]*k+e*(1-k);
  return e;
 }
 
-
-/* ==========================
-   RSI
-========================== */
-
 function RSI(a,p=14){
-
- if(a.length<=p) return 50;
-
- let gain=0;
- let loss=0;
-
+ if(a.length<=p)return 50;
+ let g=0,l=0;
  for(let i=a.length-p;i<a.length;i++){
-
   let d=a[i]-a[i-1];
-
-  if(d>0)
-   gain+=d;
-  else
-   loss-=d;
+  if(d>0)g+=d;else l-=d;
  }
-
- if(!loss) return 100;
-
- let rs=(gain/p)/(loss/p);
-
+ if(!l)return 100;
+ let rs=(g/p)/(l/p);
  return 100-(100/(1+rs));
 }
 
-
-/* ==========================
-   ATR
-========================== */
-
 function ATR(k,p=14){
-
- if(k.length<p+1) return 0;
-
- let tr=[];
-
+ if(k.length<p+1)return 0;
+ let t=[];
  for(let i=1;i<k.length;i++){
-
-  let h=+k[i][2];
-  let l=+k[i][3];
-  let pc=+k[i-1][4];
-
-  tr.push(
-   Math.max(
-    h-l,
-    Math.abs(h-pc),
-    Math.abs(l-pc)
-   )
-  );
+  let h=+k[i][2],l=+k[i][3],pc=+k[i-1][4];
+  t.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc)));
  }
-
- return tr
-  .slice(-p)
-  .reduce((a,b)=>a+b,0)/p;
+ return t.slice(-p).reduce((a,b)=>a+b,0)/p;
 }
 
-
-/* ==========================
-   CANDLE CONFIRMATION
-========================== */
-
 function candleSignal(k){
+ if(k.length<3)return{name:"NONE",bull:false,bear:false};
 
- if(k.length<3){
-  return{
-   name:"NONE",
-   bull:false,
-   bear:false
-  };
- }
+ let x=k[k.length-2],p=k[k.length-3];
 
- let x=k[k.length-2];
- let previous=k[k.length-3];
-
- let o=+x[1];
- let h=+x[2];
- let l=+x[3];
- let c=+x[4];
-
- let po=+previous[1];
- let pc=+previous[4];
+ let o=+x[1],h=+x[2],l=+x[3],c=+x[4];
+ let po=+p[1],pc=+p[4];
 
  let body=Math.abs(c-o);
+ let lower=Math.min(o,c)-l;
+ let upper=h-Math.max(o,c);
 
- let lower=
-  Math.min(o,c)-l;
+ if(c>o&&pc<po&&o<=pc&&c>=po)
+  return{name:"BULLISH ENGULFING",bull:true,bear:false};
 
- let upper=
-  h-Math.max(o,c);
+ if(c<o&&pc>po&&o>=pc&&c<=po)
+  return{name:"BEARISH ENGULFING",bull:false,bear:true};
 
+ if(body>0&&lower>body*2&&upper<body)
+  return{name:"HAMMER / REJECTION",bull:true,bear:false};
 
- if(
-  c>o &&
-  pc<po &&
-  o<=pc &&
-  c>=po
- ){
-  return{
-   name:"BULLISH ENGULFING",
-   bull:true,
-   bear:false
-  };
- }
-
-
- if(
-  c<o &&
-  pc>po &&
-  o>=pc &&
-  c<=po
- ){
-  return{
-   name:"BEARISH ENGULFING",
-   bull:false,
-   bear:true
-  };
- }
-
-
- if(
-  body>0 &&
-  lower>body*2 &&
-  upper<body
- ){
-  return{
-   name:"HAMMER / REJECTION",
-   bull:true,
-   bear:false
-  };
- }
-
-
- if(
-  body>0 &&
-  upper>body*2 &&
-  lower<body
- ){
-  return{
-   name:"BEARISH REJECTION",
-   bull:false,
-   bear:true
-  };
- }
-
+ if(body>0&&upper>body*2&&lower<body)
+  return{name:"BEARISH REJECTION",bull:false,bear:true};
 
  return{
-  name:
-   c>o
-   ?"BULLISH CLOSE"
-   :"BEARISH CLOSE",
-
+  name:c>o?"BULLISH CLOSE":"BEARISH CLOSE",
   bull:c>o,
   bear:c<o
  };
 }
 
-
-/* ==========================
-   ORDER BOOK LIQUIDITY
-========================== */
+async function klines(symbol,interval,limit=120){
+ let r=await fetch(
+  `${API}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
+ );
+ let d=await r.json();
+ return Array.isArray(d)?d:[];
+}
 
 async function orderBook(symbol,price){
-
  try{
+  let r=await fetch(`${API}/api/v3/depth?symbol=${symbol}&limit=100`);
+  let d=await r.json();
 
-  let response=
-   await fetch(
-    `${API}/api/v3/depth?symbol=${symbol}&limit=100`
-   );
-
-  let d=
-   await response.json();
-
-  let bids=0;
-  let asks=0;
+  let bids=0,asks=0;
 
   d.bids.forEach(x=>{
-
-   let p=+x[0];
-   let q=+x[1];
-
-   if(p>=price*.99){
-    bids+=p*q;
-   }
-
+   let p=+x[0],q=+x[1];
+   if(p>=price*.99)bids+=p*q;
   });
-
 
   d.asks.forEach(x=>{
-
-   let p=+x[0];
-   let q=+x[1];
-
-   if(p<=price*1.01){
-    asks+=p*q;
-   }
-
+   let p=+x[0],q=+x[1];
+   if(p<=price*1.01)asks+=p*q;
   });
 
-
-  let total=
-   bids+asks;
-
+  let total=bids+asks;
 
   return{
-
    bidLiquidity:bids,
-
    askLiquidity:asks,
-
    depth:total,
-
-   buyPressure:
-    total
-    ?bids/total*100
-    :50
-
+   buyPressure:total?bids/total*100:50
   };
 
  }catch(e){
-
   return{
    bidLiquidity:0,
    askLiquidity:0,
    depth:0,
    buyPressure:50
   };
-
  }
 }
-
-
-/* ==========================
-   FUTURES INTELLIGENCE
-========================== */
 
 async function futuresData(symbol){
-
  try{
-
-  let fundingRequest=
-   fetch(
-    `${FAPI}/fapi/v1/premiumIndex?symbol=${symbol}`
-   ).then(r=>r.json());
-
-
-  let oiRequest=
-   fetch(
-    `${FAPI}/fapi/v1/openInterest?symbol=${symbol}`
-   ).then(r=>r.json());
-
-
-  let [funding,oi]=
-   await Promise.all([
-    fundingRequest,
-    oiRequest
-   ]);
-
+  let [f,oi]=await Promise.all([
+   fetch(`${FAPI}/fapi/v1/premiumIndex?symbol=${symbol}`).then(r=>r.json()),
+   fetch(`${FAPI}/fapi/v1/openInterest?symbol=${symbol}`).then(r=>r.json())
+  ]);
 
   return{
-
-   funding:
-    funding.lastFundingRate!==undefined
-    ?+funding.lastFundingRate*100
-    :null,
-
-   openInterest:
-    oi.openInterest!==undefined
-    ?+oi.openInterest
-    :null
-
+   funding:f.lastFundingRate!==undefined?+f.lastFundingRate*100:null,
+   openInterest:oi.openInterest!==undefined?+oi.openInterest:null
   };
-
  }catch(e){
-
-  return{
-   funding:null,
-   openInterest:null
-  };
-
+  return{funding:null,openInterest:null};
  }
 }
 
-
-/* ==========================
-   KLINES
-========================== */
-
-async function getKlines(
- symbol,
- interval,
- limit=120
+function calculateFomo(
+ price,high24,low24,atr,volumeRatio,
+ volumeAcceleration,buyPressure,rsi,
+ trendBull,change
 ){
+ let up=0,down=0;
 
- let response=
-  await fetch(
-   `${API}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
-  );
+ if(volumeRatio>1.2){up+=15;down+=15}
+ if(volumeRatio>1.6){up+=10;down+=10}
 
- let data=
-  await response.json();
+ if(volumeAcceleration>1.15){up+=15;down+=15}
+ if(volumeAcceleration>1.5){up+=10;down+=10}
 
- return Array.isArray(data)
-  ?data
-  :[];
+ if(buyPressure>55)up+=20;
+ if(buyPressure>62)up+=10;
 
+ if(buyPressure<45)down+=20;
+ if(buyPressure<38)down+=10;
+
+ if(trendBull)up+=15;
+ else down+=15;
+
+ if(rsi>55&&rsi<72)up+=10;
+ if(rsi<45&&rsi>28)down+=10;
+
+ if(change>3)up+=10;
+ if(change<-3)down+=10;
+
+ up=Math.min(100,up);
+ down=Math.min(100,down);
+
+ let direction=up>=down?"UPSIDE":"DOWNSIDE";
+ let score=Math.max(up,down);
+
+ let level=
+  score>=80?"EXTREME":
+  score>=65?"HIGH":
+  score>=45?"BUILDING":
+  "LOW";
+
+ let trigger=
+  direction==="UPSIDE"
+  ?Math.max(price+atr*.35,high24)
+  :Math.min(price-atr*.35,low24);
+
+ let chase=
+  direction==="UPSIDE"
+  ?trigger+atr*.65
+  :trigger-atr*.65;
+
+ return{
+  fomoScore:Math.round(score),
+  fomoLevel:level,
+  fomoDirection:direction,
+  fomoTrigger:trigger,
+  chaseLimit:chase
+ };
 }
 
-
-/* ==========================
-   ANALYZE COIN
-========================== */
-
 async function enrich(c){
-
  try{
+  let price=+c.lastPrice;
 
-  const price=
-   +c.lastPrice;
-
-
-  const [
-   k1,
-   k4,
-   book,
-   futures
-  ]=
-  await Promise.all([
-
-   getKlines(
-    c.symbol,
-    "1h",
-    120
-   ),
-
-   getKlines(
-    c.symbol,
-    "4h",
-    100
-   ),
-
-   orderBook(
-    c.symbol,
-    price
-   ),
-
-   futuresData(
-    c.symbol
-   )
-
+  let [k1,k4,k15,book,futures]=await Promise.all([
+   klines(c.symbol,"1h",120),
+   klines(c.symbol,"4h",100),
+   klines(c.symbol,"15m",100),
+   orderBook(c.symbol,price),
+   futuresData(c.symbol)
   ]);
 
+  if(k1.length<60||k4.length<50||k15.length<50)
+   throw Error("data");
 
-  if(
-   k1.length<60 ||
-   k4.length<50
-  ){
-   throw new Error(
-    "Insufficient data"
-   );
+  let closes=k1.map(x=>+x[4]);
+  let closes4=k4.map(x=>+x[4]);
+  let closes15=k15.map(x=>+x[4]);
+  let volumes=k1.map(x=>+x[7]);
+
+  let rsi=RSI(closes);
+  let rsi15=RSI(closes15);
+
+  let e20=ema(closes.slice(-60),20);
+  let e50=ema(closes.slice(-100),50);
+
+  let e20_4=ema(closes4.slice(-60),20);
+  let e50_4=ema(closes4.slice(-100),50);
+
+  let e9_15=ema(closes15.slice(-40),9);
+  let e21_15=ema(closes15.slice(-60),21);
+
+  let atr=ATR(k1);
+  let cs=candleSignal(k1);
+
+  let avg20=
+   volumes.slice(-21,-1).reduce((a,b)=>a+b,0)/20;
+
+  let recent3=
+   volumes.slice(-4,-1).reduce((a,b)=>a+b,0)/3;
+
+  let previous3=
+   volumes.slice(-7,-4).reduce((a,b)=>a+b,0)/3;
+
+  let volumeRatio=avg20?recent3/avg20:1;
+  let volumeAcceleration=previous3?recent3/previous3:1;
+
+  let trend1Bull=e20>e50;
+  let trend4Bull=e20_4>e50_4;
+  let momentum15Bull=e9_15>e21_15;
+
+  let longScore=25;
+  let shortScore=25;
+
+  if(price>e20)longScore+=8;else shortScore+=8;
+  if(trend1Bull)longScore+=12;else shortScore+=12;
+  if(trend4Bull)longScore+=15;else shortScore+=15;
+  if(momentum15Bull)longScore+=8;else shortScore+=8;
+
+  if(book.buyPressure>55)longScore+=12;
+  if(book.buyPressure<45)shortScore+=12;
+
+  if(volumeRatio>1.15){
+   if(book.buyPressure>=50)longScore+=10;
+   else shortScore+=10;
   }
 
+  if(cs.bull)longScore+=8;
+  if(cs.bear)shortScore+=8;
 
-  const closes1=
-   k1.map(x=>+x[4]);
+  if(rsi>=45&&rsi<=65)longScore+=7;
+  if(rsi>72)shortScore+=8;
+  if(rsi<30)longScore+=5;
 
-  const closes4=
-   k4.map(x=>+x[4]);
-
-  const volumes=
-   k1.map(x=>+x[7]);
-
-
-  const rsi=
-   RSI(closes1);
-
-
-  const ema20=
-   ema(
-    closes1.slice(-60),
-    20
-   );
-
-
-  const ema50=
-   ema(
-    closes1.slice(-100),
-    50
-   );
-
-
-  const ema20_4h=
-   ema(
-    closes4.slice(-60),
-    20
-   );
-
-
-  const ema50_4h=
-   ema(
-    closes4.slice(-100),
-    50
-   );
-
-
-  const atr=
-   ATR(k1);
-
-
-  const cs=
-   candleSignal(k1);
-
-
-  const avg20=
-   volumes
-   .slice(-21,-1)
-   .reduce((a,b)=>a+b,0)/20;
-
-
-  const recent3=
-   volumes
-   .slice(-4,-1)
-   .reduce((a,b)=>a+b,0)/3;
-
-
-  const previous3=
-   volumes
-   .slice(-7,-4)
-   .reduce((a,b)=>a+b,0)/3;
-
-
-  const volumeRatio=
-   avg20
-   ?recent3/avg20
-   :1;
-
-
-  const volumeAcceleration=
-   previous3
-   ?recent3/previous3
-   :1;
-
-
-  const trend4Bull=
-   ema20_4h>ema50_4h;
-
-
-  /* ======================
-     PUMP RADAR
-  ====================== */
-
-  let pump=20;
-
-
-  if(volumeRatio>1.15)
-   pump+=12;
-
-
-  if(volumeRatio>1.50)
-   pump+=8;
-
-
-  if(volumeAcceleration>1.15)
-   pump+=12;
-
-
-  if(volumeAcceleration>1.50)
-   pump+=8;
-
-
-  if(book.buyPressure>55)
-   pump+=10;
-
-
-  if(book.buyPressure>62)
-   pump+=8;
-
-
-  if(
-   rsi>=42 &&
-   rsi<=65
-  ){
-   pump+=8;
+  if(futures.funding!==null){
+   if(futures.funding>.05)shortScore+=5;
+   if(futures.funding<-.02)longScore+=5;
   }
 
+  longScore=Math.min(100,longScore);
+  shortScore=Math.min(100,shortScore);
 
-  if(price>ema20)
-   pump+=7;
+  let signal="WAIT";
 
-
-  if(ema20>ema50)
-   pump+=7;
-
-
-  if(trend4Bull)
-   pump+=8;
-
-
-  /*
-   Avoid chasing coins
-   already excessively pumped
-  */
-
-  if(
-   +c.priceChangePercent>8
-  ){
-   pump-=15;
-  }
-
-
-  pump=
-   Math.max(
-    0,
-    Math.min(
-     100,
-     Math.round(pump)
-    )
-   );
-
-
-  /* ======================
-     LONG / SHORT ENGINE
-  ====================== */
-
-  let longScore=30;
-  let shortScore=30;
-
-
-  if(
-   rsi>=42 &&
-   rsi<=62
-  ){
-   longScore+=10;
-  }
-
-
-  if(rsi<35)
-   longScore+=8;
-
-
-  if(rsi>70)
-   shortScore+=12;
-
-
-  if(price>ema20)
-   longScore+=10;
-  else
-   shortScore+=8;
-
-
-  if(ema20>ema50)
-   longScore+=13;
-  else
-   shortScore+=12;
-
-
-  if(trend4Bull)
-   longScore+=12;
-  else
-   shortScore+=12;
-
-
-  if(volumeRatio>1.2){
-
-   if(
-    book.buyPressure>=50
-   ){
-    longScore+=10;
-   }else{
-    shortScore+=10;
-   }
-
-  }
-
-
-  if(book.buyPressure>57)
-   longScore+=12;
-
-
-  if(book.buyPressure<43)
-   shortScore+=12;
-
-
-  if(cs.bull)
-   longScore+=10;
-
-
-  if(cs.bear)
-   shortScore+=10;
-
-
-  /*
-   Funding contrarian filter
-  */
-
-  if(
-   futures.funding!==null &&
-   futures.funding<-.02
-  ){
-   longScore+=5;
-  }
-
-
-  if(
-   futures.funding!==null &&
-   futures.funding>.05
-  ){
-   shortScore+=5;
-  }
-
-
-  longScore=
-   Math.min(
-    100,
-    longScore
-   );
-
-
-  shortScore=
-   Math.min(
-    100,
-    shortScore
-   );
-
-
-  let signal="WATCH";
-
-  let score=
-   Math.max(
-    longScore,
-    shortScore
-   );
-
-
-  if(
-   longScore>=68 &&
-   longScore>shortScore+8
-  ){
+  if(longScore>=78&&longScore>shortScore+12)
+   signal="STRONG LONG";
+  else if(longScore>=66&&longScore>shortScore+8)
    signal="LONG";
-  }
-
-
-  if(
-   shortScore>=68 &&
-   shortScore>longScore+8
-  ){
+  else if(shortScore>=78&&shortScore>longScore+12)
+   signal="STRONG SHORT";
+  else if(shortScore>=66&&shortScore>longScore+8)
    signal="SHORT";
-  }
 
-
-  /* ======================
-     CONFIRMATION ENGINE
-  ====================== */
+  let direction=
+   signal.includes("SHORT")?-1:1;
 
   let confirmations=[];
 
-
-  if(signal==="LONG"){
-
-   if(price>ema20)
-    confirmations.push(
-     "1H > EMA20"
-    );
-
-   if(ema20>ema50)
-    confirmations.push(
-     "1H bullish trend"
-    );
-
-   if(trend4Bull)
-    confirmations.push(
-     "4H bullish trend"
-    );
-
-   if(book.buyPressure>53)
-    confirmations.push(
-     "Buy pressure"
-    );
-
-   if(volumeRatio>1.1)
-    confirmations.push(
-     "Volume confirmation"
-    );
-
-   if(cs.bull)
-    confirmations.push(
-     cs.name
-    );
-
+  if(direction===1){
+   confirmations.push({
+    ok:price>e20,
+    text:"Price above 1H EMA20"
+   });
+   confirmations.push({
+    ok:trend1Bull,
+    text:"1H trend aligned"
+   });
+   confirmations.push({
+    ok:trend4Bull,
+    text:"4H trend aligned"
+   });
+   confirmations.push({
+    ok:momentum15Bull,
+    text:"15M momentum aligned"
+   });
+   confirmations.push({
+    ok:book.buyPressure>53,
+    text:"Order-book buyers"
+   });
+   confirmations.push({
+    ok:volumeRatio>1.1,
+    text:"Volume expansion"
+   });
+   confirmations.push({
+    ok:cs.bull,
+    text:"Bullish candle"
+   });
+  }else{
+   confirmations.push({
+    ok:price<e20,
+    text:"Price below 1H EMA20"
+   });
+   confirmations.push({
+    ok:!trend1Bull,
+    text:"1H trend aligned"
+   });
+   confirmations.push({
+    ok:!trend4Bull,
+    text:"4H trend aligned"
+   });
+   confirmations.push({
+    ok:!momentum15Bull,
+    text:"15M momentum aligned"
+   });
+   confirmations.push({
+    ok:book.buyPressure<47,
+    text:"Order-book sellers"
+   });
+   confirmations.push({
+    ok:volumeRatio>1.1,
+    text:"Volume expansion"
+   });
+   confirmations.push({
+    ok:cs.bear,
+    text:"Bearish candle"
+   });
   }
 
+  let confirmed=
+   confirmations.filter(x=>x.ok).length;
 
-  if(signal==="SHORT"){
-
-   if(price<ema20)
-    confirmations.push(
-     "1H < EMA20"
-    );
-
-   if(ema20<ema50)
-    confirmations.push(
-     "1H bearish trend"
-    );
-
-   if(!trend4Bull)
-    confirmations.push(
-     "4H bearish trend"
-    );
-
-   if(book.buyPressure<47)
-    confirmations.push(
-     "Sell pressure"
-    );
-
-   if(volumeRatio>1.1)
-    confirmations.push(
-     "Volume confirmation"
-    );
-
-   if(cs.bear)
-    confirmations.push(
-     cs.name
-    );
-
-  }
-
-
-  if(signal==="WATCH"){
-
-   confirmations.push(
-    "Waiting for stronger confirmation"
+  let confidence=
+   Math.round(
+    Math.min(
+     95,
+     Math.max(longScore,shortScore)*.60+
+     confirmed/7*30+
+     Math.min(volumeRatio,2)*4
+    )
    );
 
-  }
+  let high24=+c.highPrice;
+  let low24=+c.lowPrice;
+  let change=+c.priceChangePercent;
 
+  let fomo=calculateFomo(
+   price,high24,low24,atr,
+   volumeRatio,volumeAcceleration,
+   book.buyPressure,rsi,
+   trend4Bull,change
+  );
 
-  /* ======================
-     TRADE PLAN
-  ====================== */
+  let avoidReasons=[];
 
-  let direction=
-   signal==="SHORT"
-   ?-1
-   :1;
+  if(Math.abs(change)>12)
+   avoidReasons.push("24H move already extended");
 
+  if(rsi>78)
+   avoidReasons.push("RSI severely overbought");
 
-  let entryLow;
-  let entryHigh;
+  if(rsi<22)
+   avoidReasons.push("RSI severely oversold");
 
+  if(volumeRatio<.65)
+   avoidReasons.push("Weak participation / volume");
 
-  if(direction>0){
+  if(book.depth<100000)
+   avoidReasons.push("Thin ±1% order-book liquidity");
 
-   entryLow=
-    price-atr*.25;
+  if(trend1Bull!==trend4Bull)
+   avoidReasons.push("1H / 4H trend conflict");
 
-   entryHigh=
-    price;
+  if(
+   futures.funding!==null &&
+   Math.abs(futures.funding)>.10
+  )
+   avoidReasons.push("Crowded futures funding");
 
+  if(
+   direction===1 &&
+   fomo.fomoDirection==="UPSIDE" &&
+   price>fomo.chaseLimit
+  )
+   avoidReasons.push("Price beyond FOMO chase limit");
+
+  if(
+   direction===-1 &&
+   fomo.fomoDirection==="DOWNSIDE" &&
+   price<fomo.chaseLimit
+  )
+   avoidReasons.push("Downside already overextended");
+
+  let avoid=
+   avoidReasons.length>=2;
+
+  let quality=
+   avoid?"AVOID":
+   confidence>=82&&confirmed>=5?"SAFE":
+   confidence>=68?"CAUTION":
+   "HIGH RISK";
+
+  let entryLow,entryHigh,sl,tp1,tp2,tp3;
+
+  if(direction===1){
+   entryLow=price-atr*.25;
+   entryHigh=price;
+   sl=price-atr*1.35;
+   tp1=price+atr*1.5;
+   tp2=price+atr*2.5;
+   tp3=price+atr*4;
   }else{
-
-   entryLow=
-    price;
-
-   entryHigh=
-    price+atr*.25;
-
+   entryLow=price;
+   entryHigh=price+atr*.25;
+   sl=price+atr*1.35;
+   tp1=price-atr*1.5;
+   tp2=price-atr*2.5;
+   tp3=price-atr*4;
   }
 
+  let risk=Math.abs(price-sl);
+  let reward=Math.abs(tp2-price);
+  let rr=risk?reward/risk:0;
 
-  let stopLoss=
-   price-direction*atr*1.5;
-
-
-  let tp1=
-   price+direction*atr*1.5;
-
-
-  let tp2=
-   price+direction*atr*2.5;
-
-
-  let tp3=
-   price+direction*atr*4;
-
-
-  /* ======================
-     EXPECTED DURATION
-  ====================== */
-
-  const atrPercent=
-   price
-   ?atr/price*100
-   :0;
-
-
-  let duration;
-
-
-  if(atrPercent>3){
-
-   duration=
-    "2–8 HOURS";
-
-  }else if(
-   atrPercent>1.5
-  ){
-
-   duration=
-    "6–24 HOURS";
-
-  }else{
-
-   duration=
-    "1–3 DAYS";
-
+  if(rr<1.5){
+   avoidReasons.push("Poor risk/reward");
+   if(quality==="SAFE")quality="CAUTION";
   }
 
+  if(avoidReasons.length>=3){
+   avoid=true;
+   quality="AVOID";
+  }
+
+  let decision;
+
+  if(avoid)
+   decision="AVOID — conditions are currently unfavorable";
+  else if(signal==="WAIT")
+   decision="WAIT — no clear directional edge";
+  else if(confirmed<4)
+   decision="WAIT FOR MORE CONFIRMATION";
+  else if(confidence>=82)
+   decision=`${signal} SETUP — confirmation is strong`;
+  else
+   decision=`${signal} BIAS — wait for cleaner execution`;
+
+  let missing=
+   confirmations
+   .filter(x=>!x.ok)
+   .map(x=>x.text);
+
+  let invalidation=
+   direction===1
+   ?Math.min(sl,e50)
+   :Math.max(sl,e50);
 
   return{
-
    ...c,
+   ...book,
+   ...futures,
+   ...fomo,
 
-   rsi,
-
-   ema20,
-   ema50,
-
+   livePrice:price,
+   rsi,rsi15,
    volumeRatio,
    volumeAcceleration,
 
-   ...book,
-   ...futures,
+   trend1:trend1Bull?"BULLISH":"BEARISH",
+   trend4:trend4Bull?"BULLISH":"BEARISH",
+   momentum15:momentum15Bull?"BULLISH":"BEARISH",
 
-   pump,
+   candle:cs.name,
 
    longScore,
    shortScore,
-
    signal,
+   confidence,
 
-   score:
-    Math.round(score),
+   confirmations,
+   confirmed,
+   missing,
 
-   candle:
-    cs.name,
+   avoid,
+   avoidReasons,
+   quality,
 
-   confirmations:
-    confirmations.length,
-
-   confirmationText:
-    confirmations,
-
-   trend4:
-    trend4Bull
-    ?"BULLISH"
-    :"BEARISH",
-
-   entryLow,
-   entryHigh,
-
-   stopLoss,
-
-   tp1,
-   tp2,
-   tp3,
-
-   duration
-
+   entryLow,entryHigh,
+   sl,tp1,tp2,tp3,
+   rr,
+   invalidation,
+   decision
   };
-
 
  }catch(e){
-
   return{
-
    ...c,
-
-   signal:"WATCH",
-
-   score:0,
-
-   pump:0,
-
-   rsi:null,
-
-   volumeRatio:null,
-
-   volumeAcceleration:null,
-
-   buyPressure:50,
-
-   depth:0,
-
-   funding:null,
-
-   openInterest:null,
-
-   confirmations:0,
-
-   confirmationText:[
-    "Data unavailable"
-   ],
-
-   candle:"—",
-
+   livePrice:+c.lastPrice,
+   signal:"WAIT",
+   confidence:0,
+   confirmed:0,
+   confirmations:[],
+   missing:["Technical data unavailable"],
+   avoid:true,
+   avoidReasons:["Incomplete market data"],
+   quality:"AVOID",
+   fomoScore:0,
+   fomoLevel:"LOW",
+   fomoDirection:"—",
+   fomoTrigger:null,
+   chaseLimit:null,
+   trend1:"—",
    trend4:"—",
-
-   duration:"—"
-
+   momentum15:"—",
+   rsi:null,
+   volumeRatio:null,
+   volumeAcceleration:null,
+   buyPressure:50,
+   depth:0,
+   funding:null,
+   openInterest:null,
+   candle:"—",
+   rr:0,
+   decision:"WAIT — data unavailable"
   };
-
  }
-
 }
-
-
-/* ==========================
-   FORMAT PRICE
-========================== */
 
 function money(v){
-
  v=+v;
-
- if(!isFinite(v))
-  return "—";
-
-
- if(v>=1000){
-
-  return "$"+
-   v.toLocaleString(
-    undefined,
-    {
-     maximumFractionDigits:2
-    }
-   );
-
- }
-
-
- if(v>=1){
-
-  return "$"+
-   v.toLocaleString(
-    undefined,
-    {
-     maximumFractionDigits:4
-    }
-   );
-
- }
-
-
- return "$"+
-  v.toLocaleString(
-   undefined,
-   {
-    maximumSignificantDigits:6
-   }
-  );
-
+ if(!isFinite(v))return"—";
+ if(v>=1000)
+  return"$"+v.toLocaleString(undefined,{maximumFractionDigits:2});
+ if(v>=1)
+  return"$"+v.toLocaleString(undefined,{maximumFractionDigits:4});
+ return"$"+v.toLocaleString(undefined,{maximumSignificantDigits:6});
 }
-
-
-/* ==========================
-   COMPACT USD
-========================== */
 
 function compact(v){
-
  v=+v;
-
- if(!v)
-  return "$0";
-
-
- if(v>=1e9)
-  return "$"+
-   (v/1e9).toFixed(2)+
-   "B";
-
-
- if(v>=1e6)
-  return "$"+
-   (v/1e6).toFixed(1)+
-   "M";
-
-
- if(v>=1e3)
-  return "$"+
-   (v/1e3).toFixed(1)+
-   "K";
-
-
- return "$"+
-  v.toFixed(0);
-
+ if(!isFinite(v)||!v)return"$0";
+ if(v>=1e9)return"$"+(v/1e9).toFixed(2)+"B";
+ if(v>=1e6)return"$"+(v/1e6).toFixed(1)+"M";
+ if(v>=1e3)return"$"+(v/1e3).toFixed(1)+"K";
+ return"$"+v.toFixed(0);
 }
 
+function signalClass(s){
+ if(s.includes("LONG"))return"long";
+ if(s.includes("SHORT"))return"short";
+ return"wait";
+}
 
-/* ==========================
-   LOAD MARKET
-========================== */
+function qualityClass(q){
+ if(q==="SAFE")return"safe";
+ if(q==="AVOID")return"avoid";
+ return"caution";
+}
+
+function confirmationHTML(c){
+ if(!c.confirmations.length)return"—";
+
+ return c.confirmations.map(x=>
+  `<span class="${x.ok?"green":"red"}">
+   ${x.ok?"✓":"✗"} ${x.text}
+  </span>`
+ ).join(" • ");
+}
+
+function updateMarketRegime(){
+ let btc=marketData.find(x=>x.symbol==="BTCUSDT");
+
+ if(!btc)return;
+
+ let regime="NEUTRAL";
+ let cls="yellow";
+
+ if(
+  btc.trend1==="BULLISH" &&
+  btc.trend4==="BULLISH" &&
+  +btc.priceChangePercent>0
+ ){
+  regime="RISK-ON";
+  cls="green";
+ }
+
+ if(
+  btc.trend1==="BEARISH" &&
+  btc.trend4==="BEARISH" &&
+  +btc.priceChangePercent<0
+ ){
+  regime="RISK-OFF";
+  cls="red";
+ }
+
+ document.getElementById("marketRegime").innerHTML=
+  `Market Regime: <b class="${cls}">${regime}</b>`;
+
+ document.getElementById("btcStatus").innerHTML=
+  `BTC: <b>${money(btc.livePrice)}</b> • ${btc.trend4}`;
+}
 
 async function loadMarket(){
-
- const results=
-  document.getElementById(
-   "results"
-  );
-
- const bar=
-  document.getElementById(
-   "bar"
-  );
-
+ let results=document.getElementById("results");
+ let bar=document.getElementById("bar");
 
  results.innerHTML=
-  '<div class="loading">Deep scanning Spot + Futures market...</div>';
-
+  '<div class="loading">Deep scanning liquidity, momentum, futures and FOMO conditions...</div>';
 
  bar.style.width="5%";
 
-
  try{
+  let r=await fetch(`${API}/api/v3/ticker/24hr`);
+  let d=await r.json();
 
-  const response=
-   await fetch(
-    `${API}/api/v3/ticker/24hr`
-   );
-
-
-  const data=
-   await response.json();
-
-
-  let base=
-   data
+  let base=d
    .filter(c=>
-
-    c.symbol.endsWith(
-     "USDT"
-    )
-
-    &&
-
-    !stable.includes(
-     c.symbol.replace(
-      "USDT",
-      ""
-     )
-    )
-
-    &&
-
-    +c.quoteVolume>
-     10000000
-
+    c.symbol.endsWith("USDT") &&
+    !c.symbol.includes("UPUSDT") &&
+    !c.symbol.includes("DOWNUSDT") &&
+    !stable.includes(c.symbol.replace("USDT","")) &&
+    +c.quoteVolume>10000000
    )
-
-   .sort(
-    (a,b)=>
-     +b.quoteVolume-
-     +a.quoteVolume
-   )
-
-   .slice(
-    0,
-    35
-   );
-
+   .sort((a,b)=>+b.quoteVolume-+a.quoteVolume)
+   .slice(0,40);
 
   marketData=[];
 
-
-  for(
-   let i=0;
-   i<base.length;
-   i+=5
-  ){
-
-   let batch=
-    await Promise.all(
-
-     base
-     .slice(
-      i,
-      i+5
-     )
-     .map(enrich)
-
-    );
-
-
-   marketData.push(
-    ...batch
+  for(let i=0;i<base.length;i+=4){
+   let batch=await Promise.all(
+    base.slice(i,i+4).map(enrich)
    );
 
+   marketData.push(...batch);
 
    bar.style.width=
-    Math.min(
-     100,
-     Math.round(
-      (i+5)/
-      base.length*
-      100
-     )
-    )+"%";
-
+    Math.min(100,Math.round((i+4)/base.length*100))+"%";
   }
 
+  marketData.sort((a,b)=>{
+   let A=
+    a.confidence*.50+
+    a.confirmed*5+
+    a.fomoScore*.15+
+    Math.min(a.rr||0,4)*5-
+    (a.avoid?35:0);
 
-  /*
-   Composite DeepRise ranking
-  */
+   let B=
+    b.confidence*.50+
+    b.confirmed*5+
+    b.fomoScore*.15+
+    Math.min(b.rr||0,4)*5-
+    (b.avoid?35:0);
 
-  marketData.sort(
-   (a,b)=>{
+   return B-A;
+  });
 
-    let scoreA=
-     a.score*.55+
-     a.pump*.30+
-     a.confirmations*3;
-
-
-    let scoreB=
-     b.score*.55+
-     b.pump*.30+
-     b.confirmations*3;
-
-
-    return scoreB-scoreA;
-
-   }
-  );
-
-
-  renderTop3();
-
+  renderTop();
   renderCoins();
+  renderAvoid();
+  updateMarketRegime();
 
+  document.getElementById("lastUpdate").textContent=
+   "Updated: "+new Date().toLocaleTimeString();
 
-  setTimeout(
-   ()=>{
-    bar.style.width="0";
-   },
-   700
-  );
-
+  setTimeout(()=>bar.style.width="0",700);
 
  }catch(e){
-
   results.innerHTML=
-   '<div class="loading">Unable to load Binance market. Tap SCAN NOW to retry.</div>';
-
-
+   '<div class="loading">Market connection failed. Tap DEEP SCAN to retry.</div>';
   bar.style.width="0";
-
  }
-
 }
 
+function renderTop(){
+ let box=document.getElementById("top3");
 
-/* ==========================
-   TOP 3
-========================== */
+ let clean=marketData.filter(x=>
+  !x.avoid &&
+  x.signal!=="WAIT" &&
+  x.confirmed>=4
+ );
 
-function renderTop3(){
+ let best=clean[0];
 
- const box=
-  document.getElementById(
-   "top3"
-  );
+ let bestLong=clean.find(x=>x.signal.includes("LONG"));
 
+ let bestShort=clean.find(x=>x.signal.includes("SHORT"));
 
- let picks=
-  marketData
-  .filter(
-   x=>
-    x.signal!=="WATCH"
-    &&
-    x.confirmations>=2
+ let picks=[];
+
+ if(best)picks.push({...best,title:"BEST SETUP"});
+ if(bestLong&&!picks.includes(bestLong))
+  picks.push({...bestLong,title:"TOP LONG"});
+ if(bestShort&&!picks.includes(bestShort))
+  picks.push({...bestShort,title:"TOP SHORT"});
+
+ clean.forEach(x=>{
+  if(
+   picks.length<3 &&
+   !picks.some(p=>p.symbol===x.symbol)
   )
-  .slice(
-   0,
-   3
-  );
+   picks.push({...x,title:"TOP SETUP"});
+ });
 
-
- if(picks.length<3){
-
-  picks=
-   marketData.slice(
-    0,
-    3
-   );
-
+ if(!picks.length){
+  box.innerHTML=
+   '<div class="loading">No high-quality setup currently passes the filters.</div>';
+  return;
  }
 
+ box.innerHTML=picks.slice(0,3).map(c=>`
+  <div class="pick">
+   <div class="rank">${c.title}</div>
+   <div class="sym">${c.symbol.replace("USDT","")}/USDT</div>
 
- box.innerHTML=
-  picks.map(
-   (c,i)=>`
+   <span class="badge ${signalClass(c.signal)}">${c.signal}</span>
+   <span class="badge ${qualityClass(c.quality)}">${c.quality}</span>
 
-<div class="pick">
-
-<small>
-DEEPRISE PICK #${i+1}
-</small>
-
-<div class="symbol">
-${c.symbol.replace("USDT","")}/USDT
-</div>
-
-<div class="green">
-<b>
-${c.signal} • Score ${c.score}/100
-</b>
-</div>
-
-<div style="font-size:12px;margin-top:8px;line-height:1.6">
-
-Pump Radar:
-<b>${c.pump}%</b>
-
-<br>
-
-Confirmations:
-<b>${c.confirmations}</b>
-
-<br>
-
-Duration:
-<b>${c.duration}</b>
-
-</div>
-
-</div>
-
-`
-  )
-  .join("");
-
+   <div class="small">
+    Confidence: <b>${c.confidence}%</b><br>
+    Confirmation: <b>${c.confirmed}/7</b><br>
+    FOMO: <b>${c.fomoLevel} ${c.fomoScore}%</b><br>
+    R:R to TP2: <b>1:${c.rr.toFixed(2)}</b>
+   </div>
+  </div>
+ `).join("");
 }
-
-
-/* ==========================
-   RENDER RESULTS
-========================== */
 
 function renderCoins(){
-
- const search=
-  document
-  .getElementById(
-   "search"
-  )
-  .value
-  .toUpperCase()
+ let q=document.getElementById("search")
+  .value.toUpperCase()
   .replace("/","")
   .replace("USDT","");
 
+ let coins=marketData.filter(c=>{
+  let searchOK=c.symbol.startsWith(q);
 
- let coins=
-  marketData.filter(
-   c=>
+  let filterOK=
+   currentFilter==="all" ||
+   (currentFilter==="long"&&c.signal.includes("LONG")) ||
+   (currentFilter==="short"&&c.signal.includes("SHORT")) ||
+   (currentFilter==="wait"&&c.signal==="WAIT") ||
+   (currentFilter==="avoid"&&c.avoid);
 
-    c.symbol.startsWith(
-     search
-    )
+  return searchOK&&filterOK;
+ });
 
-    &&
-
-    (
-     currentFilter==="all"
-     ||
-     c.signal.toLowerCase()
-     ===currentFilter
-    )
-
-  );
-
-
- const results=
-  document.getElementById(
-   "results"
-  );
-
+ let results=document.getElementById("results");
 
  if(!coins.length){
-
   results.innerHTML=
-   '<div class="loading">No matching signals.</div>';
-
+   '<div class="loading">No matching market conditions.</div>';
   return;
-
  }
 
+ results.innerHTML=coins.map(c=>`
+ <div class="card" data-symbol="${c.symbol}">
 
- results.innerHTML=
-  coins.map(c=>{
+  <div class="coin-head">
+   <div>
+    <div class="sym">${c.symbol.replace("USDT","")}/USDT</div>
+    <div class="small">
+     24H ${+c.priceChangePercent>=0?"+":""}${(+c.priceChangePercent).toFixed(2)}%
+    </div>
+   </div>
 
-   let change=
-    +c.priceChangePercent;
+   <div class="badges">
+    <span class="badge ${signalClass(c.signal)}">${c.signal}</span>
+    <span class="badge ${qualityClass(c.quality)}">
+     ${c.quality==="AVOID"?"⛔ AVOID":c.quality}
+    </span>
+    <span class="badge score">Confidence ${c.confidence}%</span>
+   </div>
+  </div>
 
+  <div class="data">
 
-   let confirmationStatus;
+   <div class="box">
+    <div class="label">LIVE PRICE</div>
+    <div class="value live-price">${money(c.livePrice)}</div>
+   </div>
 
+   <div class="box">
+    <div class="label">1H TREND</div>
+    <div class="value ${c.trend1==="BULLISH"?"green":"red"}">${c.trend1}</div>
+   </div>
 
-   if(
-    c.confirmations>=5
-   ){
+   <div class="box">
+    <div class="label">4H TREND</div>
+    <div class="value ${c.trend4==="BULLISH"?"green":"red"}">${c.trend4}</div>
+   </div>
 
-    confirmationStatus=
-     "🟢 STRONG CONFIRMATION";
+   <div class="box">
+    <div class="label">15M MOMENTUM</div>
+    <div class="value ${c.momentum15==="BULLISH"?"green":"red"}">${c.momentum15}</div>
+   </div>
 
-   }else if(
-    c.confirmations>=4
-   ){
+   <div class="box">
+    <div class="label">RSI 1H</div>
+    <div class="value">${c.rsi===null?"—":c.rsi.toFixed(1)}</div>
+   </div>
 
-    confirmationStatus=
-     "🟢 CONFIRMED";
+   <div class="box">
+    <div class="label">VOLUME RATIO</div>
+    <div class="value">${c.volumeRatio===null?"—":c.volumeRatio.toFixed(2)+"×"}</div>
+   </div>
 
-   }else if(
-    c.confirmations>=3
-   ){
+   <div class="box">
+    <div class="label">BUY PRESSURE</div>
+    <div class="value ${c.buyPressure>53?"green":c.buyPressure<47?"red":""}">
+     ${c.buyPressure.toFixed(1)}%
+    </div>
+   </div>
 
-    confirmationStatus=
-     "🟡 CONFIRMING";
+   <div class="box">
+    <div class="label">±1% LIQUIDITY</div>
+    <div class="value">${compact(c.depth)}</div>
+   </div>
 
-   }else if(
-    c.confirmations>=2
-   ){
+   <div class="box">
+    <div class="label">FUNDING</div>
+    <div class="value">
+     ${c.funding===null?"—":c.funding.toFixed(4)+"%"}
+    </div>
+   </div>
 
-    confirmationStatus=
-     "🟡 EARLY SIGNAL";
+   <div class="box">
+    <div class="label">CANDLE</div>
+    <div class="value">${c.candle}</div>
+   </div>
 
-   }else{
+   <div class="box">
+    <div class="label">CONFIRMATION</div>
+    <div class="value">${c.confirmed}/7</div>
+   </div>
 
-    confirmationStatus=
-     "⚪ WAIT";
+   <div class="box">
+    <div class="label">RISK / REWARD</div>
+    <div class="value">1:${c.rr.toFixed(2)}</div>
+   </div>
 
+   <div class="box">
+    <div class="label">ENTRY ZONE</div>
+    <div class="value">${money(c.entryLow)} – ${money(c.entryHigh)}</div>
+   </div>
+
+   <div class="box">
+    <div class="label">INVALIDATION</div>
+    <div class="value yellow">${money(c.invalidation)}</div>
+   </div>
+
+   <div class="box">
+    <div class="label">STOP LOSS</div>
+    <div class="value red">${money(c.sl)}</div>
+   </div>
+
+   <div class="box">
+    <div class="label">TP1</div>
+    <div class="value green">${money(c.tp1)}</div>
+   </div>
+
+   <div class="box">
+    <div class="label">TP2</div>
+    <div class="value green">${money(c.tp2)}</div>
+   </div>
+
+   <div class="box">
+    <div class="label">TP3</div>
+    <div class="value green">${money(c.tp3)}</div>
+   </div>
+
+  </div>
+
+  <div class="fomo">
+   <div class="label">🔥 FOMO RADAR</div>
+
+   <div class="value ${
+    c.fomoLevel==="EXTREME"?"red":
+    c.fomoLevel==="HIGH"?"yellow":
+    "blue"
+   }">
+    ${c.fomoDirection} FOMO • ${c.fomoLevel} • ${c.fomoScore}/100
+   </div>
+
+   <div class="small">
+    Expected trigger:
+    <b>${money(c.fomoTrigger)}</b>
+    •
+    Chase limit:
+    <b>${money(c.chaseLimit)}</b>
+    <br>
+    FOMO requires expansion in volume, momentum and order-book pressure.
+    A price touch alone is not confirmation.
+   </div>
+  </div>
+
+  <div class="confirm">
+   <div class="label">🧠 CONFIRMATION ENGINE</div>
+
+   <div class="value">
+    ${c.confirmed}/7 conditions confirmed
+   </div>
+
+   <div class="small">
+    ${confirmationHTML(c)}
+   </div>
+
+   ${
+    c.missing.length
+    ?`<div class="small yellow">
+       <b>Still missing:</b> ${c.missing.join(" • ")}
+      </div>`
+    :""
    }
-
-
-   return `
-
-<div class="card">
-
-<div class="coin-header">
-
-<div class="symbol">
-${c.symbol.replace("USDT","")}/USDT
-</div>
-
-<div class="badges">
-
-<span class="badge ${c.signal.toLowerCase()}">
-${c.signal}
-</span>
-
-<span class="badge score">
-Score ${c.score}
-</span>
-
-<span class="badge score">
-Pump ${c.pump}%
-</span>
-
-</div>
-
-</div>
-
-
-<div class="data">
-
-
-<div class="box">
-<div class="label">
-Price
-</div>
-<div class="value">
-${money(c.lastPrice)}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-24H Change
-</div>
-
-<div class="value ${
- change>=0
- ?"positive"
- :"negative"
-}">
-${change>=0?"+":""}${change.toFixed(2)}%
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-24H Volume / Liquidity
-</div>
-
-<div class="value">
-${compact(c.quoteVolume)}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-±1% Order Book Liquidity
-</div>
-
-<div class="value">
-${compact(c.depth)}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Buy Pressure
-</div>
-
-<div class="value ${
- c.buyPressure>=53
- ?"positive"
- :
- c.buyPressure<47
- ?"negative"
- :""
-}">
-${c.buyPressure.toFixed(1)}%
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Volume Ratio
-</div>
-
-<div class="value">
-${
- c.volumeRatio===null
- ?"—"
- :c.volumeRatio.toFixed(2)+"×"
-}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Volume Acceleration
-</div>
-
-<div class="value">
-${
- c.volumeAcceleration===null
- ?"—"
- :c.volumeAcceleration.toFixed(2)+"×"
-}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-RSI 1H
-</div>
-
-<div class="value">
-${
- c.rsi===null
- ?"—"
- :c.rsi.toFixed(1)
-}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-4H Trend
-</div>
-
-<div class="value ${
- c.trend4==="BULLISH"
- ?"positive"
- :
- c.trend4==="BEARISH"
- ?"negative"
- :""
-}">
-${c.trend4}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Confirmation Candle
-</div>
-
-<div class="value">
-${c.candle}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Funding Rate
-</div>
-
-<div class="value">
-${
- c.funding===null
- ?"—"
- :c.funding.toFixed(4)+"%"
-}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Open Interest
-</div>
-
-<div class="value">
-${
- c.openInterest===null
- ?"—"
- :c.openInterest.toLocaleString(
-   undefined,
-   {
-    maximumFractionDigits:0
-   }
-  )
-}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Expected Duration
-</div>
-
-<div class="value">
-${c.duration}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Pump Radar
-</div>
-
-<div class="value ${
- c.pump>=70
- ?"positive"
- :""
-}">
-${c.pump}/100
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Entry Zone
-</div>
-
-<div class="value">
-${money(c.entryLow)}
-–
-${money(c.entryHigh)}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-Stop Loss
-</div>
-
-<div class="value negative">
-${money(c.stopLoss)}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-TP1
-</div>
-
-<div class="value positive">
-${money(c.tp1)}
-</div>
-</div>
-
-
-<div class="box">
-<div class="label">
-TP2 / TP3
-</div>
-
-<div class="value positive">
-${money(c.tp2)}
-/
-${money(c.tp3)}
-</div>
-</div>
-
-
-</div>
-
-
-<div class="confirm">
-
-<div class="label">
-MULTI-TIMEFRAME CONFIRMATION ENGINE
-</div>
-
-<div class="value">
-${confirmationStatus}
-</div>
-
-<div style="
-font-size:11px;
-color:#8299ae;
-margin-top:7px;
-line-height:1.6
-">
-
-${c.confirmationText.join(" • ")}
-
-</div>
-
-</div>
-
-
-<div class="reason">
-
-<b>DeepRise V3 Analysis:</b>
-
-Liquidity + Order Book Pressure +
-Volume Acceleration +
-1H/4H Trend +
-Confirmation Candle +
-Funding Rate +
-Open Interest.
-
-</div>
-
-
-</div>
-
-`;
-
-  })
-  .join("");
-
-}
-
-
-/* ==========================
-   SEARCH
-========================== */
-
-document
-.getElementById(
- "search"
-)
-.addEventListener(
- "input",
- renderCoins
-);
-
-
-/* ==========================
-   FILTERS
-========================== */
-
-document
-.querySelectorAll(
- ".filter"
-)
-.forEach(button=>{
-
- button.addEventListener(
-  "click",
-  ()=>{
-
-   document
-   .querySelectorAll(
-    ".filter"
-   )
-   .forEach(
-    x=>
-     x.classList.remove(
-      "active"
-     )
-   );
-
-
-   button.classList.add(
-    "active"
-   );
-
-
-   currentFilter=
-    button.dataset.filter;
-
-
-   renderCoins();
-
+  </div>
+
+  ${
+   c.avoidReasons.length
+   ?`
+   <div class="confirm" style="border-left-color:#ff6574">
+    <div class="label">⛔ RISK FLAGS</div>
+    <div class="small red">
+     ${c.avoidReasons.join(" • ")}
+    </div>
+   </div>
+   `
+   :""
   }
- );
 
+  <div class="decision">
+   <div class="label">DEEPRISE DECISION</div>
+   <div class="value">${c.decision}</div>
+
+   ${
+    c.fomoDirection==="UPSIDE"
+    ?`<div class="small">
+       Upside acceleration becomes more credible above
+       <b>${money(c.fomoTrigger)}</b>,
+       but avoid chasing beyond
+       <b>${money(c.chaseLimit)}</b>.
+      </div>`
+    :`<div class="small">
+       Downside acceleration becomes more credible below
+       <b>${money(c.fomoTrigger)}</b>.
+      </div>`
+   }
+  </div>
+
+ </div>
+ `).join("");
+}
+
+function renderAvoid(){
+ let avoid=marketData
+  .filter(x=>x.avoid)
+  .slice(0,8);
+
+ let box=document.getElementById("avoidList");
+
+ if(!avoid.length){
+  box.innerHTML=
+   '<span class="green">No major AVOID conditions among scanned liquid pairs.</span>';
+  return;
+ }
+
+ box.innerHTML=avoid.map(c=>`
+  <div class="avoid-row">
+   <b class="red">⛔ ${c.symbol.replace("USDT","")}/USDT</b>
+   — ${c.avoidReasons.slice(0,3).join(" • ")}
+  </div>
+ `).join("");
+}
+
+/* REAL-TIME PRICE PULSE */
+
+function startPriceStream(){
+ try{
+  if(priceSocket)priceSocket.close();
+
+  priceSocket=new WebSocket(WS);
+
+  priceSocket.onmessage=e=>{
+   try{
+    let data=JSON.parse(e.data);
+
+    if(!Array.isArray(data))return;
+
+    let map=new Map(
+     data.map(x=>[x.s,+x.c])
+    );
+
+    marketData.forEach(c=>{
+     let p=map.get(c.symbol);
+
+     if(p){
+      c.livePrice=p;
+
+      document.querySelectorAll(
+       `[data-symbol="${c.symbol}"] .live-price`
+      ).forEach(el=>{
+       el.textContent=money(p);
+      });
+     }
+    });
+
+   }catch(err){}
+  };
+
+  priceSocket.onclose=()=>{
+   setTimeout(startPriceStream,4000);
+  };
+
+ }catch(e){}
+}
+
+function toggleMenu(){
+ document.getElementById("menu").classList.toggle("open");
+}
+
+function goTo(id){
+ document.getElementById(id).scrollIntoView({behavior:"smooth"});
+ document.getElementById("menu").classList.remove("open");
+}
+
+function scrollTopPage(){
+ window.scrollTo({top:0,behavior:"smooth"});
+ document.getElementById("menu").classList.remove("open");
+}
+
+function openInfo(type){
+ let content="";
+
+ if(type==="method"){
+  content=`
+   <h2>🧠 DeepRise Methodology</h2>
+   <p>V4 combines 15M momentum, 1H trend, 4H trend, RSI,
+   volume expansion, order-book imbalance, candle structure,
+   futures funding and liquidity.</p>
+   <p>Confidence measures agreement between independent market conditions.
+   It is not the mathematical probability that a trade will win.</p>
+  `;
+ }
+
+ if(type==="risk"){
+  content=`
+   <h2>🛡 Risk Rules</h2>
+   <p><b>SAFE</b> means the setup passes stronger model-quality filters,
+   not that trading is risk-free.</p>
+   <p><b>CAUTION</b> means a directional edge exists but one or more
+   important conditions remain incomplete.</p>
+   <p><b>⛔ AVOID</b> means DeepRise detects excessive extension,
+   conflicting trends, weak liquidity, crowded funding or other risk flags.</p>
+  `;
+ }
+
+ if(type==="fomo"){
+  content=`
+   <h2>🔥 FOMO Radar</h2>
+   <p>FOMO Radar estimates conditions that may precede rapid price acceleration.</p>
+   <p>It combines volume acceleration, order-book imbalance, momentum,
+   trend alignment and proximity to breakout levels.</p>
+   <p><b>Trigger</b> is the level where acceleration becomes more relevant.
+   <b>Chase Limit</b> warns when entering after the move may offer poor execution.</p>
+  `;
+ }
+
+ if(type==="about"){
+  content=`
+   <h2>DeepRise V4 PRO</h2>
+   <p>Real-time screening interface for liquid Binance USDT markets.</p>
+   <p>Prices use a WebSocket pulse while heavier analytical calculations
+   are refreshed separately to avoid treating unchanged candle indicators
+   as tick-by-tick signals.</p>
+  `;
+ }
+
+ document.getElementById("modalContent").innerHTML=content;
+ document.getElementById("modal").classList.add("open");
+ document.getElementById("menu").classList.remove("open");
+}
+
+function closeInfo(){
+ document.getElementById("modal").classList.remove("open");
+}
+
+document.getElementById("search")
+ .addEventListener("input",renderCoins);
+
+document.querySelectorAll(".filter").forEach(b=>{
+ b.addEventListener("click",()=>{
+  document.querySelectorAll(".filter")
+   .forEach(x=>x.classList.remove("active"));
+
+  b.classList.add("active");
+  currentFilter=b.dataset.filter;
+  renderCoins();
+ });
 });
 
+window.addEventListener("click",e=>{
+ let menu=document.getElementById("menu");
 
-/* ==========================
-   INITIAL SCAN
-========================== */
+ if(
+  !e.target.closest(".menu") &&
+  !e.target.closest(".menu-btn")
+ ){
+  menu.classList.remove("open");
+ }
+});
+
+/* INITIALIZE */
 
 loadMarket();
+startPriceStream();
 
-
-/* ==========================
-   AUTO REFRESH
-   EVERY 3 MINUTES
-========================== */
-
-setInterval(
- loadMarket,
- 180000
-);
+/* Full analytical refresh every 60 sec */
+setInterval(loadMarket,60000);
 
 </script>
-
 </body>
 </html>
