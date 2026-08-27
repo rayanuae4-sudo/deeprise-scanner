@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DeepRise V8 PRO</title>
+<title>DeepRise V8.5 PRO</title>
 <style>
 *{box-sizing:border-box}
 :root{--bg:#050d18;--panel:#0a1827;--panel2:#071421;--border:#18344c;--
@@ -69,18 +69,40 @@ actions{display:flex;gap:6px;flex-wrap:wrap}.chart-
 btn{background:#102236;color:#9eb5c8;border:1px solid var(--border);padding:8px
 11px}.chart-btn.active{background:#123c31;color:var(--green)}.chart-
 close{background:#3d1922;color:var(--red)}#tradingview_chart{height:520px}
-@media(max-width:900px){.data{grid-template-columns:repeat(2,1fr)}.top-
-grid{grid-template-columns:1fr}.controls{flex-direction:column}.brand
-small{display:none}}
+.menu-wrap{position:relative}.menu-btn{background:#102236;color:var(--
+text);border:1px solid var(--border);font-size:20px;padding:9px 13px}
+.dropdown{display:none;position:absolute;right:0;top:48px;min-
+width:210px;background:var(--panel);border:1px solid var(--border);border-
+radius:12px;padding:8px;z-index:50}
+.dropdown.active{display:block}.dropdown button{display:block;width:100%;text-
+align:left;margin:4px 0;background:var(--panel2);color:var(--text);border:1px solid
+var(--border)}
+.signal-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-
+top:10px}.signal-stat{background:#06111d;border:1px solid #173148;border-
+radius:8px;padding:8px}
+.chart-analysis{padding:12px 15px;border-bottom:1px solid var(--
+border);display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.chart-analysis .box{min-height:58px}
+@media(max-width:900px){.signal-stats,.chart-analysis{grid-template-
+columns:repeat(2,1fr)}.data{grid-template-columns:repeat(2,1fr)}.top-grid{grid-
+template-columns:1fr}.controls{flex-direction:column}.brand small{display:none}}
 </style>
 </head>
 <body>
-<header><div class="header-row"><div class="brand"><h1>â¡ DeepRise V8 PRO</
-h1><small>Multi-Timeframe â¢ Liquidity â¢ Futures â¢ Pump Radar â¢ Confirmation
-â¢ Trade Engine</small></div><span class="live">â LIVE</span></div></header>
+<header><div class="header-row"><div class="brand"><h1>â¡ DeepRise V8.5
+PRO</h1><small>Multi-Timeframe â¢ Liquidity â¢ Futures â¢ Pump Radar â¢ Chart
+Forecast â¢ Signal Tracking</small></div>
+<div style="display:flex;align-items:center;gap:10px"><span class="live">â LIVE</
+span><div class="menu-wrap"><button id="menuBtn" class="menu-btn">â°</
+button><div id="dropdown" class="dropdown">
+<button data-menu="all">Scanner / All</button><button data-menu="top">Top 3
+Setups</button><button data-menu="pump">ð¥ Pump Radar</button><button
+data-menu="long">ð¢ LONG</button><button data-menu="short">ð´ SHORT</
+button><button data-menu="wait">ð¡ Watch / Wait</button>
+</div></div></div></div></header>
 <div class="container">
 <div class="marketbar"><span id="marketRegime">Market: <b>SCANNING...</b></
-span><span id="btcStatus">BTC: â</span><span>Engine: <b>V8 PRO</b></
+span><span id="btcStatus">BTC: â</span><span>Engine: <b>V8.5 PRO</b></
 span></div>
 <div class="marketbar"><span>Price: <b>Binance Spot</b></
 span><span>Liquidity: <b>24H Quote Volume</b></span><span>Futures:
@@ -104,11 +126,20 @@ data-tf="60" onclick="changeChartTF('60')">1H</button><button class="chart-btn"
 data-tf="240" onclick="changeChartTF('240')">4H</button><button class="chart-
 btn" data-tf="D" onclick="changeChartTF('D')">1D</button><button class="chart-
 btn chart-close" onclick="closeChart()">â CLOSE</button></div></div><div
-id="tradingview_chart"></div></div>
+id="chartAnalysis" class="chart-analysis">
+<div class="box"><div class="label">Forecast</div><div id="forecastDirection"
+class="value yellow">Select a coin</div></div>
+<div class="box"><div class="label">Projected Target</div><div
+id="forecastTarget" class="value">â</div></div>
+<div class="box"><div class="label">Support / Resistance</div><div
+id="forecastSR" class="value">â</div></div>
+<div class="box"><div class="label">Model Confidence</div><div
+id="forecastConfidence" class="value">â</div></div>
+</div><div id="tradingview_chart"></div></div>
 <div class="hero"><h2>ð DEEPRISE TOP SETUPS</h2><div id="top3" class="top-
 grid"><div class="loading">Building market model...</div></div></div>
 <div id="results"><div class="loading">Connecting to Binance...</div></div>
-<div class="footer">DeepRise V8 PRO analyses public market data. Signals are
+<div class="footer">DeepRise V8.5 PRO analyses public market data. Signals are
 probabilistic, not guarantees or financial advice.</div>
 </div>
 <script src="https://s3.tradingview.com/tv.js"></script>
@@ -202,6 +233,65 @@ direction,score,pump,risk,entry,sl,tp1,tp2,rr,duration:tradeDuration(atrPct,volu
 o,score)}
 }catch(e){return null}
 }
+const SIGNAL
+_KEY="deeprise_
+v85
+_signals";
+function readSignals(){try{return
+JSON.parse(localStorage.getItem(SIGNAL_KEY)||"{}")}catch(e){return{}}}
+function writeSignals(s){try{localStorage.setItem(SIGNAL_KEY,JSON.stringify(s))}
+catch(e){}}
+function syncTopSignals(top){
+let s=readSignals(),now=Date.now();
+top.forEach(x=>{
+let old=s[x.symbol];
+if(!old || old.direction!==x.direction || ["TP2 HIT","STOP HIT"].includes(old.status)){
+s[x.symbol]={symbol:x.symbol,direction:x.direction,entry:x.price,created:now,high:x.
+price,low:x.price,status:"ACTIVE",tp1:x.tp1,tp2:x.tp2,sl:x.sl};
+}else{
+old.high=Math.max(old.high||x.price,x.price);old.low=Math.min(old.low||
+x.price,x.price);
+if(old.direction==="LONG"){
+if(x.price>=old.tp2)old.status="TP2 HIT";else if(x.price>=old.tp1)old.status="TP1
+HIT";else if(x.price<=old.sl)old.status="STOP HIT";
+}else{
+if(x.price<=old.tp2)old.status="TP2 HIT";else if(x.price<=old.tp1)old.status="TP1
+HIT";else if(x.price>=old.sl)old.status="STOP HIT";
+}
+}
+});
+writeSignals(s);return s;
+}
+function signalMetrics(x,s){
+let z=s[x.symbol];if(!z)return null;
+let move=(x.price-z.entry)/z.entry*100;
+let best=z.direction==="LONG"?(z.high-z.entry)/z.entry*100:(z.entry-z.low)/
+z.entry*100;
+let worst=z.direction==="LONG"?(z.low-z.entry)/z.entry*100:(z.entry-z.high)/
+z.entry*100;
+let age=Math.max(0,Date.now()-z.created),mins=Math.floor(age/
+60000),ageTxt=mins<60?mins+"m":mins<1440?Math.floor(mins/60)+"h "+
+(mins%60)+"m":Math.floor(mins/1440)+"d "+Math.floor((mins%1440)/60)+"h";
+return{...z,move,best,worst,ageTxt};
+}
+function updateChartAnalysis(symbol){
+let x=marketData.find(a=>a.symbol===symbol);if(!x)return;
+let trend=x.direction==="WAIT"?(x.h1Bull?"BULLISH WATCH":x.h1Bear?"BEARISH
+WATCH":"NEUTRAL"):x.direction;
+let projected=x.direction==="SHORT"?x.tp2:x.tp2;
+let projectedPct=(projected-x.price)/x.price*100;
+let support=x.price-x.atr*1.5,resistance=x.price+x.atr*1.5;
+let confidence=Math.min(95,Math.max(35,Math.round((x.score+x.pump.score)/2)));
+document.getElementById("forecastDirection").textContent=trend;
+document.getElementById("forecastDirection").className="value "+
+(trend.includes("BULL")||trend==="LONG"?"green":trend.includes("BEAR")||
+trend==="SHORT"?"red":"yellow");
+document.getElementById("forecastTarget").textContent="$"+priceFmt(projected)
++" ("+(projectedPct>=0?"+":"")+projectedPct.toFixed(2)+"%)";
+document.getElementById("forecastSR").textContent="$"+priceFmt(support)+" /
+$"+priceFmt(resistance);
+document.getElementById("forecastConfidence").textContent=confidence+"%";
+}
 async function loadMarket(){
 if(scanRunning)return;scanRunning=true;let
 bar=document.getElementById("bar"),results=document.getElementById("results");
@@ -234,17 +324,33 @@ function updateBTC(){let
 b=marketData.find(x=>x.symbol==="BTCUSDT");if(b)document.getElementById("bt
 cStatus").innerHTML=`BTC: <b>$${priceFmt(b.price)}</b> <span class="$
 {b.change>=0?"green":"red"}">${b.change.toFixed(2)}%</span>`}
-function renderTop(){let top=[...marketData].filter(x=>x.direction!
-=="WAIT"&&x.score>=68).sort((a,b)=>b.score-
-a.score).slice(0,3);document.getElementById("top3").innerHTML=top.length?
-top.map((x,i)=>`<div class="pick"><div class="rank">#${i+1} SETUP</div><div
-class="sym sym-link" onclick="openChart('${x.symbol}')">${x.base}/USDT</
-div><span class="badge ${x.direction.toLowerCase()}">${x.direction}</span> <span
+function renderTop(){
+let top=[...marketData].filter(x=>x.direction!
+=="WAIT"&&x.score>=68).sort((a,b)=>b.score-a.score).slice(0,3);
+let signals=syncTopSignals(top);
+document.getElementById("top3").innerHTML=top.length?top.map((x,i)=>{
+let m=signalMetrics(x,signals),move=m?m.move:0;
+return `<div class="pick"><div class="rank">#${i+1} SETUP â¢ ${m?
+m.status:"ACTIVE"}</div>
+<div class="sym sym-link" onclick="openChart('${x.symbol}')">${x.base}/USDT</
+div>
+<span class="badge ${x.direction.toLowerCase()}">${x.direction}</span> <span
 class="badge score">${x.score}/100</span> ${x.pump.score>=60?`<span
-class="badge pump">ð¥ PUMP ${x.pump.score}</span>`:""}<div
-class="small">Entry $${priceFmt(x.entry)}<br>TP1 $${priceFmt(x.tp1)} â¢ TP2 $$
-{priceFmt(x.tp2)}<br>SL $${priceFmt(x.sl)} â¢ R:R ${x.rr.toFixed(1)} â¢ ${x.duration}
-</div></div>`).join(""):'<div class="loading">No high-quality setups.</div>'}
+class="badge pump">ð¥ PUMP ${x.pump.score}</span>`:""}
+<div class="small">Signal price $${m?priceFmt(m.entry):priceFmt(x.entry)} â¢ $
+{m?m.ageTxt:"now"}<br>Entry $${priceFmt(x.entry)} â¢ TP1 $${priceFmt(x.tp1)} â¢
+TP2 $${priceFmt(x.tp2)}<br>SL $${priceFmt(x.sl)} â¢ ${x.duration}</div>
+<div class="signal-stats">
+<div class="signal-stat"><div class="label">Since Signal</div><div class="value $
+{move>=0?"green":"red"}">${move>=0?"+":""}${move.toFixed(2)}%</div></div>
+<div class="signal-stat"><div class="label">Best Move</div><div class="value
+green">${m?m.best.toFixed(2):"0.00"}%</div></div>
+<div class="signal-stat"><div class="label">Worst Move</div><div class="value
+red">${m?m.worst.toFixed(2):"0.00"}%</div></div>
+<div class="signal-stat"><div class="label">Status</div><div class="value
+yellow">${m?m.status:"ACTIVE"}</div></div>
+</div></div>`}).join(""):'<div class="loading">No high-quality setups.</div>'
+}
 function render(){
 let
 q=document.getElementById("search").value.trim().toUpperCase(),data=marketData
@@ -311,8 +417,9 @@ function openChart(symbol)
 {chartSymbol=symbol;document.getElementById("chartPanel").classList.add("active
 ");document.getElementById("chartTitle").textContent=symbol.replace("USDT","")
 +"/USDT LIVE
-CHART";loadTradingView();setTimeout(()=>document.getElementById("chartPanel")
-.scrollIntoView({behavior:"smooth",block:"start"}),100)}
+CHART";updateChartAnalysis(symbol);loadTradingView();setTimeout(()=>document.
+getElementById("chartPanel").scrollIntoView({behavior:"smooth",block:"start"}),100)
+}
 function loadTradingView(){let
 c=document.getElementById("tradingview_chart");c.innerHTML="";if(typeof
 TradingView==="undefined"){c.innerHTML='<div class="loading red">TradingView
@@ -326,6 +433,22 @@ btn[data-
 tf]").forEach(b=>b.classList.toggle("active",b.dataset.tf===tf));loadTradingView()}
 function closeChart()
 {document.getElementById("chartPanel").classList.remove("active")}
+const
+menuBtn=document.getElementById("menuBtn"),dropdown=document.getElementB
+yId("dropdown");
+menuBtn.addEventListener("click",()=>dropdown.classList.toggle("active"));
+document.addEventListener("click",e=>{if(!e.target.closest(".menu-
+wrap"))dropdown.classList.remove("active")});
+dropdown.querySelectorAll("[data-menu]").forEach(b=>b.addEventListener("click",
+()=>{
+let f=b.dataset.menu;dropdown.classList.remove("active");
+if(f==="top")
+{document.querySelector(".hero").scrollIntoView({behavior:"smooth"});return}
+currentFilter=f;
+document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.dataset.
+filter===f));
+}));
+render();document.getElementById("results").scrollIntoView({behavior:"smooth"});
 loadMarket();setInterval(loadMarket,60000);
 </script>
 </body>
