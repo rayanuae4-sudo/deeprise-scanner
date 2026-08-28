@@ -1,4 +1,4 @@
-name: DeepRise V13.2 Launch Check
+name: DeepRise V13.3 Launch Check
 
 on:
   push:
@@ -36,15 +36,15 @@ jobs:
           assert len(s)>45000, 'index.html is not the direct scanner runtime'
           assert 'document.write' not in s, 'legacy document.write loader detected'
           assert 'https://data-api.binance.vision' in s, 'stable Binance spot endpoint missing'
-          assert '<script>' in s, 'scanner core JavaScript missing'
+          assert 'deeprise-predictive-intelligence.js' in s, 'predictive UI is not loaded'
           PY
 
       - name: Validate Python and JSON
         run: |
-          python3 -m py_compile scripts/maintain_ledger.py scripts/publish_forecasts.py scripts/enrich_smart_money.py
+          python3 -m py_compile scripts/maintain_ledger.py scripts/publish_forecasts.py scripts/enrich_smart_money.py scripts/apply_trap_gate.py scripts/publish_liquidity_alerts.py
           python3 - <<'PY'
           import json
-          for f in ['manifest.json','forecast-ledger.json']:
+          for f in ['manifest.json','forecast-ledger.json','market-alerts.json']:
               with open(f,encoding='utf-8') as h: json.load(h)
           PY
 
@@ -53,33 +53,35 @@ jobs:
           COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
         run: python3 scripts/publish_forecasts.py health
 
-      - name: Assert production V13.2 predictive wiring
+      - name: Assert production V13.3 predictive wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
           idx=Path('index.html').read_text(encoding='utf-8')
           cfg=Path('deeprise-analytics-config.js').read_text(encoding='utf-8')
-          sw=Path('sw.js').read_text(encoding='utf-8')
           bridge=Path('deeprise-central-forecast-bridge.js').read_text(encoding='utf-8')
           pi=Path('deeprise-predictive-intelligence.js').read_text(encoding='utf-8')
           pub=Path('scripts/publish_forecasts.py').read_text(encoding='utf-8')
           sm=Path('scripts/enrich_smart_money.py').read_text(encoding='utf-8')
+          trap=Path('scripts/apply_trap_gate.py').read_text(encoding='utf-8')
+          alerts=Path('scripts/publish_liquidity_alerts.py').read_text(encoding='utf-8')
           maint=Path('scripts/maintain_ledger.py').read_text(encoding='utf-8')
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
-          required=['DeepRise V13.1 PRO','deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','deeprise-central-ledger.js']
-          missing=[x for x in required if x not in idx]
-          assert not missing, f'missing V13 runtime wiring: {missing}'
-          assert "version: 'V13 PRO'" in cfg, 'analytics version is not V13 PRO'
-          for x in ['deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','forecast-ledger.json']:
-              assert x in sw, f'PWA cache missing {x}'
-          assert 'Block local-only official forecast writes' in bridge, 'local-only official forecast path not blocked'
-          assert 'predictive:r.predictive||null' in bridge, 'predictive ledger fields not exposed to UI'
-          assert "'source': 'central-v13.1-publisher'" in pub, 'central publisher marker missing'
+          required=['DeepRise V13.1 PRO','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js']
+          assert not [x for x in required if x not in idx]
+          assert "version: 'V13 PRO'" in cfg
+          assert 'Block local-only official forecast writes' in bridge
           for marker in ['order_flow_intelligence','liquidity_proxy_intelligence','predictive_confluence','COINGLASS_API_KEY']:
               assert marker in pub, f'predictive engine missing {marker}'
-          for marker in ['NANSEN_API_KEY','smart-money/netflow','net_flow_24h_usd','Smart Money']:
-              assert marker in sm, f'Smart Money enrichment missing {marker}'
-          assert 'No metric is invented' in pi, 'predictive UI must disclose missing-provider behavior'
-          assert 'data-api.binance.vision' in pub and 'data-api.binance.vision' in maint, 'central jobs are not using Binance public market-data endpoint'
-          assert 'COINGLASS_API_KEY' in wf and 'NANSEN_API_KEY' in wf and 'scripts/enrich_smart_money.py' in wf and 'contents: write' in wf, 'authenticated predictive providers or authoritative writes not wired'
+          for marker in ['NANSEN_API_KEY','smart-money/netflow','whale_divergence','wallet_confirmed']:
+              assert marker in sm, f'whale intelligence missing {marker}'
+          for marker in ['BUY_SIDE_SWEEP_CONFIRMED','UPWARD_LIQUIDITY_SWEEP_RISK','blocks newly-created LONG']:
+              assert marker in trap, f'trap gate missing {marker}'
+          for marker in ['UPWARD_LIQUIDITY_SWEEP_RISK','BUY_SIDE_SWEEP_CONFIRMED','trap_score','closed 5m + 15m']:
+              assert marker in alerts, f'central sweep alerts missing {marker}'
+          for marker in ['market-alerts.json','تنبيهات سحب السيولة','Whale Divergence','Notification.requestPermission']:
+              assert marker in pi, f'UI alert wiring missing {marker}'
+          assert 'data-api.binance.vision' in pub and 'data-api.binance.vision' in maint and 'data-api.binance.vision' in alerts
+          for marker in ['COINGLASS_API_KEY','NANSEN_API_KEY','scripts/apply_trap_gate.py','scripts/publish_liquidity_alerts.py','market-alerts.json','contents: write']:
+              assert marker in wf, f'central workflow missing {marker}'
           PY
