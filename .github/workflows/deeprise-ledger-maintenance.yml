@@ -8,6 +8,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/publish_forecasts.py'
+      - 'scripts/apply_trap_gate.py'
+      - 'scripts/publish_liquidity_alerts.py'
       - 'scripts/enrich_smart_money.py'
       - 'scripts/maintain_ledger.py'
       - '.github/workflows/deeprise-ledger-maintenance.yml'
@@ -32,26 +34,32 @@ jobs:
           COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
         run: python3 scripts/publish_forecasts.py
 
-      - name: Enrich newly created forecasts with verified Smart Money
+      - name: Block new LONG forecasts caught in upward liquidity sweep traps
+        run: python3 scripts/apply_trap_gate.py
+
+      - name: Enrich newly created forecasts with Smart Money and whale divergence
         env:
           NANSEN_API_KEY: ${{ secrets.NANSEN_API_KEY }}
         run: python3 scripts/enrich_smart_money.py
 
+      - name: Publish scanner-wide liquidity sweep alerts
+        run: python3 scripts/publish_liquidity_alerts.py
+
       - name: Maintain open forecast lifecycle from Binance 1m candles
         run: python3 scripts/maintain_ledger.py
 
-      - name: Commit central forecast and lifecycle changes
+      - name: Commit central forecasts alerts and lifecycle changes
         id: ledger
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add forecast-ledger.json
+          git add forecast-ledger.json market-alerts.json
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          git commit -m "Publish and maintain DeepRise predictive forecasts"
+          git commit -m "Publish DeepRise forecasts and liquidity sweep alerts"
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "proof_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
@@ -65,6 +73,6 @@ jobs:
           git add forecast-ledger.json
           git diff --cached --quiet || git commit -m "Stamp DeepRise central forecast proof"
 
-      - name: Push authoritative central ledger
+      - name: Push authoritative central data
         if: steps.ledger.outputs.changed == 'true'
         run: git push
