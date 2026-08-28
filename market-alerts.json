@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-08-28T23:07:22.536Z",
+  "generated_at": "2026-08-28T23:20:53.846Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 30,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "UNIUSDT-BUY_SIDE_SWEEP_CONFIRMED-1787959199999",
+      "symbol": "UNIUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 74,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 4.431,
+      "liquidity_level": 4.434,
+      "distance_to_liquidity_pct": 0.0677,
+      "momentum_30m_pct": 0.2262,
+      "taker_buy_ratio": 0.61817,
+      "taker_acceleration_pp": -21.5287,
+      "upper_wick_ratio": 0.4286,
+      "volume_ratio": 1.0587,
+      "atr_pct": 0.2305,
+      "quote_volume_usdt": 27408702.21,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -21.5pp",
+        "Upper-wick rejection 43% of candle range",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-08-28T23:19:59.999Z",
+      "invalidation": "A sustained 5m close above 4.434 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-08-28T23:20:47.159Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ADAUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1787958299999",
       "symbol": "ADAUSDT",
