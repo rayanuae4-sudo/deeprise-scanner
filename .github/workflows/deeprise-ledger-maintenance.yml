@@ -1,30 +1,33 @@
-name: DeepRise Verified Ledger Maintenance
+name: DeepRise Central Forecast Publisher
 
 on:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '7,37 * * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: deeprise-ledger-maintenance
+  group: deeprise-central-ledger
   cancel-in-progress: false
 
 jobs:
-  maintain-ledger:
+  publish-and-maintain:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Publish new official forecasts from closed Binance candles
+        run: python3 scripts/publish_forecasts.py
+
       - name: Maintain open forecast lifecycle from Binance 1m candles
         run: python3 scripts/maintain_ledger.py
 
-      - name: Commit verified lifecycle refresh
-        id: lifecycle
+      - name: Commit central forecast and lifecycle changes
+        id: ledger
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
@@ -34,19 +37,20 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          git commit -m "Maintain DeepRise verified forecast lifecycle"
+          git commit -m "Publish and maintain DeepRise central forecasts"
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "proof_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: Stamp lifecycle proof commit
-        if: steps.lifecycle.outputs.changed == 'true'
+      - name: Stamp GitHub proof on new forecasts and lifecycle transitions
+        if: steps.ledger.outputs.changed == 'true'
         env:
-          PROOF_SHA: ${{ steps.lifecycle.outputs.proof_sha }}
+          PROOF_SHA: ${{ steps.ledger.outputs.proof_sha }}
         run: |
+          python3 scripts/publish_forecasts.py stamp
           python3 scripts/maintain_ledger.py stamp
           git add forecast-ledger.json
-          git diff --cached --quiet || git commit -m "Stamp DeepRise lifecycle proof"
+          git diff --cached --quiet || git commit -m "Stamp DeepRise central forecast proof"
 
-      - name: Push maintained ledger
-        if: steps.lifecycle.outputs.changed == 'true'
+      - name: Push authoritative central ledger
+        if: steps.ledger.outputs.changed == 'true'
         run: git push
