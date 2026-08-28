@@ -1,0 +1,65 @@
+name: DeepRise Production Index Builder
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'core-v85.html'
+      - '.github/workflows/deeprise-production-index.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deeprise-production-index
+  cancel-in-progress: true
+
+jobs:
+  build-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build direct V13.1 production HTML
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('core-v85.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('<title>DeepRise V8.5 PRO</title>','<title>DeepRise V13.1 PRO</title>')
+          s=s.replace('⚡ DeepRise V8.5 PRO','⚡ DeepRise V13.1 PRO')
+          s=s.replace('Engine: <b>V8.5 PRO</b>','Engine: <b>V13.1 PRO</b>')
+          s=s.replace('DeepRise V8.5 PRO analyses public market data.','DeepRise V13.1 PRO analyses public market data.')
+          s=s.replace('const API="https://api.binance.com",FAPI="https://fapi.binance.com";','const API="https://data-api.binance.vision",FAPI="https://fapi.binance.com";')
+          head='''<meta name="theme-color" content="#050d18"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="DeepRise"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon.svg"><link rel="stylesheet" href="mobile-app-v11.css?v=1310">'''
+          scripts='''<script src="deeprise-v86-upgrade.js?v=1310"></script><script src="deeprise-intelligence-v11.js?v=1310"></script><script src="deeprise-v12-experience.js?v=1310"></script><script src="deeprise-analytics-config.js?v=1310"></script><script src="deeprise-analytics.js?v=1310"></script><script src="deeprise-central-ledger.js?v=1310"></script><script src="deeprise-v13-product.js?v=1310"></script><script src="deeprise-central-forecast-bridge.js?v=1310"></script><script src="deeprise-predictive-intelligence.js?v=1310"></script><script src="deeprise-performance.js?v=1310"></script><script src="deeprise-v13-gate-hotfix.js?v=1310"></script><script src="mobile-app-v11.js?v=1310"></script><script src="pwa.js?v=1310"></script>'''
+          if 'mobile-app-v11.css?v=1310' not in s:
+              s=s.replace('</head>',head+'</head>')
+          if 'deeprise-predictive-intelligence.js?v=1310' not in s:
+              s=s.replace('</body>',scripts+'</body>')
+          Path('index.html').write_text(s,encoding='utf-8')
+          PY
+
+      - name: Assert direct production runtime
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          assert len(s)>45000, 'production index is still a loader/wrapper'
+          assert 'document.write' not in s, 'document.write loader must not ship'
+          assert 'https://data-api.binance.vision' in s, 'stable Binance spot endpoint missing'
+          for x in ['deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js','deeprise-v13-product.js']:
+              assert x in s, f'missing {x}'
+          PY
+
+      - name: Commit production index
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Build direct DeepRise V13.1 production index"
+          git push
