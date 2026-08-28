@@ -183,7 +183,7 @@ ru:{
 };
 let currentLang=localStorage.getItem("deeprise_language")||"en";
 function tr(v){return currentLang==="en"?v:(I18N[currentLang]?.[v]||v)}
-function translateTextNode(n){let raw=n.nodeValue,trim=raw.trim();if(!trim)return;let out=tr(trim);if(out!==trim)n.nodeValue=raw.replace(trim,out)}
+function translateTextNode(n){let raw=n.nodeValue,trim=raw.trim();if(!trim)return;if(!n.__deepriseOriginal)n.__deepriseOriginal=trim;let out=tr(n.__deepriseOriginal);if(out!==trim)n.nodeValue=raw.replace(trim,out)}
 function applyLanguage(){document.documentElement.lang=currentLang;document.documentElement.dir=currentLang==="ar"?"rtl":"ltr";document.querySelectorAll("body *:not(script):not(style):not(option)").forEach(el=>{for(let n of el.childNodes)if(n.nodeType===3)translateTextNode(n)});let sel=document.getElementById("languageSelect");if(sel)sel.value=currentLang}
 function setLanguage(lang){currentLang=lang;localStorage.setItem("deeprise_language",lang);applyLanguage();if(chartSymbol&&marketData.length)updateChartAnalysis(chartSymbol)}
 
