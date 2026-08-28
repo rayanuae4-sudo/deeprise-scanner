@@ -59,6 +59,9 @@ jobs:
           from pathlib import Path
           idx=Path('index.html').read_text(encoding='utf-8')
           cfg=Path('deeprise-analytics-config.js').read_text(encoding='utf-8')
+          pwa=Path('pwa.js').read_text(encoding='utf-8')
+          sw=Path('sw.js').read_text(encoding='utf-8')
+          manifest=Path('manifest.json').read_text(encoding='utf-8')
           bridge=Path('deeprise-central-forecast-bridge.js').read_text(encoding='utf-8')
           pi=Path('deeprise-predictive-intelligence.js').read_text(encoding='utf-8')
           pub=Path('scripts/publish_forecasts.py').read_text(encoding='utf-8')
@@ -67,9 +70,12 @@ jobs:
           alerts=Path('scripts/publish_liquidity_alerts.py').read_text(encoding='utf-8')
           maint=Path('scripts/maintain_ledger.py').read_text(encoding='utf-8')
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
-          required=['DeepRise V13.1 PRO','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js']
+          required=['deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js']
           assert not [x for x in required if x not in idx]
-          assert "version: 'V13 PRO'" in cfg
+          assert "version: 'V13.3 PRO'" in cfg
+          assert 'DeepRise V13.3 PRO' in pwa and 'stable-v13-6' in pwa
+          assert "deeprise-pwa-stable-v13-6" in sw and './market-alerts.json' in sw
+          assert 'DeepRise Scanner V13.3 PRO' in manifest
           assert 'Block local-only official forecast writes' in bridge
           for marker in ['order_flow_intelligence','liquidity_proxy_intelligence','predictive_confluence','COINGLASS_API_KEY']:
               assert marker in pub, f'predictive engine missing {marker}'
