@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/publish_forecasts.py'
+      - 'scripts/enrich_smart_money.py'
       - 'scripts/maintain_ledger.py'
       - '.github/workflows/deeprise-ledger-maintenance.yml'
 
@@ -30,6 +31,11 @@ jobs:
         env:
           COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
         run: python3 scripts/publish_forecasts.py
+
+      - name: Enrich newly created forecasts with verified Smart Money
+        env:
+          NANSEN_API_KEY: ${{ secrets.NANSEN_API_KEY }}
+        run: python3 scripts/enrich_smart_money.py
 
       - name: Maintain open forecast lifecycle from Binance 1m candles
         run: python3 scripts/maintain_ledger.py
