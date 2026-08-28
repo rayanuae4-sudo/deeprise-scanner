@@ -1,0 +1,52 @@
+name: DeepRise Verified Ledger Maintenance
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deeprise-ledger-maintenance
+  cancel-in-progress: false
+
+jobs:
+  maintain-ledger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Maintain open forecast lifecycle from Binance 1m candles
+        run: python3 scripts/maintain_ledger.py
+
+      - name: Commit verified lifecycle refresh
+        id: lifecycle
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forecast-ledger.json
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Maintain DeepRise verified forecast lifecycle"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "proof_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Stamp lifecycle proof commit
+        if: steps.lifecycle.outputs.changed == 'true'
+        env:
+          PROOF_SHA: ${{ steps.lifecycle.outputs.proof_sha }}
+        run: |
+          python3 scripts/maintain_ledger.py stamp
+          git add forecast-ledger.json
+          git diff --cached --quiet || git commit -m "Stamp DeepRise lifecycle proof"
+
+      - name: Push maintained ledger
+        if: steps.lifecycle.outputs.changed == 'true'
+        run: git push
