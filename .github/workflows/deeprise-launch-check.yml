@@ -24,7 +24,7 @@ jobs:
 
       - name: Validate JavaScript syntax
         run: |
-          for f in deeprise-v86-upgrade.js deeprise-intelligence-v11.js deeprise-v12-experience.js deeprise-analytics-config.js deeprise-analytics.js deeprise-central-ledger.js deeprise-v13-product.js deeprise-performance.js deeprise-v13-gate-hotfix.js mobile-app-v11.js pwa.js sw.js; do
+          for f in deeprise-v86-upgrade.js deeprise-intelligence-v11.js deeprise-v12-experience.js deeprise-analytics-config.js deeprise-analytics.js deeprise-central-ledger.js deeprise-v13-product.js deeprise-central-forecast-bridge.js deeprise-performance.js deeprise-v13-gate-hotfix.js mobile-app-v11.js pwa.js sw.js; do
             node --check "$f"
           done
 
@@ -42,24 +42,45 @@ jobs:
 
       - name: Validate Python and JSON
         run: |
-          python3 -m py_compile scripts/maintain_ledger.py
+          python3 -m py_compile scripts/maintain_ledger.py scripts/publish_forecasts.py
           python3 - <<'PY'
           import json
           for f in ['manifest.json','forecast-ledger.json']:
               with open(f,encoding='utf-8') as h: json.load(h)
           PY
 
-      - name: Assert production V13 wiring
+      - name: Verify public Binance data path from GitHub runner
+        run: |
+          python3 - <<'PY'
+          import json
+          from urllib.request import Request,urlopen
+          for url in [
+              'https://api.binance.com/api/v3/time',
+              'https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=15m&limit=2'
+          ]:
+              req=Request(url,headers={'User-Agent':'DeepRise-Launch-Check/13'})
+              with urlopen(req,timeout=20) as r:
+                  assert r.status == 200
+                  json.loads(r.read().decode())
+          PY
+
+      - name: Assert production V13 central wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
           idx=Path('index.html').read_text(encoding='utf-8')
           cfg=Path('deeprise-analytics-config.js').read_text(encoding='utf-8')
           sw=Path('sw.js').read_text(encoding='utf-8')
-          required=['DeepRise V13 PRO','deeprise-v13-product.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','deeprise-central-ledger.js']
+          bridge=Path('deeprise-central-forecast-bridge.js').read_text(encoding='utf-8')
+          pub=Path('scripts/publish_forecasts.py').read_text(encoding='utf-8')
+          wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
+          required=['DeepRise V13 PRO','deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','deeprise-central-ledger.js']
           missing=[x for x in required if x not in idx]
           assert not missing, f'missing V13 runtime wiring: {missing}'
           assert "version: 'V13 PRO'" in cfg, 'analytics version is not V13 PRO'
-          for x in ['deeprise-v13-product.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','forecast-ledger.json']:
+          for x in ['deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','forecast-ledger.json']:
               assert x in sw, f'PWA cache missing {x}'
+          assert 'Block local-only official forecast writes' in bridge, 'local-only official forecast path not blocked'
+          assert "source': 'central-v13-publisher'" in pub, 'central publisher source marker missing'
+          assert 'scripts/publish_forecasts.py' in wf and 'contents: write' in wf, 'central publisher workflow is not wired for ledger writes'
           PY
