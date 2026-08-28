@@ -1,4 +1,4 @@
-name: DeepRise V13 Launch Check
+name: DeepRise V13.1 Launch Check
 
 on:
   push:
@@ -24,21 +24,20 @@ jobs:
 
       - name: Validate JavaScript syntax
         run: |
-          for f in deeprise-v86-upgrade.js deeprise-intelligence-v11.js deeprise-v12-experience.js deeprise-analytics-config.js deeprise-analytics.js deeprise-central-ledger.js deeprise-v13-product.js deeprise-central-forecast-bridge.js deeprise-performance.js deeprise-v13-gate-hotfix.js mobile-app-v11.js pwa.js sw.js; do
+          for f in deeprise-v86-upgrade.js deeprise-intelligence-v11.js deeprise-v12-experience.js deeprise-analytics-config.js deeprise-analytics.js deeprise-central-ledger.js deeprise-v13-product.js deeprise-central-forecast-bridge.js deeprise-predictive-intelligence.js deeprise-performance.js deeprise-v13-gate-hotfix.js mobile-app-v11.js pwa.js sw.js; do
             node --check "$f"
           done
 
-      - name: Validate wrapper inline JavaScript
+      - name: Validate direct production index
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           s=Path('index.html').read_text(encoding='utf-8')
-          scripts=re.findall(r'<script>(.*?)</script>',s,re.S)
-          assert scripts, 'index wrapper inline script missing'
-          Path('/tmp/deeprise-index-inline.js').write_text(scripts[-1],encoding='utf-8')
+          assert len(s)>45000, 'index.html is not the direct scanner runtime'
+          assert 'document.write' not in s, 'legacy document.write loader detected'
+          assert 'https://data-api.binance.vision' in s, 'stable Binance spot endpoint missing'
+          assert '<script>' in s, 'scanner core JavaScript missing'
           PY
-          node --check /tmp/deeprise-index-inline.js
 
       - name: Validate Python and JSON
         run: |
@@ -49,10 +48,12 @@ jobs:
               with open(f,encoding='utf-8') as h: json.load(h)
           PY
 
-      - name: Verify exact central market-data path from GitHub runner
+      - name: Verify predictive market-data path from GitHub runner
+        env:
+          COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
         run: python3 scripts/publish_forecasts.py health
 
-      - name: Assert production V13 central wiring
+      - name: Assert production V13.1 predictive wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -60,17 +61,22 @@ jobs:
           cfg=Path('deeprise-analytics-config.js').read_text(encoding='utf-8')
           sw=Path('sw.js').read_text(encoding='utf-8')
           bridge=Path('deeprise-central-forecast-bridge.js').read_text(encoding='utf-8')
+          pi=Path('deeprise-predictive-intelligence.js').read_text(encoding='utf-8')
           pub=Path('scripts/publish_forecasts.py').read_text(encoding='utf-8')
           maint=Path('scripts/maintain_ledger.py').read_text(encoding='utf-8')
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
-          required=['DeepRise V13 PRO','deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','deeprise-central-ledger.js']
+          required=['DeepRise V13.1 PRO','deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','deeprise-central-ledger.js']
           missing=[x for x in required if x not in idx]
-          assert not missing, f'missing V13 runtime wiring: {missing}'
+          assert not missing, f'missing V13.1 runtime wiring: {missing}'
           assert "version: 'V13 PRO'" in cfg, 'analytics version is not V13 PRO'
-          for x in ['deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','forecast-ledger.json']:
+          for x in ['deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','forecast-ledger.json']:
               assert x in sw, f'PWA cache missing {x}'
           assert 'Block local-only official forecast writes' in bridge, 'local-only official forecast path not blocked'
-          assert "source': 'central-v13-publisher'" in pub, 'central publisher source marker missing'
+          assert 'predictive:r.predictive||null' in bridge, 'predictive ledger fields not exposed to UI'
+          assert "'source': 'central-v13.1-publisher'" in pub, 'V13.1 central publisher marker missing'
+          for marker in ['order_flow_intelligence','liquidity_proxy_intelligence','predictive_confluence','COINGLASS_API_KEY']:
+              assert marker in pub, f'predictive engine missing {marker}'
+          assert 'No metric is invented' in pi, 'predictive UI must disclose missing-provider behavior'
           assert 'data-api.binance.vision' in pub and 'data-api.binance.vision' in maint, 'central jobs are not using Binance public market-data endpoint'
-          assert 'scripts/publish_forecasts.py' in wf and 'scripts/maintain_ledger.py' in wf and 'contents: write' in wf, 'central publisher workflow is not wired for authoritative ledger writes'
+          assert 'COINGLASS_API_KEY' in wf and 'contents: write' in wf, 'optional external intelligence or authoritative writes not wired'
           PY
