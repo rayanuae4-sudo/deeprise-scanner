@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Maintain lifecycle of already-verified DeepRise forecasts using Binance 1m candles.
+"""Maintain lifecycle of verified DeepRise forecasts using Binance 1m candles.
 No forecasts are invented here. Ambiguous same-minute target/stop ordering is explicitly excluded.
 """
 import json, os, sys, time
@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 
 LEDGER=Path('forecast-ledger.json')
 CHANGES=Path('.ledger_status_changes.json')
-API='https://api.binance.com/api/v3/klines'
+API='https://data-api.binance.vision/api/v3/klines'
 
 def iso(ms=None):
     d=datetime.fromtimestamp((ms/1000) if ms is not None else time.time(),timezone.utc)
@@ -48,10 +48,10 @@ def move(entry,price,side):
 
 def maintain():
     data=json.loads(LEDGER.read_text(encoding='utf-8'))
-    changed_ids=[]; touched=False; now_ms=int(time.time()*1000)
+    changed_ids=[]; touched=False; now_ms=int(time.time()*1000); attempted=0; successful=0
     for r in data.get('records',[]):
         status=str(r.get('status') or 'ACTIVE').upper()
-        if status not in ('ACTIVE','TP1 HIT'): 
+        if status not in ('ACTIVE','TP1 HIT'):
             if status=='TP2 HIT' and not r.get('ended_at') and r.get('tp2_hit_at'):
                 r['ended_at']=r['tp2_hit_at']; touched=True
             continue
@@ -59,10 +59,12 @@ def maintain():
         if not symbol or side not in ('LONG','SHORT'):continue
         start=ms(r.get('last_checked_at') or r.get('created_at'))
         if not start:continue
+        attempted+=1
         try: bars=klines(symbol,max(start-60000,0),now_ms)
         except Exception as e:
-            r['maintenance_error']=type(e).__name__; continue
+            r['maintenance_error']=type(e).__name__; touched=True; continue
         if not bars:continue
+        successful+=1
         old_status=status; entry=float(r.get('entry') or 0); tp1=float(r.get('tp1') or 0); tp2=float(r.get('tp2') or 0); sl=float(r.get('sl') or 0)
         for b in bars:
             high=float(b[2]); low=float(b[3]); close=float(b[4]); close_ms=int(b[6]); at=iso(close_ms)
@@ -97,10 +99,12 @@ def maintain():
         touched=True
     if touched:
         data['generated_at']=iso()
-        data['lifecycle_source']='Binance Spot 1m candles via GitHub Actions'
+        data['lifecycle_source']='Binance public market-data endpoint, Spot 1m candles via GitHub Actions'
         data['lifecycle_precision']='1 minute; same-minute target/stop ordering marked AMBIGUOUS and excluded from performance'
         LEDGER.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     CHANGES.write_text(json.dumps([x for x in changed_ids if x]),encoding='utf-8')
+    if attempted and successful==0:
+        raise RuntimeError(f'Central lifecycle refresh failed for all {attempted} open forecasts')
 
 def stamp():
     sha=os.environ.get('PROOF_SHA','').strip()
