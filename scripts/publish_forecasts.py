@@ -6,7 +6,7 @@ market data, requires the V13 quality gate, never weakens thresholds to fill
 slots, and writes no fabricated results. Browser clients consume these records
 instead of creating official forecasts locally.
 """
-import json, math, os, sys, time
+import json, os, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode
@@ -14,7 +14,7 @@ from urllib.request import Request, urlopen
 
 LEDGER = Path('forecast-ledger.json')
 NEW_IDS = Path('.ledger_new_forecasts.json')
-API = 'https://api.binance.com'
+API = 'https://data-api.binance.vision'
 MAX_DAILY = 5
 MIN_QUOTE_VOLUME = 20_000_000.0
 UNIVERSE = 45
@@ -51,7 +51,6 @@ def ema(values, period):
 def rsi(values, period=14):
     if len(values) <= period:
         return None
-    gains = losses = 0.0
     diffs = [values[i] - values[i-1] for i in range(1, len(values))]
     seed = diffs[:period]
     gains = sum(max(x, 0.0) for x in seed) / period
@@ -176,6 +175,14 @@ def universe():
     return rows[:UNIVERSE]
 
 
+def health():
+    t = get_json('/api/v3/time')
+    bars = candles('BTCUSDT', '15m', 2)
+    if not isinstance(t, dict) or not t.get('serverTime') or not isinstance(bars, list) or len(bars) < 2:
+        raise RuntimeError('Binance public market-data endpoint did not return valid data')
+    print(f"DeepRise central market-data health OK via {API}")
+
+
 def publish():
     data = json.loads(LEDGER.read_text(encoding='utf-8'))
     records = data.setdefault('records', [])
@@ -224,7 +231,7 @@ def publish():
             used.add(row['symbol'])
             created.append(fid)
     data['generated_at'] = now_iso()
-    data['source'] = 'GitHub Actions central V13 publisher + Binance market data; historical verified imports retained'
+    data['source'] = 'GitHub Actions central V13 publisher + Binance public market-data endpoint; historical verified imports retained'
     data['forecast_creation'] = 'Authoritative forecasts are created centrally before browser display; no browser secret or local-only official forecast path'
     data['quality_gate'] = 'V13: aligned 15m/1h trend, score >=72, volume/candle/liquidity/R:R checks; minimum 5/6 conditions'
     LEDGER.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
@@ -249,4 +256,9 @@ def stamp():
 
 
 if __name__ == '__main__':
-    stamp() if len(sys.argv) > 1 and sys.argv[1] == 'stamp' else publish()
+    if len(sys.argv) > 1 and sys.argv[1] == 'stamp':
+        stamp()
+    elif len(sys.argv) > 1 and sys.argv[1] == 'health':
+        health()
+    else:
+        publish()
