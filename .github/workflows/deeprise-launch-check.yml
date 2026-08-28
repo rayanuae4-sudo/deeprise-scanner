@@ -1,0 +1,65 @@
+name: DeepRise V13 Launch Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - '*.js'
+      - '*.json'
+      - 'scripts/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          for f in deeprise-v86-upgrade.js deeprise-intelligence-v11.js deeprise-v12-experience.js deeprise-analytics-config.js deeprise-analytics.js deeprise-central-ledger.js deeprise-v13-product.js deeprise-performance.js deeprise-v13-gate-hotfix.js mobile-app-v11.js pwa.js sw.js; do
+            node --check "$f"
+          done
+
+      - name: Validate wrapper inline JavaScript
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text(encoding='utf-8')
+          scripts=re.findall(r'<script>(.*?)</script>',s,re.S)
+          assert scripts, 'index wrapper inline script missing'
+          Path('/tmp/deeprise-index-inline.js').write_text(scripts[-1],encoding='utf-8')
+          PY
+          node --check /tmp/deeprise-index-inline.js
+
+      - name: Validate Python and JSON
+        run: |
+          python3 -m py_compile scripts/maintain_ledger.py
+          python3 - <<'PY'
+          import json
+          for f in ['manifest.json','forecast-ledger.json']:
+              with open(f,encoding='utf-8') as h: json.load(h)
+          PY
+
+      - name: Assert production V13 wiring
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          idx=Path('index.html').read_text(encoding='utf-8')
+          cfg=Path('deeprise-analytics-config.js').read_text(encoding='utf-8')
+          sw=Path('sw.js').read_text(encoding='utf-8')
+          required=['DeepRise V13 PRO','deeprise-v13-product.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','deeprise-central-ledger.js']
+          missing=[x for x in required if x not in idx]
+          assert not missing, f'missing V13 runtime wiring: {missing}'
+          assert "version: 'V13 PRO'" in cfg, 'analytics version is not V13 PRO'
+          for x in ['deeprise-v13-product.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','forecast-ledger.json']:
+              assert x in sw, f'PWA cache missing {x}'
+          PY
