@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-08-29T08:27:32.577Z",
+  "generated_at": "2026-08-29T08:40:55.134Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 27,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "BMTUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1787992799999",
+      "symbol": "BMTUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 67,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.02187,
+      "liquidity_level": 0.02205,
+      "distance_to_liquidity_pct": 0.823,
+      "momentum_30m_pct": 0.598,
+      "taker_buy_ratio": 0.58074,
+      "taker_acceleration_pp": -5.9247,
+      "upper_wick_ratio": 0.5556,
+      "volume_ratio": 2.9461,
+      "atr_pct": 0.5846,
+      "quote_volume_usdt": 106804801.94,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Aggressive buying decelerating -5.9pp",
+        "Upper-wick rejection 56% of candle range",
+        "Volume expansion 2.95x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-08-29T08:39:59.999Z",
+      "invalidation": "A sustained 5m close above 0.02205 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-08-29T08:40:39.780Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "PUMPUSDT-BUY_SIDE_SWEEP_CONFIRMED-1787988599999",
       "symbol": "PUMPUSDT",
