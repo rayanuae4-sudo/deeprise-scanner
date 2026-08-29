@@ -1,0 +1,74 @@
+name: One-off AAVE Ledger Correction
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/oneoff-aave-ledger-correction-20260829.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  correct:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore newer AAVE ledger current
+        id: data
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          p=Path('forecast-ledger.json')
+          d=json.loads(p.read_text(encoding='utf-8'))
+          target=next((r for r in d.get('records',[]) if r.get('forecast_id')=='2026-08-29-AAVEUSDT'),None)
+          if target is None:
+              raise SystemExit('AAVE forecast row not found')
+          # Preserve immutable setup and all lifecycle fields. 121.17 was the newer GitHub publisher value
+          # present at 02:40Z; PostHog 121.6 was an older 02:16Z audit snapshot.
+          changed = target.get('current') != 121.17
+          if changed:
+              target['current']=121.17
+              d['generated_at']=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+              p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          Path('/tmp/aave_changed').write_text('1' if changed else '',encoding='utf-8')
+          PY
+          if [ -s /tmp/aave_changed ]; then
+            git add forecast-ledger.json
+            git commit -m "Restore newer AAVE ledger current after PostHog merge"
+            DATA_SHA=$(git rev-parse HEAD)
+            echo "data_sha=$DATA_SHA" >> "$GITHUB_OUTPUT"
+            git push origin HEAD:main
+          else
+            echo "data_sha=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stamp corrected AAVE proof
+        if: steps.data.outputs.data_sha != ''
+        shell: bash
+        env:
+          DATA_SHA: ${{ steps.data.outputs.data_sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          p=Path('forecast-ledger.json')
+          d=json.loads(p.read_text(encoding='utf-8'))
+          target=next(r for r in d.get('records',[]) if r.get('forecast_id')=='2026-08-29-AAVEUSDT')
+          target['proof_commit']=os.environ['DATA_SHA']
+          target['proof_verified_at']=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+          p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          PY
+          git add forecast-ledger.json
+          git commit -m "Stamp GitHub proof for corrected AAVE ledger row"
+          git push origin HEAD:main
