@@ -1,0 +1,131 @@
+name: DeepRise PostHog Ledger Sync Once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deeprise-posthog-sync-once.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deeprise-posthog-ledger-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebase on latest main
+        run: git pull --rebase origin main
+
+      - name: Apply authoritative PostHog audit enrichments
+        id: apply
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          path=Path('forecast-ledger.json')
+          data=json.loads(path.read_text(encoding='utf-8'))
+          updates={
+            '2026-08-29-TRUMPUSDT': {
+              'final_move': -1.3237924865831814,
+              'end_reason': 'STOP HIT'
+            },
+            '2026-08-28-PEPEUSDT': {
+              'final_move': -1.648351648351656,
+              'end_reason': 'STOP HIT'
+            }
+          }
+          changed=[]
+          by_id={str(r.get('forecast_id')):r for r in data.get('records',[])}
+          for fid, vals in updates.items():
+              r=by_id.get(fid)
+              if not r:
+                  raise RuntimeError(f'Expected forecast missing from ledger: {fid}')
+              # Immutable identity/trade parameters are deliberately untouched.
+              if str(r.get('status','')).upper() != 'STOP HIT':
+                  raise RuntimeError(f'Unexpected lifecycle regression for {fid}: {r.get("status")}')
+              row_changed=False
+              for k,v in vals.items():
+                  if r.get(k) != v:
+                      r[k]=v
+                      row_changed=True
+              if row_changed:
+                  changed.append(fid)
+          if changed:
+              now=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+              data['generated_at']=now
+              path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          Path('.posthog_changed_ids.json').write_text(json.dumps(changed),encoding='utf-8')
+          with open('changed.env','w',encoding='utf-8') as h:
+              h.write('CHANGED=' + ('1' if changed else '0') + '\n')
+          print('Changed:', ', '.join(changed) if changed else 'none')
+          PY
+          cat changed.env >> "$GITHUB_OUTPUT"
+
+      - name: Commit lifecycle and audit data
+        id: data_commit
+        if: steps.apply.outputs.CHANGED == '1'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forecast-ledger.json
+          git commit -m "Synchronize DeepRise PostHog audit outcomes for TRUMP and PEPE"
+          DATA_SHA=$(git rev-parse HEAD)
+          echo "sha=$DATA_SHA" >> "$GITHUB_OUTPUT"
+          git push origin HEAD:main
+
+      - name: Stamp per-row proof and remove one-time workflow
+        if: steps.apply.outputs.CHANGED == '1'
+        env:
+          DATA_SHA: ${{ steps.data_commit.outputs.sha }}
+        shell: bash
+        run: |
+          git pull --rebase origin main
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          sha=os.environ['DATA_SHA'].strip()
+          if len(sha)!=40:
+              raise RuntimeError('Invalid data commit SHA')
+          ids=set(json.loads(Path('.posthog_changed_ids.json').read_text(encoding='utf-8')))
+          path=Path('forecast-ledger.json')
+          data=json.loads(path.read_text(encoding='utf-8'))
+          now=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+          found=set()
+          for r in data.get('records',[]):
+              fid=str(r.get('forecast_id') or '')
+              if fid in ids:
+                  r['proof_commit']=sha
+                  r['proof_verified_at']=now
+                  found.add(fid)
+          if found != ids:
+              raise RuntimeError(f'Proof rows missing: {sorted(ids-found)}')
+          data['generated_at']=now
+          path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          PY
+          git add forecast-ledger.json
+          git rm .github/workflows/deeprise-posthog-sync-once.yml
+          git commit -m "Stamp GitHub proof for PostHog ledger synchronization"
+          git push origin HEAD:main
+
+      - name: Remove one-time workflow when no ledger change was needed
+        if: steps.apply.outputs.CHANGED != '1'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/deeprise-posthog-sync-once.yml
+          git commit -m "Remove completed one-time PostHog sync workflow"
+          git push origin HEAD:main
