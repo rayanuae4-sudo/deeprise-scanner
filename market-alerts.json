@@ -1,12 +1,40 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-08-29T18:51:45.627Z",
+  "generated_at": "2026-08-29T19:05:07.506Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 18,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "BMTUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788029999999",
+      "symbol": "BMTUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 66,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.02252,
+      "liquidity_level": 0.02254,
+      "distance_to_liquidity_pct": 0.0888,
+      "momentum_30m_pct": 1.9005,
+      "taker_buy_ratio": 0.51732,
+      "taker_acceleration_pp": -13.9766,
+      "upper_wick_ratio": 0.625,
+      "volume_ratio": 1.2185,
+      "atr_pct": 0.5043,
+      "quote_volume_usdt": 96550843.94,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -14.0pp",
+        "Upper-wick rejection 63% of candle range"
+      ],
+      "bar_closed_at": "2026-08-29T18:59:59.999Z",
+      "invalidation": "A sustained 5m close above 0.02254 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-08-29T19:04:54.140Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "TRUMPUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788029399999",
       "symbol": "TRUMPUSDT",
