@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-08-29T19:31:44.716Z",
+  "generated_at": "2026-08-29T19:44:49.700Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 18,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "XRPUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788032399999",
+      "symbol": "XRPUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 74,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 1.3967,
+      "liquidity_level": 1.3983,
+      "distance_to_liquidity_pct": 0.1146,
+      "momentum_30m_pct": 0.0573,
+      "taker_buy_ratio": 0.54533,
+      "taker_acceleration_pp": -16.1017,
+      "upper_wick_ratio": 0.5645,
+      "volume_ratio": 5.1278,
+      "atr_pct": 0.2061,
+      "quote_volume_usdt": 78099217.42,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -16.1pp",
+        "Upper-wick rejection 56% of candle range",
+        "Volume expansion 5.13x"
+      ],
+      "bar_closed_at": "2026-08-29T19:39:59.999Z",
+      "invalidation": "A sustained 5m close above 1.3983 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-08-29T19:44:41.991Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ENAUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788031799999",
       "symbol": "ENAUSDT",
