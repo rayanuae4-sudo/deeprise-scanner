@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-08-29T12:01:45.788Z",
+  "generated_at": "2026-08-29T12:15:12.831Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 24,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "HEMIUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788005699999",
+      "symbol": "HEMIUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 70,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.01179,
+      "liquidity_level": 0.01184,
+      "distance_to_liquidity_pct": 0.4241,
+      "momentum_30m_pct": 2.611,
+      "taker_buy_ratio": 0.52096,
+      "taker_acceleration_pp": 0.9115,
+      "upper_wick_ratio": 0.3158,
+      "volume_ratio": 2.6895,
+      "atr_pct": 0.9754,
+      "quote_volume_usdt": 24453446.56,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Upper-wick rejection 32% of candle range",
+        "Volume expansion 2.69x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-08-29T12:14:59.999Z",
+      "invalidation": "A sustained 5m close above 0.01184 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-08-29T12:15:07.042Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "SNDKBUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788002399999",
       "symbol": "SNDKBUSDT",
