@@ -17,7 +17,7 @@ function whaleFlowLayer(){load('dr-whale-flow-v155-loader','./deeprise-whale-flo
 function publicLiquidityLayer(){load('dr-public-liquidity-v148-loader','./deeprise-public-liquidity-v148.js?v=1480')}
 function tradeMonitorLayer(){load('dr-trade-monitor-loader','./deeprise-trade-monitor-v14.js?v=1440')}
 function entryRankingLayer(){load('dr-entry-ranking-v155-loader','./deeprise-entry-ranking-v155.js?v=1550')}
-function integrityLayer(){load('dr-integrity-v151-loader','./deeprise-integrity-v151.js?v=1550')}
+function integrityLayer(){load('dr-integrity-v155-loader','./deeprise-integrity-v155.js?v=1550')}
 function signalCardUiLayer(){load('dr-signal-card-ui-v153-loader','./deeprise-signal-card-ui-v153.js?v=1531')}
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;button()});
 addEventListener('load',()=>{brand();languagePerformancePatch();setTimeout(button,1800);setTimeout(nextCandleLayer,100);setTimeout(forecastSafetyLayer,140);setTimeout(signalEngineLayer,180);setTimeout(uiLayer,220);setTimeout(whaleLayer,260);setTimeout(whaleFlowLayer,320);setTimeout(publicLiquidityLayer,360);setTimeout(tradeMonitorLayer,400);setTimeout(entryRankingLayer,480);setTimeout(integrityLayer,580);setTimeout(signalCardUiLayer,680);setTimeout(brand,1600)});
