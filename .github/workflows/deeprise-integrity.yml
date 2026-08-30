@@ -55,7 +55,7 @@ jobs:
               assert marker in entry, f'V15.5 entry invariant missing: {marker}'
           for marker in ['Whale Money Flow Predictor','anomalyScore','ARRIVAL_CONFIRMED','BUY_LIKELY','ROTATION','MOBILIZING','support','selfTest']:
               assert marker in flow, f'whale-flow predictor missing: {marker}'
-          for marker in ["DeepRiseEntryRank?.version==='15.5'","DeepRiseWhaleFlowV155?.version==='15.5'",'whale-flow self-test failed','whale-flow source stale >4h','blockTrading']:
+          for marker in ["DeepRiseEntryRank?.version==='15.5'",'optional whale-flow module unavailable','whale-flow self-test failed','whale-flow source stale >4h','S.blockTrading=issues.length>0']:
               assert marker in integrity, f'integrity monitor missing: {marker}'
           for marker in ['Signal Quality:','dr-quality-pills','DeepRiseEntryRank']:
               assert marker in ui, f'signal-quality UI missing: {marker}'
