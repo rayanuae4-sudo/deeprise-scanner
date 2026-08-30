@@ -1,4 +1,4 @@
-name: DeepRise V14.8 Launch Check
+name: DeepRise V14.9 Launch Check
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
 
       - name: Validate JavaScript syntax
         run: |
-          for f in deeprise-v86-upgrade.js deeprise-intelligence-v11.js deeprise-v12-experience.js deeprise-analytics-config.js deeprise-analytics.js deeprise-central-ledger.js deeprise-v13-product.js deeprise-central-forecast-bridge.js deeprise-predictive-intelligence.js deeprise-performance.js deeprise-v13-gate-hotfix.js deeprise-next-candle-v145.js deeprise-forecast-safety-v145.js deeprise-ui-v146.js deeprise-whale-radar-v147.js deeprise-public-liquidity-v148.js deeprise-trade-monitor-v14.js mobile-app-v11.js pwa.js sw.js; do
+          for f in deeprise-v86-upgrade.js deeprise-intelligence-v11.js deeprise-v12-experience.js deeprise-analytics-config.js deeprise-analytics.js deeprise-central-ledger.js deeprise-v13-product.js deeprise-central-forecast-bridge.js deeprise-predictive-intelligence.js deeprise-performance.js deeprise-v13-gate-hotfix.js deeprise-next-candle-v145.js deeprise-forecast-safety-v145.js deeprise-signal-engine-v149.js deeprise-ui-v146.js deeprise-whale-radar-v147.js deeprise-public-liquidity-v148.js deeprise-trade-monitor-v14.js mobile-app-v11.js pwa.js sw.js; do
             node --check "$f"
           done
 
@@ -53,13 +53,14 @@ jobs:
           COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
         run: python3 scripts/publish_forecasts.py health
 
-      - name: Assert V14.8 public-data and predictive wiring
+      - name: Assert V14.9 public-data and predictive wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
           pwa=Path('pwa.js').read_text(encoding='utf-8')
           sw=Path('sw.js').read_text(encoding='utf-8')
           manifest=Path('manifest.json').read_text(encoding='utf-8')
+          signal=Path('deeprise-signal-engine-v149.js').read_text(encoding='utf-8')
           whale=Path('scripts/publish_whale_radar.py').read_text(encoding='utf-8')
           gate=Path('scripts/apply_whale_gate.py').read_text(encoding='utf-8')
           wui=Path('deeprise-whale-radar-v147.js').read_text(encoding='utf-8')
@@ -67,9 +68,11 @@ jobs:
           pui=Path('deeprise-public-liquidity-v148.js').read_text(encoding='utf-8')
           sm=Path('scripts/enrich_smart_money.py').read_text(encoding='utf-8')
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
-          assert 'DeepRise V14.8 PRO' in pwa and 'stable-v14-8' in pwa
-          assert "deeprise-pwa-stable-v14-8" in sw and './public-liquidity.json' in sw and './deeprise-public-liquidity-v148.js' in sw
-          assert 'DeepRise Scanner V14.8 PRO' in manifest
+          assert 'DeepRise V14.9 PRO' in pwa and 'stable-v14-9' in pwa and 'deeprise-signal-engine-v149.js' in pwa
+          assert "deeprise-pwa-stable-v14-9" in sw and './deeprise-signal-engine-v149.js' in sw and './public-liquidity.json' in sw and './deeprise-public-liquidity-v148.js' in sw
+          assert 'DeepRise Scanner V14.9 PRO' in manifest
+          for marker in ['Signal confidence','Expected move','Buy / accumulation zone','Distribution / sell zone','deeprise_v149_tracking_stats','DeepRiseNextCandleV14']:
+              assert marker in signal, f'signal engine missing {marker}'
           for marker in ['api.geckoterminal.com','tx_from_address','trade_volume_in_usd_greater_than','rotation_in_30m','arrival_score','distribution_score','NANSEN_API_KEY']:
               assert marker in whale, f'whale radar missing {marker}'
           for marker in ['PUBLIC_WHALE_FLOW_CONFLICT','conflict>=88','whale_arrival_radar']:
