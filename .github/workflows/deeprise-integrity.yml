@@ -1,4 +1,4 @@
-name: DeepRise V15.7 Integrity Gate
+name: DeepRise V15.8 Integrity Gate
 
 on:
   push:
@@ -27,41 +27,47 @@ jobs:
             node --check "$f"
           done
 
-      - name: Run production entry regression
+      - name: Run V15.8 entry regression
         run: node scripts/deeprise-entry-regression.js
+
+      - name: Run V15.8 move-timing regression
+        run: node scripts/deeprise-move-timing-regression.js
 
       - name: Run whale-flow regression
         run: node scripts/deeprise-whale-flow-regression.js
 
-      - name: Verify V15.7 runtime and PWA wiring
+      - name: Verify V15.8 runtime and PWA wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
           pwa=Path('pwa.js').read_text(encoding='utf-8')
           sw=Path('sw.js').read_text(encoding='utf-8')
-          integrity=Path('deeprise-integrity-v155.js').read_text(encoding='utf-8')
-          entry=Path('deeprise-entry-ranking-v155.js').read_text(encoding='utf-8')
+          timing=Path('deeprise-move-timing-v158.js').read_text(encoding='utf-8')
+          entry=Path('deeprise-entry-ranking-v158.js').read_text(encoding='utf-8')
+          integrity=Path('deeprise-integrity-v158.js').read_text(encoding='utf-8')
           flow=Path('deeprise-whale-flow-v155.js').read_text(encoding='utf-8')
           inline=Path('deeprise-whale-inline-v156.js').read_text(encoding='utf-8')
           zones=Path('deeprise-trade-zones-v157.js').read_text(encoding='utf-8')
           ui=Path('deeprise-signal-card-ui-v153.js').read_text(encoding='utf-8')
-          for marker in ['deeprise-whale-flow-v155.js?v=1550','deeprise-entry-ranking-v155.js?v=1550','deeprise-integrity-v155.js?v=1550','deeprise-signal-card-ui-v153.js?v=1531','deeprise-whale-inline-v156.js?v=1560','deeprise-trade-zones-v157.js?v=1570']:
+          for marker in ['deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1580','deeprise-integrity-v158.js?v=1580','deeprise-whale-flow-v155.js?v=1550','deeprise-signal-card-ui-v153.js?v=1531','deeprise-whale-inline-v156.js?v=1560','deeprise-trade-zones-v157.js?v=1570']:
               assert marker in pwa, f'pwa.js missing {marker}'
-          assert 'stable-v15-7' in pwa, 'service-worker registration not bumped to V15.7'
-          assert "deeprise-pwa-stable-v15-7" in sw, 'service-worker cache is not V15.7'
-          for f in ['./deeprise-whale-flow-v155.js','./deeprise-entry-ranking-v155.js','./deeprise-integrity-v155.js','./deeprise-signal-card-ui-v153.js','./deeprise-whale-inline-v156.js','./deeprise-trade-zones-v157.js']:
+          assert 'stable-v15-8' in pwa, 'service-worker registration not bumped to V15.8'
+          assert "deeprise-pwa-stable-v15-8" in sw, 'service-worker cache is not V15.8'
+          for f in ['./deeprise-move-timing-v158.js','./deeprise-entry-ranking-v158.js','./deeprise-integrity-v158.js','./deeprise-whale-flow-v155.js','./deeprise-signal-card-ui-v153.js','./deeprise-whale-inline-v156.js','./deeprise-trade-zones-v157.js']:
               assert f in sw, f'{f} missing from PWA core cache'
-          for marker in ['strictReady','fastTrack','FAST_TRACK','whaleFlow','whaleConflict','flowAssist','entryAllowed']:
+          for marker in ['POTENTIAL MOVE STARTING','MOVE EXTENDED — DO NOT CHASE','EARLY_START','EXTENDED','RELOAD','@kline_1m','excursionAtr','givebackAtr','earlyStrong','selfTest']:
+              assert marker in timing, f'move timing missing: {marker}'
+          for marker in ['strictReady','fastTrack','EARLY_FLOW','timingAssist','timingSafe','entryAllowed','patchAnalyze','whaleFlow','whaleConflict']:
               assert marker in entry, f'entry invariant missing: {marker}'
+          for marker in ["DeepRiseEntryRank?.version==='15.8'","DeepRiseMoveTimingV158?.version==='15.8'",'move-timing self-test failed','S.blockTrading=issues.length>0']:
+              assert marker in integrity, f'integrity monitor missing: {marker}'
           for marker in ['Whale Money Flow Predictor','anomalyScore','ARRIVAL_CONFIRMED','BUY_LIKELY','ROTATION','MOBILIZING','support','selfTest']:
               assert marker in flow, f'whale-flow predictor missing: {marker}'
-          for marker in ["DeepRiseEntryRank?.version==='15.5'",'optional whale-flow module unavailable','whale-flow self-test failed','whale-flow source stale >4h','S.blockTrading=issues.length>0']:
-              assert marker in integrity, f'integrity monitor missing: {marker}'
           for marker in ['Whale accumulation detected','Possible move in','DeepRiseWhaleInlineV156']:
               assert marker in inline, f'inline whale alert missing: {marker}'
           for marker in ['Trade Zone Advisor','BUY / RELOAD ZONE','DISTRIBUTION / TAKE-PROFIT','DeepRiseTradeZonesV157','buyZone','distributionZone','DeepRiseWhaleFlowV155?.support']:
               assert marker in zones, f'trade-zone advisor missing: {marker}'
           for marker in ['Signal Quality:','dr-quality-pills','DeepRiseEntryRank']:
               assert marker in ui, f'signal-quality UI missing: {marker}'
-          print('DeepRise V15.7 integrity + whale-flow + trade-zone wiring: PASS')
+          print('DeepRise V15.8 integrity + early timing + anti-chase + whale-flow + trade-zone wiring: PASS')
           PY
