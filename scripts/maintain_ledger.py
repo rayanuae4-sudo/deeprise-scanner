@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Maintain lifecycle of verified DeepRise forecasts using Binance 1m candles.
 No forecasts are invented here. Ambiguous same-minute target/stop ordering is explicitly excluded.
+Every signal keeps an append-only lifecycle timeline (opened, TP1, TP2, cancelled/stopped, ended).
 """
 import json, os, sys, time
 from datetime import datetime, timezone
@@ -46,14 +47,71 @@ def move(entry,price,side):
     raw=(price-entry)/entry*100
     return -raw if side=='SHORT' else raw
 
+def ensure_timeline(r):
+    """Backfill and normalize append-only lifecycle fields without deleting prior data."""
+    changed=False
+    opened=r.get('opened_at') or r.get('created_at')
+    if opened and not r.get('opened_at'):
+        r['opened_at']=opened; changed=True
+    events=r.get('status_history')
+    if not isinstance(events,list):
+        events=[]; r['status_history']=events; changed=True
+
+    def add(kind,at,status=None,reason=None):
+        nonlocal changed
+        if not at:return
+        key=(kind,str(at))
+        if any((str(e.get('event')),str(e.get('at')))==key for e in events if isinstance(e,dict)):
+            return
+        e={'event':kind,'at':at}
+        if status:e['status']=status
+        if reason:e['reason']=reason
+        events.append(e); changed=True
+
+    add('SIGNAL_OPENED',opened,'ACTIVE')
+    add('TP1_HIT',r.get('tp1_hit_at'),'TP1 HIT')
+    add('TP2_HIT',r.get('tp2_hit_at'),'TP2 HIT')
+    status=str(r.get('status') or '').upper()
+    end=r.get('ended_at')
+    reason=r.get('end_reason')
+    if end:
+        if 'STOP' in status or 'STOP' in str(reason or '').upper():
+            if not r.get('cancelled_at'):
+                r['cancelled_at']=end; changed=True
+            add('SIGNAL_CANCELLED',r.get('cancelled_at'),status or 'STOP HIT',reason)
+        elif 'AMBIGUOUS' in status:
+            if not r.get('cancelled_at'):
+                r['cancelled_at']=end; changed=True
+            add('SIGNAL_CANCELLED',r.get('cancelled_at'),status,reason)
+        add('SIGNAL_ENDED',end,status or 'ENDED',reason)
+    events.sort(key=lambda e: ms(e.get('at')) if isinstance(e,dict) else 0)
+    return changed
+
+def add_event(r,event,at,status=None,reason=None):
+    ensure_timeline(r)
+    events=r.setdefault('status_history',[])
+    if any(isinstance(e,dict) and e.get('event')==event and e.get('at')==at for e in events):return
+    x={'event':event,'at':at}
+    if status:x['status']=status
+    if reason:x['reason']=reason
+    events.append(x); events.sort(key=lambda e:ms(e.get('at')) if isinstance(e,dict) else 0)
+
+def set_ended(r,at,status,reason):
+    r['status']=status; r['end_reason']=reason; r['ended_at']=r.get('ended_at') or at
+    if 'STOP' in status or 'AMBIGUOUS' in status:
+        r['cancelled_at']=r.get('cancelled_at') or at
+        add_event(r,'SIGNAL_CANCELLED',r['cancelled_at'],status,reason)
+    add_event(r,'SIGNAL_ENDED',r['ended_at'],status,reason)
+
 def maintain():
     data=json.loads(LEDGER.read_text(encoding='utf-8'))
     changed_ids=[]; touched=False; now_ms=int(time.time()*1000); attempted=0; successful=0
     for r in data.get('records',[]):
+        if ensure_timeline(r): touched=True
         status=str(r.get('status') or 'ACTIVE').upper()
         if status not in ('ACTIVE','TP1 HIT'):
             if status=='TP2 HIT' and not r.get('ended_at') and r.get('tp2_hit_at'):
-                r['ended_at']=r['tp2_hit_at']; touched=True
+                r['ended_at']=r['tp2_hit_at']; add_event(r,'SIGNAL_ENDED',r['ended_at'],'TP2 HIT','TP2'); touched=True
             continue
         symbol=str(r.get('symbol') or '').upper(); side=str(r.get('side') or '').upper()
         if not symbol or side not in ('LONG','SHORT'):continue
@@ -75,20 +133,28 @@ def maintain():
             status=str(r.get('status') or 'ACTIVE').upper()
             if status=='ACTIVE':
                 if stop and (hit1 or hit2):
-                    r['status']='AMBIGUOUS 1M BAR'; r['end_reason']='TARGET_STOP_SAME_1M'; r['ended_at']=at; break
+                    set_ended(r,at,'AMBIGUOUS 1M BAR','TARGET_STOP_SAME_1M'); break
                 if hit2:
-                    r['tp1_hit_at']=r.get('tp1_hit_at') or at; r['tp2_hit_at']=r.get('tp2_hit_at') or at; r['status']='TP2 HIT'; r['end_reason']='TP2'; r['ended_at']=at; break
+                    if not r.get('tp1_hit_at'):
+                        r['tp1_hit_at']=at; add_event(r,'TP1_HIT',at,'TP1 HIT')
+                    if not r.get('tp2_hit_at'):
+                        r['tp2_hit_at']=at; add_event(r,'TP2_HIT',at,'TP2 HIT')
+                    set_ended(r,at,'TP2 HIT','TP2'); break
                 if hit1:
-                    r['tp1_hit_at']=r.get('tp1_hit_at') or at; r['status']='TP1 HIT'
+                    if not r.get('tp1_hit_at'):
+                        r['tp1_hit_at']=at; add_event(r,'TP1_HIT',at,'TP1 HIT')
+                    r['status']='TP1 HIT'
                 elif stop:
-                    r['status']='STOP HIT'; r['end_reason']='STOP'; r['ended_at']=at; break
+                    set_ended(r,at,'STOP HIT','STOP'); break
             elif status=='TP1 HIT':
                 if hit2 and stop:
-                    r['status']='AMBIGUOUS 1M BAR'; r['end_reason']='TP2_STOP_SAME_1M'; r['ended_at']=at; break
+                    set_ended(r,at,'AMBIGUOUS 1M BAR','TP2_STOP_SAME_1M'); break
                 if hit2:
-                    r['tp2_hit_at']=r.get('tp2_hit_at') or at; r['status']='TP2 HIT'; r['end_reason']='TP2'; r['ended_at']=at; break
+                    if not r.get('tp2_hit_at'):
+                        r['tp2_hit_at']=at; add_event(r,'TP2_HIT',at,'TP2 HIT')
+                    set_ended(r,at,'TP2 HIT','TP2'); break
                 if stop:
-                    r['status']='STOP AFTER TP1'; r['end_reason']='STOP_AFTER_TP1'; r['ended_at']=at; break
+                    set_ended(r,at,'STOP AFTER TP1','STOP_AFTER_TP1'); break
         r['last_checked_at']=iso(int(bars[-1][6]))
         r.pop('maintenance_error',None)
         if entry:
@@ -101,6 +167,7 @@ def maintain():
         data['generated_at']=iso()
         data['lifecycle_source']='Binance public market-data endpoint, Spot 1m candles via GitHub Actions'
         data['lifecycle_precision']='1 minute; same-minute target/stop ordering marked AMBIGUOUS and excluded from performance'
+        data['lifecycle_timeline']='Append-only timestamps: opened_at, tp1_hit_at, tp2_hit_at, cancelled_at, ended_at, status_history[]'
         LEDGER.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     CHANGES.write_text(json.dumps([x for x in changed_ids if x]),encoding='utf-8')
     if attempted and successful==0:
