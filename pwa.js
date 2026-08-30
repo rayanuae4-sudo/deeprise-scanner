@@ -16,7 +16,7 @@ function whaleLayer(){load('dr-whale-v147-loader','./deeprise-whale-radar-v147.j
 function whaleFlowLayer(){load('dr-whale-flow-v155-loader','./deeprise-whale-flow-v155.js?v=1550')}
 function publicLiquidityLayer(){load('dr-public-liquidity-v148-loader','./deeprise-public-liquidity-v148.js?v=1480')}
 function tradeMonitorLayer(){load('dr-trade-monitor-loader','./deeprise-trade-monitor-v14.js?v=1440')}
-function entryRankingLayer(){load('dr-entry-ranking-v154-loader','./deeprise-entry-ranking-v154.js?v=1550')}
+function entryRankingLayer(){load('dr-entry-ranking-v155-loader','./deeprise-entry-ranking-v155.js?v=1550')}
 function integrityLayer(){load('dr-integrity-v151-loader','./deeprise-integrity-v151.js?v=1550')}
 function signalCardUiLayer(){load('dr-signal-card-ui-v153-loader','./deeprise-signal-card-ui-v153.js?v=1531')}
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;button()});
