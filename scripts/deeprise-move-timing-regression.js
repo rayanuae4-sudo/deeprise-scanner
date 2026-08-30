@@ -1,0 +1,15 @@
+/* DeepRise CI regression — production V15.8 live move timing evaluator. */
+'use strict';
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+function element(){return{style:{},dataset:{},textContent:'',appendChild(){},querySelector(){return null},querySelectorAll(){return[]},insertAdjacentElement(){},before(){},remove(){},addEventListener(){}}}
+const document={readyState:'loading',head:{appendChild(){}},body:element(),getElementById(){return null},querySelector(){return null},querySelectorAll(){return[]},createElement(){return element()},addEventListener(){}};
+const localStorage={getItem(){return null},setItem(){}};const window={};
+const context={window,document,localStorage,console,Date,Math,Number,String,Object,Array,Set,Map,JSON,MutationObserver:class{observe(){}},setInterval(){},setTimeout(){},clearTimeout(){},addEventListener(){},fetch(){throw new Error('offline test')},WebSocket:function(){},Notification:function(){},navigator:{}};context.globalThis=context;vm.createContext(context);vm.runInContext(fs.readFileSync('deeprise-move-timing-v158.js','utf8'),context,{filename:'deeprise-move-timing-v158.js'});
+const api=window.DeepRiseMoveTimingV158;assert(api&&api.version==='15.8');assert.strictEqual(api.selfTest(),true,'self-test failed');
+function coin(side='LONG'){const long=side==='LONG';return{symbol:'TESTUSDT',e20:long?110:90,e50:100,h1Bull:long,h1Bear:!long,atrPct:2,proSignal:{direction:side,buyZone:long?[97,98]:[90,92],distributionZone:long?[106,108]:[102,104],riskFlags:[]}}}
+function hist(base=100){const h=[];for(let i=0;i<12;i++)h.push({high:base+i*.08,low:base-1+i*.05,close:base-.5+i*.07,volume:100});return h}
+let e=api.evaluate(coin(),{price:101,minuteOpen:100.5,minuteHigh:101.1,minuteLow:100.4,volumePace:1.9,recent:hist(),updated:Date.now()},'LONG');assert.strictEqual(e.status,'EARLY_START');assert.strictEqual(e.earlyStrong,true);assert.strictEqual(e.hardBlock,false);
+let c=api.evaluate(coin(),{price:105.5,minuteOpen:104.8,minuteHigh:106,minuteLow:104.7,volumePace:1.8,recent:[...hist(),{high:106,low:100,close:105.6,volume:300}],updated:Date.now()},'LONG');assert.strictEqual(c.status,'EXTENDED');assert.strictEqual(c.hardBlock,true);assert(c.excursionAtr>1.7);
+let rcoin=coin();rcoin.proSignal.buyZone=[100.6,101.2];let r=api.evaluate(rcoin,{price:101,minuteOpen:101.1,minuteHigh:102,minuteLow:100.8,volumePace:1.05,recent:hist(101),updated:Date.now()},'LONG');assert.strictEqual(r.status,'RELOAD');assert.strictEqual(r.hardBlock,false);
+let s=api.evaluate(coin('SHORT'),{price:94,minuteOpen:95,minuteHigh:95.2,minuteLow:93.8,volumePace:2,recent:hist(99),updated:Date.now()},'SHORT');assert.strictEqual(s.hardBlock,true,'large SHORT excursion should be chase-blocked');
+console.log('DeepRise V15.8 move-timing regression: PASS — early detection, late-chase block, reload and short-side symmetry verified.');
