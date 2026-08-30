@@ -1,4 +1,4 @@
-const CACHE='deeprise-pwa-stable-v13-6';
+const CACHE='deeprise-pwa-stable-v14-1';
 const CORE=['./','./index.html','./core-v85.html','./manifest.json','./icon.svg','./mobile-app-v11.css','./deeprise-v86-upgrade.js','./deeprise-intelligence-v11.js','./deeprise-v12-experience.js','./deeprise-analytics-config.js','./deeprise-analytics.js','./deeprise-central-ledger.js','./deeprise-v13-product.js','./deeprise-central-forecast-bridge.js','./deeprise-predictive-intelligence.js','./deeprise-performance.js','./deeprise-v13-gate-hotfix.js','./mobile-app-v11.js','./pwa.js','./deeprise-next-candle-v14.js','./forecast-ledger.json','./market-alerts.json'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(async c=>{for(const u of CORE){try{await c.add(new Request(u,{cache:'reload'}))}catch(e){}}}).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
