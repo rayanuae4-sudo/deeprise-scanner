@@ -1,4 +1,4 @@
-name: DeepRise V15.1 Integrity Gate
+name: DeepRise V15.2 Integrity Gate
 
 on:
   push:
@@ -24,6 +24,7 @@ jobs:
         run: |
           node --check deeprise-entry-ranking-v150.js
           node --check deeprise-integrity-v151.js
+          node --check deeprise-signal-card-ui-v152.js
           node --check pwa.js
           node --check sw.js
           node --check scripts/deeprise-entry-regression.js
@@ -39,15 +40,19 @@ jobs:
           sw=Path('sw.js').read_text(encoding='utf-8')
           integrity=Path('deeprise-integrity-v151.js').read_text(encoding='utf-8')
           entry=Path('deeprise-entry-ranking-v150.js').read_text(encoding='utf-8')
+          ui=Path('deeprise-signal-card-ui-v152.js').read_text(encoding='utf-8')
           assert 'deeprise-entry-ranking-v150.js?v=1500' in pwa, 'entry ranking layer is not loaded by pwa.js'
           assert 'deeprise-integrity-v151.js?v=1510' in pwa, 'integrity layer is not loaded by pwa.js'
-          assert 'stable-v15-1' in pwa, 'service-worker registration version not bumped to V15.1'
-          assert "deeprise-pwa-stable-v15-1" in sw, 'service-worker cache is not V15.1'
-          for f in ['./deeprise-entry-ranking-v150.js','./deeprise-integrity-v151.js']:
+          assert 'deeprise-signal-card-ui-v152.js?v=1520' in pwa, 'signal-card UI layer is not loaded by pwa.js'
+          assert 'stable-v15-2' in pwa, 'service-worker registration version not bumped to V15.2'
+          assert "deeprise-pwa-stable-v15-2" in sw, 'service-worker cache is not V15.2'
+          for f in ['./deeprise-entry-ranking-v150.js','./deeprise-integrity-v151.js','./deeprise-signal-card-ui-v152.js']:
               assert f in sw, f'{f} missing from PWA core cache'
           for marker in ['quality','hardAligned','READY','CONFIRMED','FORMING']:
               assert marker in entry, f'entry gate invariant missing: {marker}'
           for marker in ['unhandledrejection','DeepRiseSignalEngine','market data stale >6m','blockTrading','logicTest']:
               assert marker in integrity, f'integrity monitor missing: {marker}'
-          print('DeepRise V15.1 wiring: PASS')
+          for marker in ['6 SIGNAL CONDITIONS','dr-six-grid','ncf-strip','DeepRiseEntryRank','version:\'15.2\'']:
+              assert marker in ui, f'signal-card UI missing: {marker}'
+          print('DeepRise V15.2 integrity + UI wiring: PASS')
           PY
