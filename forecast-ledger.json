@@ -2,11 +2,125 @@
   "version": 1,
   "ledger": "DeepRise Central Forecast Ledger",
   "started_at": "2026-08-28T13:47:00Z",
-  "generated_at": "2026-08-30T02:53:34.876Z",
+  "generated_at": "2026-08-30T03:06:59.627Z",
   "source": "GitHub Actions central V13.1 publisher + Binance public market data; optional CoinGlass authenticated intelligence; historical verified imports retained",
   "integrity_note_ar": "هذا سجل مركزي موحّد يبدأ من 28 أغسطس 2026. يعرض توصيات DeepRise التي تم تسجيلها فعليًا بعد تفعيل السجل المركزي، ولا تُحذف النتائج بسبب تحديث التطبيق. كل تحديث للسجل يُحفظ في GitHub بتاريخ Commit قابل للمراجعة.",
   "integrity_note_en": "This is a unified central ledger starting August 28, 2026. It shows DeepRise forecasts actually recorded after central tracking was enabled. App updates do not delete results, and every ledger refresh is preserved in GitHub commit history.",
   "records": [
+    {
+      "forecast_id": "2026-08-30-UNIUSDT",
+      "source": "central-v13.1-publisher",
+      "method": "V13.1 Predictive Confluence / closed Binance candles + optional authenticated external intelligence",
+      "symbol": "UNIUSDT",
+      "side": "LONG",
+      "created_at": "2026-08-30T03:06:29.840Z",
+      "entry": 4.872,
+      "tp1": 4.9133571428571425,
+      "tp2": 4.946442857142857,
+      "sl": 4.830642857142857,
+      "status": "ACTIVE",
+      "score": 80.0,
+      "predictive": {
+        "model_version": "V13.1 Predictive Confluence",
+        "score": 69.7,
+        "coverage_pct": 70.0,
+        "grade": "C",
+        "order_flow": {
+          "available": true,
+          "provider": "Binance closed 15m klines",
+          "taker_buy_ratio": 0.6202,
+          "cvd_proxy_pct": 24.0405,
+          "taker_ratio_acceleration_pp": 11.452,
+          "alignment": "ALIGNED",
+          "score": 78.2
+        },
+        "liquidity_proxy": {
+          "available": true,
+          "provider": "Binance swing-liquidity proxy",
+          "target_price": 4.827,
+          "distance_pct": -0.9236,
+          "atr_distance": 1.088,
+          "alignment": "BEHIND",
+          "score": 35.0,
+          "note": "Swing-liquidity proxy; not a liquidation heatmap."
+        },
+        "liquidation_map": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "large_orders": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "smart_money": {
+          "available": false,
+          "provider": "Nansen",
+          "reason": "NANSEN_API_KEY not configured; no Smart Money wallet value inferred"
+        },
+        "explanation": "Technical trend + closed-candle order flow + liquidity target; CoinGlass liquidation/large-order layers are included only when authenticated data is available.",
+        "liquidity_sweep": {
+          "available": true,
+          "type": "NONE",
+          "severity": "LOW",
+          "trap_score": 62,
+          "score_meaning": "Evidence strength, not reversal probability",
+          "liquidity_level": 4.89,
+          "distance_pct": 0.0819,
+          "momentum_30m_pct": 2.9065,
+          "taker_buy_ratio": 0.66869,
+          "taker_acceleration_pp": -0.8259,
+          "upper_wick_ratio": 0.6585,
+          "volume_ratio": 3.4346,
+          "evidence": [
+            "confirmed sweep above prior 5m high with close back below",
+            "upper-wick rejection",
+            "volume expansion"
+          ],
+          "captured_at": "2026-08-30T03:06:31.005Z"
+        },
+        "whale_divergence": {
+          "available": true,
+          "type": "NONE",
+          "strength": 0,
+          "wallet_confirmed": false,
+          "sources": [
+            "Binance order flow"
+          ],
+          "evidence": [],
+          "note": "No multi-source whale/flow divergence confirmed at forecast creation."
+        }
+      },
+      "rank": 5,
+      "day": "2026-08-30",
+      "current": 4.868,
+      "high": 4.878,
+      "low": 4.863,
+      "best_move": 0.12315270935961058,
+      "worst_move": -0.18472906403939765,
+      "final_move": null,
+      "end_reason": null,
+      "tp1_hit_at": null,
+      "tp2_hit_at": null,
+      "ended_at": null,
+      "proof_commit": null,
+      "proof_verified_at": null,
+      "quality": {
+        "count": 6,
+        "required": 5,
+        "volume_ratio": 8.532,
+        "quote_volume_usdt": 20657275.78,
+        "atr_pct": 0.8489,
+        "rsi_15m": 82.16,
+        "candle_confirmed": true,
+        "trend_15m": "LONG",
+        "trend_1h": "LONG",
+        "rr": 1.8,
+        "momentum_15m_pct": 3.4175
+      },
+      "last_checked_at": "2026-08-30T03:06:59.999Z"
+    },
     {
       "forecast_id": "2026-08-30-DOGEUSDT",
       "source": "central-v13.1-publisher",
