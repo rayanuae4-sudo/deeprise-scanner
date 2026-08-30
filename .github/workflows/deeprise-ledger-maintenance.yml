@@ -12,9 +12,11 @@ on:
       - 'scripts/publish_liquidity_alerts.py'
       - 'scripts/enrich_smart_money.py'
       - 'scripts/publish_whale_radar.py'
+      - 'scripts/publish_public_liquidity.py'
       - 'scripts/apply_whale_gate.py'
       - 'scripts/maintain_ledger.py'
       - 'whale-radar.json'
+      - 'public-liquidity.json'
       - '.github/workflows/deeprise-ledger-maintenance.yml'
 
 permissions:
@@ -36,6 +38,9 @@ jobs:
         env:
           NANSEN_API_KEY: ${{ secrets.NANSEN_API_KEY }}
         run: python3 scripts/publish_whale_radar.py
+
+      - name: Publish public liquidity fallback
+        run: python3 scripts/publish_public_liquidity.py
 
       - name: Publish new official forecasts from predictive confluence
         env:
@@ -59,18 +64,18 @@ jobs:
       - name: Maintain open forecast lifecycle from Binance 1m candles
         run: python3 scripts/maintain_ledger.py
 
-      - name: Commit central forecasts alerts whale radar and lifecycle changes
+      - name: Commit central forecasts alerts whale radar public liquidity and lifecycle changes
         id: ledger
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add forecast-ledger.json market-alerts.json whale-radar.json
+          git add forecast-ledger.json market-alerts.json whale-radar.json public-liquidity.json
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          git commit -m "Publish DeepRise forecasts whale radar and liquidity alerts"
+          git commit -m "Publish DeepRise forecasts whale radar public liquidity and alerts"
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "proof_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
