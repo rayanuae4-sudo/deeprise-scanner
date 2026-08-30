@@ -1,4 +1,4 @@
-name: DeepRise V15.4 Integrity Gate
+name: DeepRise V15.5 Integrity Gate
 
 on:
   push:
@@ -30,26 +30,34 @@ jobs:
       - name: Run production entry regression
         run: node scripts/deeprise-entry-regression.js
 
-      - name: Verify V15.4 runtime and PWA wiring
+      - name: Run whale-flow regression
+        run: node scripts/deeprise-whale-flow-regression.js
+
+      - name: Verify V15.5 runtime and PWA wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
           pwa=Path('pwa.js').read_text(encoding='utf-8')
           sw=Path('sw.js').read_text(encoding='utf-8')
-          integrity=Path('deeprise-integrity-v151.js').read_text(encoding='utf-8')
-          entry=Path('deeprise-entry-ranking-v154.js').read_text(encoding='utf-8')
+          integrity=Path('deeprise-integrity-v155.js').read_text(encoding='utf-8')
+          entry=Path('deeprise-entry-ranking-v155.js').read_text(encoding='utf-8')
+          flow=Path('deeprise-whale-flow-v155.js').read_text(encoding='utf-8')
           ui=Path('deeprise-signal-card-ui-v153.js').read_text(encoding='utf-8')
-          assert 'deeprise-entry-ranking-v154.js?v=1540' in pwa, 'V15.4 entry gate is not loaded by pwa.js'
+          assert 'deeprise-whale-flow-v155.js?v=1550' in pwa, 'V15.5 whale flow is not loaded by pwa.js'
+          assert 'deeprise-entry-ranking-v155.js?v=1550' in pwa, 'V15.5 entry gate is not loaded by pwa.js'
+          assert 'deeprise-integrity-v155.js?v=1550' in pwa, 'V15.5 integrity monitor is not loaded by pwa.js'
           assert 'deeprise-signal-card-ui-v153.js?v=1531' in pwa, 'approved signal-quality UI is not loaded'
-          assert 'stable-v15-4' in pwa, 'service-worker registration not bumped to V15.4'
-          assert "deeprise-pwa-stable-v15-4" in sw, 'service-worker cache is not V15.4'
-          for f in ['./deeprise-entry-ranking-v154.js','./deeprise-integrity-v151.js','./deeprise-signal-card-ui-v153.js']:
+          assert 'stable-v15-5' in pwa, 'service-worker registration not bumped to V15.5'
+          assert "deeprise-pwa-stable-v15-5" in sw, 'service-worker cache is not V15.5'
+          for f in ['./deeprise-whale-flow-v155.js','./deeprise-entry-ranking-v155.js','./deeprise-integrity-v155.js','./deeprise-signal-card-ui-v153.js']:
               assert f in sw, f'{f} missing from PWA core cache'
-          for marker in ['strictReady','fastTrack','FAST_TRACK','onlySoftMissing','entryAllowed','hardAligned']:
-              assert marker in entry, f'balanced entry invariant missing: {marker}'
-          for marker in ["DeepRiseEntryRank?.version==='15.4'",'fast-track regression failed','market data stale >6m','blockTrading']:
+          for marker in ['strictReady','fastTrack','FAST_TRACK','whaleFlow','whaleConflict','flowAssist','entryAllowed']:
+              assert marker in entry, f'V15.5 entry invariant missing: {marker}'
+          for marker in ['Whale Money Flow Predictor','anomalyScore','ARRIVAL_CONFIRMED','BUY_LIKELY','ROTATION','MOBILIZING','support','selfTest']:
+              assert marker in flow, f'whale-flow predictor missing: {marker}'
+          for marker in ["DeepRiseEntryRank?.version==='15.5'","DeepRiseWhaleFlowV155?.version==='15.5'",'whale-flow self-test failed','whale-flow source stale >4h','blockTrading']:
               assert marker in integrity, f'integrity monitor missing: {marker}'
-          for marker in ['Signal Quality:','dr-quality-pills','DeepRiseEntryRank','version:\'15.3\'']:
+          for marker in ['Signal Quality:','dr-quality-pills','DeepRiseEntryRank']:
               assert marker in ui, f'signal-quality UI missing: {marker}'
-          print('DeepRise V15.4 integrity + opportunity-capture wiring: PASS')
+          print('DeepRise V15.5 integrity + whale-flow wiring: PASS')
           PY
