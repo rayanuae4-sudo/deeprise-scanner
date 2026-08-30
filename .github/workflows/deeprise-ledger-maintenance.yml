@@ -89,6 +89,9 @@ jobs:
           git add forecast-ledger.json
           git diff --cached --quiet || git commit -m "Stamp DeepRise central forecast proof"
 
-      - name: Push authoritative central data
+      - name: Rebase on latest main and push authoritative central data
         if: steps.ledger.outputs.changed == 'true'
-        run: git push
+        run: |
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
