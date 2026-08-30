@@ -1,4 +1,4 @@
-name: DeepRise V15.4 Launch Check
+name: DeepRise V15.5 Launch Check
 
 on:
   push:
@@ -30,6 +30,11 @@ jobs:
             node --check "$f"
           done
 
+      - name: Run V15.5 regressions
+        run: |
+          node scripts/deeprise-entry-regression.js
+          node scripts/deeprise-whale-flow-regression.js
+
       - name: Validate direct production index
         run: |
           python3 - <<'PY'
@@ -55,30 +60,31 @@ jobs:
           COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
         run: python3 scripts/publish_forecasts.py health
 
-      - name: Assert production intelligence and V15.4 wiring
+      - name: Assert production intelligence and V15.5 wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
           pwa=Path('pwa.js').read_text(encoding='utf-8')
           sw=Path('sw.js').read_text(encoding='utf-8')
           signal=Path('deeprise-signal-engine-v149.js').read_text(encoding='utf-8')
-          entry=Path('deeprise-entry-ranking-v154.js').read_text(encoding='utf-8')
-          integrity=Path('deeprise-integrity-v151.js').read_text(encoding='utf-8')
+          entry=Path('deeprise-entry-ranking-v155.js').read_text(encoding='utf-8')
+          integrity=Path('deeprise-integrity-v155.js').read_text(encoding='utf-8')
           ui=Path('deeprise-signal-card-ui-v153.js').read_text(encoding='utf-8')
           whale=Path('scripts/publish_whale_radar.py').read_text(encoding='utf-8')
           gate=Path('scripts/apply_whale_gate.py').read_text(encoding='utf-8')
           wui=Path('deeprise-whale-radar-v147.js').read_text(encoding='utf-8')
+          flow=Path('deeprise-whale-flow-v155.js').read_text(encoding='utf-8')
           pub=Path('scripts/publish_public_liquidity.py').read_text(encoding='utf-8')
           pui=Path('deeprise-public-liquidity-v148.js').read_text(encoding='utf-8')
           sm=Path('scripts/enrich_smart_money.py').read_text(encoding='utf-8')
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
-          assert 'stable-v15-4' in pwa and 'deeprise-entry-ranking-v154.js?v=1540' in pwa and 'deeprise-signal-card-ui-v153.js?v=1531' in pwa
-          assert "deeprise-pwa-stable-v15-4" in sw and './deeprise-entry-ranking-v154.js' in sw and './deeprise-signal-card-ui-v153.js' in sw
+          assert 'stable-v15-5' in pwa and 'deeprise-entry-ranking-v155.js?v=1550' in pwa and 'deeprise-whale-flow-v155.js?v=1550' in pwa and 'deeprise-integrity-v155.js?v=1550' in pwa
+          assert "deeprise-pwa-stable-v15-5" in sw and './deeprise-entry-ranking-v155.js' in sw and './deeprise-whale-flow-v155.js' in sw and './deeprise-integrity-v155.js' in sw
           for marker in ['Signal confidence','Expected move','Buy / accumulation zone','Distribution / sell zone','deeprise_v149_tracking_stats','DeepRiseNextCandleV14']:
               assert marker in signal, f'signal engine missing {marker}'
-          for marker in ['strictReady','fastTrack','FAST_TRACK','entryAllowed']:
+          for marker in ['strictReady','fastTrack','FAST_TRACK','entryAllowed','whaleFlow','whaleConflict','flowAssist']:
               assert marker in entry, f'entry gate missing {marker}'
-          for marker in ['unhandledrejection','blockTrading','market data stale >6m']:
+          for marker in ['unhandledrejection','blockTrading','market data stale >6m','whale-flow self-test failed','whale-flow source stale >4h']:
               assert marker in integrity, f'integrity monitor missing {marker}'
           for marker in ['Signal Quality:','dr-quality-pills']:
               assert marker in ui, f'approved signal quality UI missing {marker}'
@@ -88,6 +94,8 @@ jobs:
               assert marker in gate, f'whale gate missing {marker}'
           for marker in ['Whale Arrival Radar','whale-radar.json','top_buy_wallets','fresh_large_buyers_30m']:
               assert marker in wui, f'whale UI missing {marker}'
+          for marker in ['Whale Money Flow Predictor','anomalyScore','ARRIVAL_CONFIRMED','BUY_LIKELY','ROTATION','MOBILIZING','support','selfTest']:
+              assert marker in flow, f'whale-flow predictor missing {marker}'
           for marker in ['data-api.binance.vision','/api/v3/depth','volume-at-price concentration proxy','not a liquidation heatmap']:
               assert marker in pub, f'public liquidity publisher missing {marker}'
           for marker in ['Public Liquidity Fallback','public-liquidity.json','PUBLIC PROXY','not a CoinGlass liquidation heatmap']:
@@ -96,5 +104,5 @@ jobs:
               assert marker in sm, f'wallet intelligence missing {marker}'
           for marker in ['scripts/publish_whale_radar.py','scripts/publish_public_liquidity.py','scripts/apply_whale_gate.py','public-liquidity.json','NANSEN_API_KEY','COINGLASS_API_KEY','contents: write']:
               assert marker in wf, f'central workflow missing {marker}'
-          print('DeepRise V15.4 launch wiring: PASS')
+          print('DeepRise V15.5 launch wiring: PASS')
           PY
