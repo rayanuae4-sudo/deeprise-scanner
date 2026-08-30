@@ -13,7 +13,7 @@ function forecastSafetyLayer(){load('dr-forecast-safety-loader','./deeprise-fore
 function signalEngineLayer(){load('dr-signal-engine-v149-loader','./deeprise-signal-engine-v149.js?v=1490')}
 function uiLayer(){load('dr-ui-v146-loader','./deeprise-ui-v146.js?v=1461')}
 function whaleLayer(){load('dr-whale-v147-loader','./deeprise-whale-radar-v147.js?v=1470')}
-function publicLiquidityLayer(){load('dr-public-liquidity-loader','./deeprise-public-liquidity-v148.js?v=1480')}
+function publicLiquidityLayer(){load('dr-public-liquidity-v148-loader','./deeprise-public-liquidity-v148.js?v=1480')}
 function tradeMonitorLayer(){load('dr-trade-monitor-loader','./deeprise-trade-monitor-v14.js?v=1440')}
 function entryRankingLayer(){load('dr-entry-ranking-v150-loader','./deeprise-entry-ranking-v150.js?v=1500')}
 function integrityLayer(){load('dr-integrity-v151-loader','./deeprise-integrity-v151.js?v=1510')}
