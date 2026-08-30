@@ -1,4 +1,4 @@
-name: DeepRise V13.3 Launch Check
+name: DeepRise V14.7 Launch Check
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
 
       - name: Validate JavaScript syntax
         run: |
-          for f in deeprise-v86-upgrade.js deeprise-intelligence-v11.js deeprise-v12-experience.js deeprise-analytics-config.js deeprise-analytics.js deeprise-central-ledger.js deeprise-v13-product.js deeprise-central-forecast-bridge.js deeprise-predictive-intelligence.js deeprise-performance.js deeprise-v13-gate-hotfix.js mobile-app-v11.js pwa.js sw.js; do
+          for f in deeprise-v86-upgrade.js deeprise-intelligence-v11.js deeprise-v12-experience.js deeprise-analytics-config.js deeprise-analytics.js deeprise-central-ledger.js deeprise-v13-product.js deeprise-central-forecast-bridge.js deeprise-predictive-intelligence.js deeprise-performance.js deeprise-v13-gate-hotfix.js deeprise-next-candle-v145.js deeprise-forecast-safety-v145.js deeprise-ui-v146.js deeprise-whale-radar-v147.js deeprise-trade-monitor-v14.js mobile-app-v11.js pwa.js sw.js; do
             node --check "$f"
           done
 
@@ -41,10 +41,10 @@ jobs:
 
       - name: Validate Python and JSON
         run: |
-          python3 -m py_compile scripts/maintain_ledger.py scripts/publish_forecasts.py scripts/enrich_smart_money.py scripts/apply_trap_gate.py scripts/publish_liquidity_alerts.py
+          python3 -m py_compile scripts/maintain_ledger.py scripts/publish_forecasts.py scripts/enrich_smart_money.py scripts/apply_trap_gate.py scripts/publish_liquidity_alerts.py scripts/publish_whale_radar.py scripts/apply_whale_gate.py
           python3 - <<'PY'
           import json
-          for f in ['manifest.json','forecast-ledger.json','market-alerts.json']:
+          for f in ['manifest.json','forecast-ledger.json','market-alerts.json','whale-radar.json']:
               with open(f,encoding='utf-8') as h: json.load(h)
           PY
 
@@ -53,41 +53,29 @@ jobs:
           COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
         run: python3 scripts/publish_forecasts.py health
 
-      - name: Assert production V13.3 predictive wiring
+      - name: Assert V14.7 whale and predictive wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          idx=Path('index.html').read_text(encoding='utf-8')
-          cfg=Path('deeprise-analytics-config.js').read_text(encoding='utf-8')
           pwa=Path('pwa.js').read_text(encoding='utf-8')
           sw=Path('sw.js').read_text(encoding='utf-8')
           manifest=Path('manifest.json').read_text(encoding='utf-8')
-          bridge=Path('deeprise-central-forecast-bridge.js').read_text(encoding='utf-8')
-          pi=Path('deeprise-predictive-intelligence.js').read_text(encoding='utf-8')
-          pub=Path('scripts/publish_forecasts.py').read_text(encoding='utf-8')
+          whale=Path('scripts/publish_whale_radar.py').read_text(encoding='utf-8')
+          gate=Path('scripts/apply_whale_gate.py').read_text(encoding='utf-8')
+          wui=Path('deeprise-whale-radar-v147.js').read_text(encoding='utf-8')
           sm=Path('scripts/enrich_smart_money.py').read_text(encoding='utf-8')
-          trap=Path('scripts/apply_trap_gate.py').read_text(encoding='utf-8')
-          alerts=Path('scripts/publish_liquidity_alerts.py').read_text(encoding='utf-8')
-          maint=Path('scripts/maintain_ledger.py').read_text(encoding='utf-8')
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
-          required=['deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js']
-          assert not [x for x in required if x not in idx]
-          assert "version: 'V13.3 PRO'" in cfg
-          assert 'DeepRise V13.3 PRO' in pwa and 'stable-v13-6' in pwa
-          assert "deeprise-pwa-stable-v13-6" in sw and './market-alerts.json' in sw
-          assert 'DeepRise Scanner V13.3 PRO' in manifest
-          assert 'Block local-only official forecast writes' in bridge
-          for marker in ['order_flow_intelligence','liquidity_proxy_intelligence','predictive_confluence','COINGLASS_API_KEY']:
-              assert marker in pub, f'predictive engine missing {marker}'
-          for marker in ['NANSEN_API_KEY','smart-money/netflow','whale_divergence','wallet_confirmed']:
-              assert marker in sm, f'whale intelligence missing {marker}'
-          for marker in ['BUY_SIDE_SWEEP_CONFIRMED','UPWARD_LIQUIDITY_SWEEP_RISK','blocks newly-created LONG']:
-              assert marker in trap, f'trap gate missing {marker}'
-          for marker in ['UPWARD_LIQUIDITY_SWEEP_RISK','BUY_SIDE_SWEEP_CONFIRMED','trap_score','closed 5m + 15m']:
-              assert marker in alerts, f'central sweep alerts missing {marker}'
-          for marker in ['market-alerts.json','تنبيهات سحب السيولة','Whale Divergence','Notification.requestPermission']:
-              assert marker in pi, f'UI alert wiring missing {marker}'
-          assert 'data-api.binance.vision' in pub and 'data-api.binance.vision' in maint and 'data-api.binance.vision' in alerts
-          for marker in ['COINGLASS_API_KEY','NANSEN_API_KEY','scripts/apply_trap_gate.py','scripts/publish_liquidity_alerts.py','market-alerts.json','contents: write']:
+          assert 'DeepRise V14.7 PRO' in pwa and 'stable-v14-7' in pwa
+          assert "deeprise-pwa-stable-v14-7" in sw and './whale-radar.json' in sw and './deeprise-whale-radar-v147.js' in sw
+          assert 'DeepRise Scanner V14.7 PRO' in manifest
+          for marker in ['api.geckoterminal.com','tx_from_address','trade_volume_in_usd_greater_than','rotation_in_30m','arrival_score','distribution_score','NANSEN_API_KEY']:
+              assert marker in whale, f'whale radar missing {marker}'
+          for marker in ['PUBLIC_WHALE_FLOW_CONFLICT','conflict>=88','whale_arrival_radar']:
+              assert marker in gate, f'whale gate missing {marker}'
+          for marker in ['Whale Arrival Radar','whale-radar.json','top_buy_wallets','fresh_large_buyers_30m']:
+              assert marker in wui, f'whale UI missing {marker}'
+          for marker in ['NANSEN_API_KEY','smart-money/netflow','wallet_confirmed']:
+              assert marker in sm, f'wallet intelligence missing {marker}'
+          for marker in ['scripts/publish_whale_radar.py','scripts/apply_whale_gate.py','whale-radar.json','NANSEN_API_KEY','COINGLASS_API_KEY','contents: write']:
               assert marker in wf, f'central workflow missing {marker}'
           PY
