@@ -15,7 +15,8 @@ function uiLayer(){load('dr-ui-v146-loader','./deeprise-ui-v146.js?v=1461')}
 function whaleLayer(){load('dr-whale-v147-loader','./deeprise-whale-radar-v147.js?v=1470')}
 function publicLiquidityLayer(){load('dr-public-liquidity-v148-loader','./deeprise-public-liquidity-v148.js?v=1480')}
 function tradeMonitorLayer(){load('dr-trade-monitor-loader','./deeprise-trade-monitor-v14.js?v=1440')}
+function entryRankingLayer(){load('dr-entry-ranking-v150-loader','./deeprise-entry-ranking-v150.js?v=1500')}
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;button()});
-addEventListener('load',()=>{brand();languagePerformancePatch();setTimeout(button,1800);setTimeout(nextCandleLayer,100);setTimeout(forecastSafetyLayer,140);setTimeout(signalEngineLayer,180);setTimeout(uiLayer,220);setTimeout(whaleLayer,260);setTimeout(publicLiquidityLayer,300);setTimeout(tradeMonitorLayer,340);setTimeout(brand,1600)});
-setTimeout(brand,250);setTimeout(languagePerformancePatch,320);setTimeout(nextCandleLayer,700);setTimeout(forecastSafetyLayer,760);setTimeout(signalEngineLayer,800);setTimeout(uiLayer,840);setTimeout(whaleLayer,880);setTimeout(publicLiquidityLayer,920);setTimeout(tradeMonitorLayer,960);setTimeout(brand,1800);
+addEventListener('load',()=>{brand();languagePerformancePatch();setTimeout(button,1800);setTimeout(nextCandleLayer,100);setTimeout(forecastSafetyLayer,140);setTimeout(signalEngineLayer,180);setTimeout(uiLayer,220);setTimeout(whaleLayer,260);setTimeout(publicLiquidityLayer,300);setTimeout(tradeMonitorLayer,340);setTimeout(entryRankingLayer,420);setTimeout(brand,1600)});
+setTimeout(brand,250);setTimeout(languagePerformancePatch,320);setTimeout(nextCandleLayer,700);setTimeout(forecastSafetyLayer,760);setTimeout(signalEngineLayer,800);setTimeout(uiLayer,840);setTimeout(whaleLayer,880);setTimeout(publicLiquidityLayer,920);setTimeout(tradeMonitorLayer,960);setTimeout(entryRankingLayer,1040);setTimeout(brand,1800);
 })();
