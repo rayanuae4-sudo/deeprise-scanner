@@ -21,8 +21,13 @@ function toast(msg,kind='green'){
 function askNotifications(){try{if('Notification' in window&&Notification.permission==='default'){const p=Notification.requestPermission();if(p&&typeof p.catch==='function')p.catch(()=>{})}}catch(e){}}
 function notify(title,body,kind='yellow'){
  toast(title+' — '+body,kind);
- try{if('Notification' in window&&Notification.permission==='granted')new Notification('DeepRise • '+title,{body,icon:'icon.svg',tag:'deeprise-'+title+'-'+body.slice(0,18),renotify:true})}catch(e){}
  try{navigator.vibrate?.([120,80,120])}catch(e){}
+ try{
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  const options={body,icon:'icon.svg',badge:'icon.svg',tag:'deeprise-'+title+'-'+body.slice(0,18),renotify:true,data:{url:location.href}};
+  const fallback=()=>{try{new Notification('DeepRise • '+title,options)}catch(e){}};
+  if('serviceWorker' in navigator){navigator.serviceWorker.getRegistration().then(reg=>reg?reg.showNotification('DeepRise • '+title,options):fallback()).catch(fallback)}else fallback()
+ }catch(e){}
 }
 function fire(tr,key,title,body,kind='yellow',cooldown=ALERT_COOLDOWN){
  tr.alerts=tr.alerts||{};const now=Date.now(),last=tr.alerts[key]||0;if(last&&now-last<cooldown)return false;tr.alerts[key]=now;save();notify(title,body,kind);return true
@@ -54,7 +59,7 @@ async function enterTrade(symbol){
  if(state.trades[symbol]){if(confirm(t('remove')+'?'))stopTrade(symbol);return}
  let a=analysisFor(symbol);try{a=await window.DeepRiseBinanceUniverse?.analyze?.(symbol,true)||a}catch(e){}
  if(!a||!['LONG','SHORT'].includes(a.direction)){toast(t('noEntry'),'yellow');queueInject();return}
- state.trades[symbol]={symbol,side:a.direction,entry:+a.price,created:Date.now(),score:+a.score||0,lastScore:+a.score||0,sl:+a.sl,tp1:+a.tp1,tp2:+a.tp2,livePrice:+a.price,alerts:{},lastDirection:a.direction,status:'ACTIVE'};save();toast(t('entered'),'green');restartSocket();renderPanel();queueInject();deepCheckOne(symbol,true)
+ state.trades[symbol]={symbol,side:a.direction,entry:+a.price,created:Date.now(),score:+a.score||0,lastScore:+a.score||0,sl:+a.sl,tp1:+a.tp1,tp2:+a.tp2,livePrice:+a.price,alerts:{},lastDirection:a.direction,status:'ACTIVE'};save();toast(t('entered'),'green');restartSocket();renderPanel();queueInject();deepCheckOne(symbol)
 }
 function stopTrade(symbol){delete state.trades[symbol];save();restartSocket();renderPanel();queueInject();toast(t('stopped'),'yellow')}
 function priceCheck(symbol,price){const tr=state.trades[symbol];if(!tr)return;tr.livePrice=price;
