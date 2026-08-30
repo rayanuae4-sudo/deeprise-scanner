@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-08-30T21:34:01.681Z",
+  "generated_at": "2026-08-30T21:47:29.278Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 19,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "PROMUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788126299999",
+      "symbol": "PROMUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 75,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 6.658,
+      "liquidity_level": 6.72,
+      "distance_to_liquidity_pct": 0.9312,
+      "momentum_30m_pct": 1.7265,
+      "taker_buy_ratio": 0.39533,
+      "taker_acceleration_pp": -3.8265,
+      "upper_wick_ratio": 0.32,
+      "volume_ratio": 0.9285,
+      "atr_pct": 0.9967,
+      "quote_volume_usdt": 21609263.7,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Taker buy ratio weak at 39.5%",
+        "Aggressive buying decelerating -3.8pp",
+        "Upper-wick rejection 32% of candle range",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-08-30T21:44:59.999Z",
+      "invalidation": "A sustained 5m close above 6.72 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-08-30T21:47:27.451Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ZKCUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788123899999",
       "symbol": "ZKCUSDT",
