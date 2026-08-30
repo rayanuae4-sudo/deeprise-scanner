@@ -11,7 +11,10 @@ on:
       - 'scripts/apply_trap_gate.py'
       - 'scripts/publish_liquidity_alerts.py'
       - 'scripts/enrich_smart_money.py'
+      - 'scripts/publish_whale_radar.py'
+      - 'scripts/apply_whale_gate.py'
       - 'scripts/maintain_ledger.py'
+      - 'whale-radar.json'
       - '.github/workflows/deeprise-ledger-maintenance.yml'
 
 permissions:
@@ -29,6 +32,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Publish public Whale Arrival Radar
+        env:
+          NANSEN_API_KEY: ${{ secrets.NANSEN_API_KEY }}
+        run: python3 scripts/publish_whale_radar.py
+
       - name: Publish new official forecasts from predictive confluence
         env:
           COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
@@ -42,24 +50,27 @@ jobs:
           NANSEN_API_KEY: ${{ secrets.NANSEN_API_KEY }}
         run: python3 scripts/enrich_smart_money.py
 
+      - name: Apply fresh whale-arrival confluence and conflict gate
+        run: python3 scripts/apply_whale_gate.py
+
       - name: Publish scanner-wide liquidity sweep alerts
         run: python3 scripts/publish_liquidity_alerts.py
 
       - name: Maintain open forecast lifecycle from Binance 1m candles
         run: python3 scripts/maintain_ledger.py
 
-      - name: Commit central forecasts alerts and lifecycle changes
+      - name: Commit central forecasts alerts whale radar and lifecycle changes
         id: ledger
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add forecast-ledger.json market-alerts.json
+          git add forecast-ledger.json market-alerts.json whale-radar.json
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          git commit -m "Publish DeepRise forecasts and liquidity sweep alerts"
+          git commit -m "Publish DeepRise forecasts whale radar and liquidity alerts"
           echo "changed=true" >> "$GITHUB_OUTPUT"
           echo "proof_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
