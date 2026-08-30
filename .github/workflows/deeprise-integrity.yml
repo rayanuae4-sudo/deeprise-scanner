@@ -1,4 +1,4 @@
-name: DeepRise V15.2 Integrity Gate
+name: DeepRise V15.4 Integrity Gate
 
 on:
   push:
@@ -20,39 +20,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Syntax-check critical runtime layers
+      - name: Syntax-check all JavaScript
         run: |
-          node --check deeprise-entry-ranking-v150.js
-          node --check deeprise-integrity-v151.js
-          node --check deeprise-signal-card-ui-v152.js
-          node --check pwa.js
-          node --check sw.js
-          node --check scripts/deeprise-entry-regression.js
+          set -e
+          find . -type f -name '*.js' -not -path './node_modules/*' -print0 | while IFS= read -r -d '' f; do
+            node --check "$f"
+          done
 
       - name: Run production entry regression
         run: node scripts/deeprise-entry-regression.js
 
-      - name: Verify runtime and PWA wiring
+      - name: Verify V15.4 runtime and PWA wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
           pwa=Path('pwa.js').read_text(encoding='utf-8')
           sw=Path('sw.js').read_text(encoding='utf-8')
           integrity=Path('deeprise-integrity-v151.js').read_text(encoding='utf-8')
-          entry=Path('deeprise-entry-ranking-v150.js').read_text(encoding='utf-8')
-          ui=Path('deeprise-signal-card-ui-v152.js').read_text(encoding='utf-8')
-          assert 'deeprise-entry-ranking-v150.js?v=1500' in pwa, 'entry ranking layer is not loaded by pwa.js'
-          assert 'deeprise-integrity-v151.js?v=1510' in pwa, 'integrity layer is not loaded by pwa.js'
-          assert 'deeprise-signal-card-ui-v152.js?v=1520' in pwa, 'signal-card UI layer is not loaded by pwa.js'
-          assert 'stable-v15-2' in pwa, 'service-worker registration version not bumped to V15.2'
-          assert "deeprise-pwa-stable-v15-2" in sw, 'service-worker cache is not V15.2'
-          for f in ['./deeprise-entry-ranking-v150.js','./deeprise-integrity-v151.js','./deeprise-signal-card-ui-v152.js']:
+          entry=Path('deeprise-entry-ranking-v154.js').read_text(encoding='utf-8')
+          ui=Path('deeprise-signal-card-ui-v153.js').read_text(encoding='utf-8')
+          assert 'deeprise-entry-ranking-v154.js?v=1540' in pwa, 'V15.4 entry gate is not loaded by pwa.js'
+          assert 'deeprise-signal-card-ui-v153.js?v=1531' in pwa, 'approved signal-quality UI is not loaded'
+          assert 'stable-v15-4' in pwa, 'service-worker registration not bumped to V15.4'
+          assert "deeprise-pwa-stable-v15-4" in sw, 'service-worker cache is not V15.4'
+          for f in ['./deeprise-entry-ranking-v154.js','./deeprise-integrity-v151.js','./deeprise-signal-card-ui-v153.js']:
               assert f in sw, f'{f} missing from PWA core cache'
-          for marker in ['quality','hardAligned','READY','CONFIRMED','FORMING']:
-              assert marker in entry, f'entry gate invariant missing: {marker}'
-          for marker in ['unhandledrejection','DeepRiseSignalEngine','market data stale >6m','blockTrading','logicTest']:
+          for marker in ['strictReady','fastTrack','FAST_TRACK','onlySoftMissing','entryAllowed','hardAligned']:
+              assert marker in entry, f'balanced entry invariant missing: {marker}'
+          for marker in ["DeepRiseEntryRank?.version==='15.4'",'fast-track regression failed','market data stale >6m','blockTrading']:
               assert marker in integrity, f'integrity monitor missing: {marker}'
-          for marker in ['6 SIGNAL CONDITIONS','dr-six-grid','ncf-strip','DeepRiseEntryRank','version:\'15.2\'']:
-              assert marker in ui, f'signal-card UI missing: {marker}'
-          print('DeepRise V15.2 integrity + UI wiring: PASS')
+          for marker in ['Signal Quality:','dr-quality-pills','DeepRiseEntryRank','version:\'15.3\'']:
+              assert marker in ui, f'signal-quality UI missing: {marker}'
+          print('DeepRise V15.4 integrity + opportunity-capture wiring: PASS')
           PY
