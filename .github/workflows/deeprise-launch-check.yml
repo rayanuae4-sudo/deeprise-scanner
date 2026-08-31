@@ -7,6 +7,7 @@ on:
       - 'index.html'
       - '*.js'
       - '*.json'
+      - '*.html'
       - 'scripts/**'
       - '.github/workflows/**'
   pull_request:
@@ -36,15 +37,17 @@ jobs:
           node scripts/deeprise-move-timing-regression.js
           node scripts/deeprise-whale-flow-regression.js
 
-      - name: Validate direct production index
+      - name: Validate direct production index and repair route
         run: |
           python3 - <<'PY'
           from pathlib import Path
           s=Path('index.html').read_text(encoding='utf-8')
+          repair=Path('recover.html').read_text(encoding='utf-8')
           assert len(s)>45000, 'index.html is not the direct scanner runtime'
           assert 'document.write' not in s, 'legacy document.write loader detected'
           assert 'https://data-api.binance.vision' in s, 'stable Binance spot endpoint missing'
           assert 'deeprise-predictive-intelligence.js' in s, 'predictive UI is not loaded'
+          assert 'getRegistrations' in repair and 'caches.keys' in repair and 'v=16.0.2' in repair, 'repair route incomplete'
           PY
 
       - name: Validate Python and JSON
@@ -61,7 +64,7 @@ jobs:
           COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
         run: python3 scripts/publish_forecasts.py health
 
-      - name: Assert production intelligence and lightweight PWA wiring
+      - name: Assert production intelligence and cacheless PWA wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -82,12 +85,13 @@ jobs:
           pui=Path('deeprise-public-liquidity-v148.js').read_text(encoding='utf-8')
           sm=Path('scripts/enrich_smart_money.py').read_text(encoding='utf-8')
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
-          assert 'recovery-v16-0-1' in pwa
+          assert 'network-v16-0-2' in pwa
           for marker in ['deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1580','deeprise-integrity-v158.js?v=1580','deeprise-whale-flow-v155.js?v=1550','deeprise-whale-inline-v156.js?v=1560','deeprise-trade-zones-v157.js?v=1570']:
               assert marker in pwa, f'pwa missing {marker}'
-          assert "deeprise-pwa-recovery-v16-0-1" in sw
-          for marker in ['./index.html','./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1310','./mobile-app-v11.js?v=1310','./pwa.js?v=1310','shellReady','navigationFallback','offlinePage']:
-              assert marker in sw, f'resilient service worker core missing {marker}'
+          assert "deeprise-pwa-network-v16-0-2" in sw
+          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1310','./mobile-app-v11.js?v=1310','./pwa.js?v=1310','networkOnlyNavigation','offlinePage']:
+              assert marker in sw, f'cacheless service worker core missing {marker}'
+          assert "event.request.mode==='navigate'" in sw and "cache:'no-store'" in sw
           for marker in ['Signal confidence','Expected move','Buy / accumulation zone','Distribution / sell zone','deeprise_v149_tracking_stats','DeepRiseNextCandleV14']:
               assert marker in signal, f'signal engine missing {marker}'
           for marker in ['POTENTIAL MOVE STARTING','MOVE EXTENDED — DO NOT CHASE','EARLY_START','EXTENDED','RELOAD','@kline_1m','volumePace','excursionAtr','givebackAtr','earlyStrong']:
