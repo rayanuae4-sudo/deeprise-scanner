@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [inline, fast, core, legacy, data, product, ui, all-index]
+        variant: [analytics-config, analytics, ledger, mobile, pwa]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -30,24 +30,22 @@ jobs:
           auto='loadMarket();\nsetInterval(loadMarket,60000);'
           if auto in src:
               src=src.replace(auto,"try{document.getElementById('marketRegime').innerHTML='Market: <b>READY</b>'}catch(e){}",1)
-          groups={
-            'inline':[],
-            'fast':['deeprise-fast-search-v160.js'],
-            'core':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js'],
-            'legacy':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js','deeprise-v86-upgrade.js','deeprise-intelligence-v11.js','deeprise-v12-experience.js'],
-            'data':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js','deeprise-analytics-config.js','deeprise-analytics.js','deeprise-central-ledger.js'],
-            'product':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js','deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js'],
-            'ui':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js','mobile-app-v11.js','pwa.js'],
-            'all-index':['deeprise-fast-search-v160.js','deeprise-v86-upgrade.js','deeprise-intelligence-v11.js','deeprise-v12-experience.js','deeprise-analytics-config.js','deeprise-analytics.js','deeprise-central-ledger.js','deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','mobile-app-v11.js','pwa.js']
-          }
-          keep=groups[v]
+          base=['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js']
+          extra={
+            'analytics-config':['deeprise-analytics-config.js'],
+            'analytics':['deeprise-analytics.js'],
+            'ledger':['deeprise-central-ledger.js'],
+            'mobile':['mobile-app-v11.js'],
+            'pwa':['pwa.js']
+          }[v]
+          keep=base+extra
           def repl(m):
               u=m.group(1)
               if 's3.tradingview.com' in u:return ''
               return m.group(0) if any(k in u for k in keep) else ''
           out=re.sub(r'<script(?: defer)? src="([^"]+)"[^>]*></script>',repl,src)
           Path('probe.html').write_text(out,encoding='utf-8')
-          print('VARIANT',v,'KEEP',keep)
+          print('KEEP',keep)
           PY
       - name: Start local app
         run: |
@@ -69,7 +67,7 @@ jobs:
           for a in ['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--window-size=390,844']:o.add_argument(a)
           o.add_argument('--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1')
           d=webdriver.Chrome(options=o);w=WebDriverWait(d,20)
-          d.get('http://127.0.0.1:4173/probe.html?parallel=1')
+          d.get('http://127.0.0.1:4173/probe.html?pinpoint=1')
           w.until(EC.presence_of_element_located((By.ID,'search')))
           print('BOOT',flush=True)
           time.sleep(15)
