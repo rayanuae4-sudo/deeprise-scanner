@@ -1,6 +1,6 @@
 name: DeepRise Freeze Isolation
 
-# Runtime layer isolation probe
+# Search-event runtime isolation probe
 on:
   push:
     branches: [main]
@@ -27,7 +27,6 @@ jobs:
           if auto in src:
               src=src.replace(auto,"try{document.getElementById('marketRegime').innerHTML='Market: <b>READY</b>'}catch(e){}",1)
           scripts=re.findall(r'<script(?: defer)? src="([^"]+)"[^>]*></script>',src)
-          print('SCRIPTS', scripts)
           core_names=('deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js')
           groups={
             'core.html':[],
@@ -46,7 +45,6 @@ jobs:
                   return m.group(0) if any(k in url for k in keep) else ''
               s=re.sub(r'<script(?: defer)? src="([^"]+)"[^>]*></script>',repl,s)
               Path(name).write_text(s,encoding='utf-8')
-              print(name, [u for u in scripts if any(k in u for k in keep)])
           PY
       - name: Start local app
         run: |
@@ -54,7 +52,7 @@ jobs:
           sleep 2
       - name: Install Selenium
         run: python3 -m pip install --quiet selenium
-      - name: Create isolated browser probe
+      - name: Create search-event browser probe
         run: |
           cat > /tmp/probe.py <<'PY'
           import sys, shutil, time
@@ -68,34 +66,31 @@ jobs:
           o=Options(); o.binary_location=chrome
           for a in ['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--window-size=390,844'] : o.add_argument(a)
           o.add_argument('--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1')
-          d=webdriver.Chrome(options=o); w=WebDriverWait(d,35)
-          d.get('http://127.0.0.1:4173/'+name+'?isolate=1')
+          d=webdriver.Chrome(options=o); w=WebDriverWait(d,25)
+          d.get('http://127.0.0.1:4173/'+name+'?isolate=search')
           w.until(EC.presence_of_element_located((By.ID,'search')))
           w.until(lambda x:x.execute_script('return !!window.DeepRiseBinanceUniverse'))
           w.until(lambda x:x.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length')>=20)
           print(name,'UNIVERSE',d.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length'),flush=True)
-          t=time.time(); r=d.execute_async_script("""
-          const done=arguments[arguments.length-1];
-          Promise.race([
-            window.DeepRiseBinanceUniverse.analyze('BTCUSDT'),
-            new Promise(res=>setTimeout(()=>res('TIMEOUT'),12000))
-          ]).then(x=>done(x==='TIMEOUT'?'TIMEOUT':(x&&x.symbol||'NULL'))).catch(e=>done('ERR:'+e.message));
-          """)
-          dt=time.time()-t
-          print(name,'ANALYZE',r,'SECONDS',round(dt,2),flush=True)
-          assert r=='BTCUSDT', (name,r)
-          t=time.time(); ready=d.execute_script('return document.readyState'); dt=time.time()-t
+          inp=d.find_element(By.ID,'search')
+          t=time.time(); inp.send_keys('BTC')
+          print(name,'SEND_KEYS',round(time.time()-t,3),flush=True)
+          w.until(lambda x:'BTC/USDT' in x.find_element(By.ID,'results').text)
+          print(name,'RESULT_RENDERED',round(time.time()-t,3),flush=True)
+          w.until(lambda x:x.execute_script("return window.DeepRiseBinanceUniverse.state.analyzed.has('BTCUSDT')"))
+          print(name,'SEARCH_ANALYZED',round(time.time()-t,3),flush=True)
+          t2=time.time(); ready=d.execute_script('return document.readyState'); dt=time.time()-t2
           print(name,'RESPONSIVE',round(dt,3),ready,flush=True)
           assert dt<2
           d.quit()
           PY
-      - name: Probe variants independently
+      - name: Probe search path independently
         run: |
           set +e
           FAIL=0
           for v in core.html ui.html legacy.html product.html data.html all.html; do
             echo "===== $v ====="
-            timeout 50s python3 /tmp/probe.py "$v"
+            timeout 40s python3 /tmp/probe.py "$v"
             rc=$?
             echo "RESULT $v rc=$rc"
             if [ "$v" = "core.html" ] && [ $rc -ne 0 ]; then FAIL=1; fi
