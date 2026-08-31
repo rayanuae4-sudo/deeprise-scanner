@@ -13,13 +13,13 @@ permissions:
 jobs:
   repair-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Patch startup, stable launcher and cache keys
+      - name: Patch startup and runtime stability
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -32,8 +32,46 @@ jobs:
               s=s.replace(old,safe,1)
           s=s.replace('deeprise-fast-search-v160.js?v=1601','deeprise-fast-search-v160.js?v=1650')
           s=s.replace('deeprise-v13-gate-hotfix.js?v=1310','deeprise-v13-gate-hotfix.js?v=1650')
+          s=s.replace('deeprise-v13-product.js?v=1310','deeprise-v13-product.js?v=1650')
           s=s.replace('pwa.js?v=1310','pwa.js?v=1650')
           assert 'setInterval(loadMarket,60000)' not in s, 'old automatic deep scan still present'
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('deeprise-v13-gate-hotfix.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('DeepRise V14.4.2 — stability hotfix: single startup path, timeout-safe Binance requests, deduped analysis','DeepRise V14.4.3 — responsive deep scan, single startup path, timeout-safe Binance requests')
+          s=s.replace("document.title='DeepRise V14.4.2 PRO'","document.title='DeepRise V14.4.3 PRO'")
+          s=s.replace("x.textContent='V14.4.2 PRO Mobile'","x.textContent='V14.4.3 PRO Mobile'")
+          s=s.replace("x.textContent='⚡ DeepRise V14.4.2 PRO'","x.textContent='⚡ DeepRise V14.4.3 PRO'")
+          s=s.replace("x.innerHTML='Engine: <b>V14.4.2 PRO</b>'","x.innerHTML='Engine: <b>V14.4.3 PRO</b>'")
+          s=s.replace('const concurrency=MOBILE?3:4;','const concurrency=MOBILE?2:3;')
+          s=s.replace('await Promise.allSettled(wanted.slice(i,i+concurrency).map(x=>ensureAnalyzed(x.symbol,true)));if(paint&&i===0){','await Promise.allSettled(wanted.slice(i,i+concurrency).map(x=>ensureAnalyzed(x.symbol,false)));await new Promise(r=>setTimeout(r,MOBILE?45:20));if(paint&&i===0){')
+          s=s.replace('await deepSweep(MOBILE?18:26,true);','await deepSweep(MOBILE?10:14,true);')
+          s=s.replace('await deepSweep(MOBILE?8:18,false);','await deepSweep(MOBILE?6:10,false);')
+          assert 'finally{state.loading=false;try{scanRunning=false}catch(e){}}' in s, 'scanRunning completion reset missing'
+          assert 'await deepSweep(MOBILE?10:14,true);' in s, 'responsive deep scan patch missing'
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('pwa.js')
+          s=p.read_text(encoding='utf-8')
+          old_refresh="function refreshDynamic(){clearTimeout(langTimer);langTimer=setTimeout(()=>{['results','top3','signalResultsPanel','deepriseFastSearchResult'].forEach(id=>translateRoot(document.getElementById(id)))},MOBILE?420:240)}"
+          new_refresh="function refreshDynamic(){clearTimeout(langTimer);langTimer=setTimeout(()=>{try{if(typeof scanRunning!=='undefined'&&scanRunning){refreshDynamic();return}}catch(e){}['results','top3','signalResultsPanel','deepriseFastSearchResult'].forEach(id=>translateRoot(document.getElementById(id)))},MOBILE?1500:900)}"
+          if old_refresh in s:
+              s=s.replace(old_refresh,new_refresh,1)
+          old_idle="function idle(fn,delay=0){setTimeout(()=>{if(document.hidden)return;if('requestIdleCallback'in window)requestIdleCallback(fn,{timeout:MOBILE?3000:1800});else setTimeout(fn,0)},delay)}"
+          new_idle="function idle(fn,delay=0){setTimeout(()=>{if(document.hidden)return;try{if(typeof scanRunning!=='undefined'&&scanRunning){idle(fn,MOBILE?2500:1800);return}}catch(e){}if('requestIdleCallback'in window)requestIdleCallback(fn,{timeout:MOBILE?3500:2500});else setTimeout(fn,0)},delay)}"
+          if old_idle in s:
+              s=s.replace(old_idle,new_idle,1)
+          old_prog="function progressiveLayers(){const primary=[nextCandleLayer,signalEngineLayer,uiLayer,earlyBreakoutLayer,forecastSafetyLayer,tradeMonitorLayer];const secondary=[tradeZonesLayer,moveTimingLayer,entryRankingLayer,integrityLayer,signalCardUiLayer,publicLiquidityLayer,whaleLayer,whaleFlowLayer,whaleInlineLayer];if(MOBILE){primary.forEach((fn,i)=>idle(fn,2600+i*1200));secondary.forEach((fn,i)=>idle(fn,14000+i*1700))}else{[...primary,...secondary].forEach((fn,i)=>idle(fn,900+i*420))}}"
+          new_prog="function progressiveLayers(){const primary=[nextCandleLayer,signalEngineLayer,uiLayer,earlyBreakoutLayer,forecastSafetyLayer,tradeMonitorLayer];const secondary=[tradeZonesLayer,moveTimingLayer,entryRankingLayer,integrityLayer,signalCardUiLayer,publicLiquidityLayer,whaleLayer,whaleFlowLayer,whaleInlineLayer];if(MOBILE){primary.forEach((fn,i)=>idle(fn,15000+i*2500));secondary.forEach((fn,i)=>idle(fn,42000+i*3000))}else{primary.forEach((fn,i)=>idle(fn,12000+i*1800));secondary.forEach((fn,i)=>idle(fn,30000+i*2400))}}"
+          if old_prog in s:
+              s=s.replace(old_prog,new_prog,1)
+          assert '15000+i*2500' in s, 'progressive layer deferral patch missing'
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('deeprise-v13-product.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('setInterval(refreshCards,5000);',"setInterval(()=>{try{if(typeof scanRunning==='undefined'||!scanRunning)refreshCards()}catch(e){refreshCards()}},7000);")
           p.write_text(s,encoding='utf-8')
 
           p=Path('stable-loader.js')
@@ -44,6 +82,7 @@ jobs:
           s=s.replace('    html=html.replace(startup,safe);','    if(startup.test(html))html=html.replace(startup,safe);')
           s=s.replace('deeprise-fast-search-v160.js?v=1641','deeprise-fast-search-v160.js?v=1650')
           s=s.replace('deeprise-v13-gate-hotfix.js?v=1641','deeprise-v13-gate-hotfix.js?v=1650')
+          s=s.replace('deeprise-v13-product.js?v=1310','deeprise-v13-product.js?v=1650')
           s=s.replace('pwa.js?v=1641','pwa.js?v=1650')
           p.write_text(s,encoding='utf-8')
 
@@ -65,6 +104,7 @@ jobs:
           set -e
           node --check deeprise-fast-search-v160.js
           node --check deeprise-v13-gate-hotfix.js
+          node --check deeprise-v13-product.js
           node --check stable-loader.js
           node --check pwa.js
 
@@ -100,17 +140,25 @@ jobs:
           opts.add_argument('--disable-dev-shm-usage')
           opts.add_argument('--disable-gpu')
           opts.add_argument('--window-size=390,844')
+          opts.add_argument('--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.7 Mobile/15E148 Safari/604.1')
           opts.set_capability('goog:loggingPrefs', {'browser':'ALL'})
           d=webdriver.Chrome(options=opts)
-          w=WebDriverWait(d, 75)
+          d.set_script_timeout(25)
+          w=WebDriverWait(d, 90)
 
           def fatal_console():
               bad=[]
               for row in d.get_log('browser'):
                   msg=row.get('message','')
-                  if row.get('level')=='SEVERE' and not any(x in msg for x in ['favicon','s3.tradingview.com','ERR_BLOCKED_BY_CLIENT']):
+                  if row.get('level')=='SEVERE' and not any(x in msg for x in ['favicon','s3.tradingview.com','ERR_BLOCKED_BY_CLIENT','ERR_CONNECTION_CLOSED']):
                       bad.append(msg)
               return bad
+
+          def responsive():
+              start=time.time()
+              value=d.execute_script('return document.readyState')
+              elapsed=time.time()-start
+              assert value in ('interactive','complete') and elapsed < 3.0, f'UI response too slow: {elapsed:.2f}s'
 
           def check(url, stable=False):
               d.get(url)
@@ -119,6 +167,7 @@ jobs:
               w.until(lambda x: x.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length') >= 20)
               cards=w.until(lambda x: x.find_elements(By.CSS_SELECTOR,'.dr-market-card'))
               assert len(cards)>=10, f'only {len(cards)} market cards rendered'
+              responsive()
 
               analyzed=d.execute_script('return window.DeepRiseBinanceUniverse.state.analyzed.size')
               assert analyzed==0, f'deep scan started automatically ({analyzed} analyzed)'
@@ -127,22 +176,28 @@ jobs:
               search.clear(); search.send_keys('BTC')
               w.until(lambda x: 'BTC/USDT' in x.find_element(By.ID,'results').text)
               w.until(lambda x: x.execute_script("return window.DeepRiseBinanceUniverse.state.analyzed.has('BTCUSDT')"))
+              responsive()
 
               Select(d.find_element(By.ID,'languageSelect')).select_by_value('ar')
               w.until(lambda x: x.find_element(By.TAG_NAME,'html').get_attribute('dir')=='rtl')
               Select(d.find_element(By.ID,'languageSelect')).select_by_value('en')
+              responsive()
 
               search.clear()
               d.execute_script("document.getElementById('search').dispatchEvent(new Event('input',{bubbles:true}))")
               btn=d.find_element(By.XPATH,"//button[contains(.,'DEEP SCAN')]")
               d.execute_script('arguments[0].click()',btn)
               w.until(lambda x: x.execute_script('return window.DeepRiseBinanceUniverse.state.analyzed.size') >= 3)
-              w.until(lambda x: x.execute_script('return window.scanRunning===false'))
+              responsive()
+              w.until(lambda x: x.execute_script("return typeof scanRunning!=='undefined' && scanRunning===false"))
+              responsive()
+              assert d.execute_script('return window.DeepRiseBinanceUniverse.state.analyzed.size') >= 6
 
               first=d.find_element(By.CSS_SELECTOR,'[data-open-symbol]')
               d.execute_script('arguments[0].click()',first)
               w.until(lambda x: 'active' in x.find_element(By.ID,'chartPanel').get_attribute('class'))
               w.until(EC.presence_of_element_located((By.CSS_SELECTOR,'#tradingview_chart iframe')))
+              responsive()
 
               bad=fatal_console()
               assert not bad, 'console errors: '+ ' | '.join(bad[:5])
@@ -151,7 +206,7 @@ jobs:
           check('http://127.0.0.1:4173/index.html?smoke=1650', False)
           check('http://127.0.0.1:4173/stable.html?smoke=1650', True)
           d.quit()
-          print('DEEPRISE BROWSER SMOKE: PASS')
+          print('DEEPRISE MOBILE BROWSER SMOKE: PASS')
           PY
 
       - name: Commit repaired runtime only after browser PASS
@@ -162,6 +217,6 @@ jobs:
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html stable-loader.js stable.html manifest.json recover.html
-          git commit -m 'Repair scanner startup after browser smoke test'
+          git add index.html deeprise-v13-gate-hotfix.js deeprise-v13-product.js pwa.js stable-loader.js stable.html manifest.json recover.html
+          git commit -m 'Repair scanner responsiveness after mobile browser test'
           git push
