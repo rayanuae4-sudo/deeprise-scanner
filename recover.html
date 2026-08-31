@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<title>DeepRise Repair</title>
+<style>
+html,body{margin:0;min-height:100%;background:#050d18;color:#edf6ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}body{display:grid;place-items:center;min-height:100vh;padding:22px;box-sizing:border-box}.card{width:min(520px,100%);background:#0a1827;border:1px solid #193b55;border-radius:18px;padding:24px;box-sizing:border-box;box-shadow:0 20px 60px #0008}.brand{font-size:24px;font-weight:900;color:#35e0a1}.status{margin:16px 0;line-height:1.6;color:#cfe2ef}.bar{height:8px;background:#102638;border-radius:999px;overflow:hidden}.bar i{display:block;width:20%;height:100%;background:#35e0a1;border-radius:999px;animation:p 1.2s ease-in-out infinite alternate}@keyframes p{to{width:100%}}button{width:100%;margin-top:16px;padding:13px;border:0;border-radius:12px;background:#35e0a1;color:#04110d;font-weight:900;font-size:16px}
+</style>
+</head>
+<body>
+<div class="card"><div class="brand">⚡ DeepRise Repair</div><div id="status" class="status">Clearing the old app cache and Service Worker…</div><div class="bar"><i></i></div><button id="retry" hidden>Open DeepRise</button></div>
+<script>
+(async()=>{
+  const s=document.getElementById('status'),b=document.getElementById('retry');
+  try{
+    if('serviceWorker'in navigator){
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister().catch(()=>false)));
+    }
+    if('caches'in window){
+      const keys=await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k).catch(()=>false)));
+    }
+    try{localStorage.removeItem('deeprise_sw_cleanup_1602')}catch(_e){}
+    try{sessionStorage.clear()}catch(_e){}
+    s.textContent='Repair complete. Opening the fresh scanner…';
+    const target='./?source=repair&v=16.0.2&t='+Date.now();
+    setTimeout(()=>location.replace(target),350);
+    b.hidden=false;b.onclick=()=>location.replace(target);
+  }catch(e){
+    s.textContent='Repair completed as far as Safari allowed. Tap below to reopen DeepRise.';
+    b.hidden=false;b.onclick=()=>location.replace('./?source=repair&v=16.0.2&t='+Date.now());
+  }
+})();
+</script>
+</body>
+</html>
