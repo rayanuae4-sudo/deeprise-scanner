@@ -11,11 +11,11 @@ html,body{margin:0;min-height:100%;background:#050d18;color:#edf6ff;font-family:
 </style>
 </head>
 <body>
-<div class="card"><div class="brand">⚡ DeepRise Repair</div><div id="status" class="status">Clearing the old app cache and Service Worker…</div><div class="bar"><i></i></div><button id="retry" hidden>Open DeepRise</button></div>
+<div class="card"><div class="brand">⚡ DeepRise Repair</div><div id="status" class="status">Clearing the old app cache and Service Worker…</div><div class="bar"><i></i></div><button id="retry" hidden>Open DeepRise Stable</button></div>
 <script>
 (async()=>{
   const s=document.getElementById('status'),b=document.getElementById('retry');
-  const fresh=()=> './?source=repair&v=16.2.0&t='+Date.now();
+  const fresh=()=> './stable.html?source=repair&v=16.3.0&t='+Date.now();
   try{
     if('serviceWorker'in navigator){
       const regs=await navigator.serviceWorker.getRegistrations();
@@ -27,12 +27,12 @@ html,body{margin:0;min-height:100%;background:#050d18;color:#edf6ff;font-family:
     }
     try{localStorage.removeItem('deeprise_sw_cleanup_1602')}catch(_e){}
     try{sessionStorage.clear()}catch(_e){}
-    s.textContent='Repair complete. Opening DeepRise v16.2…';
+    s.textContent='Repair complete. Opening the stable scanner…';
     const target=fresh();
-    setTimeout(()=>location.replace(target),350);
+    setTimeout(()=>location.replace(target),250);
     b.hidden=false;b.onclick=()=>location.replace(fresh());
   }catch(e){
-    s.textContent='Repair completed as far as Safari allowed. Tap below to reopen DeepRise.';
+    s.textContent='Repair completed as far as Safari allowed. Tap below to open the stable scanner.';
     b.hidden=false;b.onclick=()=>location.replace(fresh());
   }
 })();
