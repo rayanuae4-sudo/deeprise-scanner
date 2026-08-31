@@ -1,0 +1,178 @@
+name: DeepRise PostHog Ledger Sync Once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deeprise-posthog-sync-once.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deeprise-posthog-ledger-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reconcile latest PostHog audit data
+        id: reconcile
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, math, pathlib
+          from datetime import datetime, timezone
+
+          path=pathlib.Path('forecast-ledger.json')
+          ledger=json.loads(path.read_text(encoding='utf-8'))
+          records=ledger.get('records',[])
+          by_id={r.get('forecast_id'):r for r in records if r.get('forecast_id')}
+
+          audits={
+            '2026-08-31-XAUTUSDT': {
+              'audit_at':'2026-08-31T00:42:55.523Z','status':'STOP HIT','score':80.0,'rank':3,'day':'2026-08-31',
+              'current':4453.85,'high':4453.85,'low':4439.63,'final_move':-0.2056377131466469,
+              'best_move':0.11429317098303211,'worst_move':-0.2056377131466469,'end_reason':'STOP HIT',
+              'ended_at':'2026-08-31T00:35:59.999Z'
+            },
+            '2026-08-31-XRPUSDT': {
+              'audit_at':'2026-08-31T00:42:55.524Z','status':'STOP HIT','score':80.0,'rank':2,'day':'2026-08-31',
+              'current':1.3702,'high':1.3707,'low':1.3527,'final_move':-0.935543278084726,
+              'best_move':0.3535911602209883,'worst_move':-0.9723756906077424,'end_reason':'STOP HIT',
+              'ended_at':'2026-08-31T00:36:59.999Z'
+            },
+            '2026-08-31-BTCUSDT': {
+              'audit_at':'2026-08-31T00:42:55.523Z','status':'STOP HIT','score':80.0,'rank':1,'day':'2026-08-31',
+              'current':78076.74,'high':78155.29,'low':77436.4,'final_move':-0.5081486058546448,
+              'best_move':0.3161607579619549,'worst_move':-0.6092659818233228,'end_reason':'STOP HIT',
+              'ended_at':'2026-08-31T00:35:59.999Z'
+            },
+            '2026-08-31-PUMPUSDT': {
+              'audit_at':'2026-08-31T00:42:55.523Z','status':'ACTIVE','score':80.0,'rank':4,'day':'2026-08-31',
+              'current':0.004531,'high':0.004531,'low':0.004479,'best_move':0.0,
+              'worst_move':-1.160973431569546
+            }
+          }
+
+          def ts(v):
+              if not v: return 0.0
+              try: return datetime.fromisoformat(str(v).replace('Z','+00:00')).timestamp()
+              except Exception: return 0.0
+
+          terminal={'TP2 HIT','STOP HIT','STOP AFTER TP1','TIME EXPIRED','EXPIRED','ENDED'}
+          fields=['score','rank','day','current','high','low','final_move','best_move','worst_move','end_reason','tp1_hit_at','tp2_hit_at','ended_at']
+          changed=[]
+          for fid,a in audits.items():
+              r=by_id.get(fid)
+              if not r:
+                  continue
+              # Only enrich from an audit newer than the row's last market/lifecycle check.
+              freshness=max(ts(r.get('last_checked_at')), ts(r.get('ended_at')), ts(r.get('tp2_hit_at')), ts(r.get('tp1_hit_at')))
+              if ts(a.get('audit_at')) <= freshness:
+                  # Missing terminal audit outputs are still valid enrichment when the audit post-dates proof verification.
+                  if not (a.get('final_move') is not None and r.get('final_move') is None and ts(a.get('audit_at')) > ts(r.get('proof_verified_at'))):
+                      continue
+              row_changed=False
+              new_status=a.get('status')
+              old_status=str(r.get('status') or 'ACTIVE')
+              if new_status and new_status != old_status:
+                  # Never regress a terminal lifecycle record to ACTIVE or an earlier state.
+                  if old_status not in terminal or new_status in terminal:
+                      r['status']=new_status; row_changed=True
+              for k in fields:
+                  if k not in a or a[k] is None:
+                      continue
+                  if r.get(k) != a[k]:
+                      r[k]=a[k]; row_changed=True
+              if row_changed:
+                  changed.append(fid)
+
+          if changed:
+              ledger['generated_at']=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+              path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          pathlib.Path('/tmp/changed_ids.json').write_text(json.dumps(changed),encoding='utf-8')
+          print('changed_ids='+','.join(changed))
+          PY
+
+          CHANGED=$(python3 -c "import json; print(','.join(json.load(open('/tmp/changed_ids.json'))))")
+          if [ -z "$CHANGED" ]; then
+            echo "data_changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forecast-ledger.json
+          git commit -m "Sync PostHog forecast audit lifecycle data"
+          git push
+          DATA_SHA=$(git rev-parse HEAD)
+          echo "data_changed=true" >> "$GITHUB_OUTPUT"
+          echo "data_sha=$DATA_SHA" >> "$GITHUB_OUTPUT"
+          echo "changed_ids=$CHANGED" >> "$GITHUB_OUTPUT"
+
+      - name: Stamp proof commits
+        shell: bash
+        run: |
+          git fetch origin main
+          git rebase origin/main || { git rebase --abort || true; exit 1; }
+          python3 - <<'PY'
+          import json, pathlib, subprocess
+          from datetime import datetime, timezone
+
+          path=pathlib.Path('forecast-ledger.json')
+          ledger=json.loads(path.read_text(encoding='utf-8'))
+          changed=json.loads(pathlib.Path('/tmp/changed_ids.json').read_text())
+          first_sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip() if changed else None
+          now=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+          audit_keys=['forecast_id','created_at','entry','tp1','tp2','sl','symbol','side','status','score','rank','day','current','high','low','final_move','best_move','worst_move','end_reason','tp1_hit_at','tp2_hit_at','ended_at']
+
+          def signature(r):
+              return {k:r.get(k) for k in audit_keys}
+
+          def find_proof_for_row(row):
+              target=signature(row)
+              shas=subprocess.check_output(['git','log','--format=%H','--','forecast-ledger.json'],text=True).splitlines()
+              for sha in shas[:150]:
+                  try:
+                      raw=subprocess.check_output(['git','show',f'{sha}:forecast-ledger.json'],text=True,stderr=subprocess.DEVNULL)
+                      old=json.loads(raw)
+                  except Exception:
+                      continue
+                  rr=next((x for x in old.get('records',[]) if x.get('forecast_id')==row.get('forecast_id')),None)
+                  if rr and signature(rr)==target:
+                      return sha
+              return None
+
+          stamped=[]
+          for r in ledger.get('records',[]):
+              fid=r.get('forecast_id')
+              if fid in changed:
+                  sha=first_sha
+              elif not r.get('proof_commit'):
+                  sha=find_proof_for_row(r)
+              else:
+                  continue
+              if not sha:
+                  raise SystemExit(f'No proof commit found for {fid}')
+              r['proof_commit']=sha
+              r['proof_verified_at']=now
+              stamped.append(fid)
+
+          if stamped:
+              path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          pathlib.Path('/tmp/stamped_ids.json').write_text(json.dumps(stamped),encoding='utf-8')
+          print('stamped_ids='+','.join(stamped))
+          PY
+
+          STAMPED=$(python3 -c "import json; print(','.join(json.load(open('/tmp/stamped_ids.json'))))")
+          if [ -z "$STAMPED" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forecast-ledger.json
+          git commit -m "Stamp per-row GitHub proof for PostHog sync"
+          git push
