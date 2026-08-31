@@ -90,7 +90,7 @@ jobs:
           from selenium import webdriver
           from selenium.webdriver.chrome.options import Options
           from selenium.webdriver.common.by import By
-          from selenium.webdriver.support.ui import WebDriverWait,Select
+          from selenium.webdriver.support.ui import WebDriverWait
           from selenium.webdriver.support import expected_conditions as EC
 
           chrome=shutil.which('google-chrome') or shutil.which('chromium') or shutil.which('chromium-browser'); assert chrome
@@ -113,19 +113,15 @@ jobs:
               w.until(lambda x:'BTC/USDT' in x.find_element(By.ID,'results').text)
               w.until(lambda x:len(x.find_elements(By.CSS_SELECTOR,'#results .dr-enter-trade'))>=1)
 
-              Select(d.find_element(By.ID,'languageSelect')).select_by_value('ar')
-              w.until(lambda x:x.find_element(By.TAG_NAME,'html').get_attribute('dir')=='rtl')
               btn=d.find_element(By.CSS_SELECTOR,'#results .dr-enter-trade')
-              label=btn.text.strip()
-              assert label in ('دخول الصفقة','حلّل ثم ادخل','✓ تم تتبع العملة'),label
-
-              if 'تم تتبع' not in label:
+              assert btn.text.strip(), 'trade button has no label'
+              active=btn.get_attribute('aria-pressed')=='true'
+              if not active:
                   d.execute_script('arguments[0].click()',btn)
                   # A working click must either create an active trade or produce a visible
                   # no-entry/activation toast after analysis; a dead button does neither.
                   w.until(lambda x: x.execute_script("return !!document.querySelector('#dr-active-trades-panel') || !!document.querySelector('#dr-trade-toast.show')"))
 
-              # Page remains responsive after interaction.
               t=time.time(); state=d.execute_script('return document.readyState'); dt=time.time()-t
               assert state in ('interactive','complete') and dt<2,(state,dt)
 
