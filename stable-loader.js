@@ -1,11 +1,11 @@
-/* DeepRise Stable Loader v16.5.2 */
+/* DeepRise Stable Loader v16.5.3 */
 (()=>{'use strict';
 const status=document.getElementById('status');
 const retry=document.getElementById('retry');
 const fail=(msg)=>{if(status)status.textContent=msg;if(retry){retry.hidden=false;retry.onclick=()=>location.reload()}};
 (async()=>{
   try{
-    const r=await fetch('./index.html?stable=16.5.2&t='+Date.now(),{cache:'no-store'});
+    const r=await fetch('./index.html?stable=16.5.3&t='+Date.now(),{cache:'no-store'});
     if(!r.ok)throw new Error('HTTP '+r.status);
     let html=await r.text();
     const startup=/loadMarket\(\);\s*setInterval\(loadMarket,60000\);/;
