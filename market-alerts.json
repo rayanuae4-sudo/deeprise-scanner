@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-08-31T05:10:47.475Z",
+  "generated_at": "2026-08-31T05:23:56.515Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 23,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "ZECUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788153599999",
+      "symbol": "ZECUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 70,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 825.92,
+      "liquidity_level": 826.0,
+      "distance_to_liquidity_pct": 0.0097,
+      "momentum_30m_pct": 1.3088,
+      "taker_buy_ratio": 0.63159,
+      "taker_acceleration_pp": -6.3418,
+      "upper_wick_ratio": 0.1545,
+      "volume_ratio": 1.6311,
+      "atr_pct": 0.42,
+      "quote_volume_usdt": 162252740.47,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -6.3pp",
+        "Volume expansion 1.63x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-08-31T05:19:59.999Z",
+      "invalidation": "A sustained 5m close above 826 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-08-31T05:23:38.631Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ADAUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788152999999",
       "symbol": "ADAUSDT",
