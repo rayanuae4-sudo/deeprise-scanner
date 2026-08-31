@@ -1,0 +1,147 @@
+name: DeepRise Trade Entry + iPhone Search Fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deeprise-entry-mobile-fix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix-test-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch trade entry and iPhone search focus
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+
+          # iOS Safari auto-zooms focused inputs when computed font-size is below 16px.
+          old='input{flex:1;padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:white}'
+          new='input{flex:1;padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:white;font-size:16px;line-height:1.25}'
+          if old in s:
+              s=s.replace(old,new,1)
+          elif 'font-size:16px' not in s:
+              raise SystemExit('search input CSS marker not found')
+
+          # Trade monitor used to arrive through optional PWA layers. After the stability
+          # repair those optional layers no longer auto-load, so load the monitor once
+          # in the production document, after the market universe engine is defined.
+          monitor='<script defer src="deeprise-trade-monitor-v14.js?v=1652"></script>'
+          if 'deeprise-trade-monitor-v14.js' not in s:
+              marker='<script defer src="deeprise-v13-gate-hotfix.js?v=1651"></script>'
+              if marker not in s:
+                  raise SystemExit('gate hotfix script marker not found')
+              s=s.replace(marker,marker+monitor,1)
+
+          p.write_text(s,encoding='utf-8')
+
+          # Bump stable/PWA shell so installed iPhones do not keep an old generated page.
+          p=Path('stable-loader.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('DeepRise Stable Loader v16.5.1','DeepRise Stable Loader v16.5.2')
+          s=s.replace('./index.html?stable=16.5.1&t=','./index.html?stable=16.5.2&t=')
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('stable.html')
+          s=p.read_text(encoding='utf-8').replace('stable-loader.js?v=1651','stable-loader.js?v=1652')
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('manifest.json')
+          s=p.read_text(encoding='utf-8').replace('./stable.html?source=pwa&v=16.5.1','./stable.html?source=pwa&v=16.5.2')
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('recover.html')
+          s=p.read_text(encoding='utf-8').replace('./stable.html?source=repair&v=16.5.1&t=','./stable.html?source=repair&v=16.5.2&t=')
+          p.write_text(s,encoding='utf-8')
+          PY
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check deeprise-trade-monitor-v14.js
+          node --check deeprise-v13-gate-hotfix.js
+          node --check stable-loader.js
+
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 >/tmp/deeprise-http.log 2>&1 &
+          sleep 2
+          curl -fsS http://127.0.0.1:4173/index.html >/dev/null
+          curl -fsS http://127.0.0.1:4173/stable.html >/dev/null
+
+      - name: Install Selenium
+        run: python3 -m pip install --quiet selenium
+
+      - name: Test iPhone search and trade-entry button
+        run: |
+          python3 - <<'PY'
+          import shutil,time
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+          from selenium.webdriver.common.by import By
+          from selenium.webdriver.support.ui import WebDriverWait,Select
+          from selenium.webdriver.support import expected_conditions as EC
+
+          chrome=shutil.which('google-chrome') or shutil.which('chromium') or shutil.which('chromium-browser'); assert chrome
+          o=Options();o.binary_location=chrome
+          for a in ['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--window-size=390,844']:o.add_argument(a)
+          o.add_argument('--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1')
+          d=webdriver.Chrome(options=o);w=WebDriverWait(d,90)
+
+          def check(url):
+              d.get(url)
+              w.until(EC.presence_of_element_located((By.ID,'search')))
+              w.until(lambda x:x.execute_script('return !!window.DeepRiseBinanceUniverse'))
+              w.until(lambda x:x.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length')>=20)
+              w.until(lambda x:x.execute_script("return [...document.scripts].some(s=>s.src.includes('deeprise-trade-monitor-v14.js'))"))
+
+              search=d.find_element(By.ID,'search')
+              fs=float(d.execute_script("return parseFloat(getComputedStyle(arguments[0]).fontSize)",search))
+              assert fs>=16,fs
+              search.click(); search.send_keys('BTC')
+              w.until(lambda x:'BTC/USDT' in x.find_element(By.ID,'results').text)
+              w.until(lambda x:len(x.find_elements(By.CSS_SELECTOR,'#results .dr-enter-trade'))>=1)
+
+              Select(d.find_element(By.ID,'languageSelect')).select_by_value('ar')
+              w.until(lambda x:x.find_element(By.TAG_NAME,'html').get_attribute('dir')=='rtl')
+              btn=d.find_element(By.CSS_SELECTOR,'#results .dr-enter-trade')
+              label=btn.text.strip()
+              assert label in ('دخول الصفقة','حلّل ثم ادخل','✓ تم تتبع العملة'),label
+
+              if 'تم تتبع' not in label:
+                  d.execute_script('arguments[0].click()',btn)
+                  # A working click must either create an active trade or produce a visible
+                  # no-entry/activation toast after analysis; a dead button does neither.
+                  w.until(lambda x: x.execute_script("return !!document.querySelector('#dr-active-trades-panel') || !!document.querySelector('#dr-trade-toast.show')"))
+
+              # Page remains responsive after interaction.
+              t=time.time(); state=d.execute_script('return document.readyState'); dt=time.time()-t
+              assert state in ('interactive','complete') and dt<2,(state,dt)
+
+          check('http://127.0.0.1:4173/index.html?smoke=1652')
+          print('ROOT TRADE + SEARCH PASS',flush=True)
+          check('http://127.0.0.1:4173/stable.html?smoke=1652')
+          print('STABLE TRADE + SEARCH PASS',flush=True)
+          d.quit()
+          PY
+
+      - name: Commit runtime only after PASS
+        run: |
+          if git diff --quiet; then echo 'No changes'; exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html stable-loader.js stable.html manifest.json recover.html
+          git commit -m 'Fix trade entry button and iPhone search zoom'
+          git pull --rebase origin main
+          git push
