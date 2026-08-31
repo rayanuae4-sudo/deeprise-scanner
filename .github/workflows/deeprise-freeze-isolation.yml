@@ -1,6 +1,6 @@
 name: DeepRise Freeze Isolation
 
-# Search-event runtime isolation probe
+# Progressive PWA layer isolation probe
 on:
   push:
     branches: [main]
@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Build isolated runtime variants
+      - name: Build progressive runtime variants
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -26,25 +26,27 @@ jobs:
           auto='loadMarket();\nsetInterval(loadMarket,60000);'
           if auto in src:
               src=src.replace(auto,"try{document.getElementById('marketRegime').innerHTML='Market: <b>READY</b>'}catch(e){}",1)
-          scripts=re.findall(r'<script(?: defer)? src="([^"]+)"[^>]*></script>',src)
           core_names=('deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js')
-          groups={
-            'core.html':[],
-            'ui.html':['mobile-app-v11.js','pwa.js'],
-            'legacy.html':['deeprise-v86-upgrade.js','deeprise-intelligence-v11.js','deeprise-v12-experience.js'],
-            'product.html':['deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js'],
-            'data.html':['deeprise-analytics-config.js','deeprise-analytics.js','deeprise-central-ledger.js'],
-            'all.html':['deeprise-v86-upgrade.js','deeprise-intelligence-v11.js','deeprise-v12-experience.js','deeprise-analytics-config.js','deeprise-analytics.js','deeprise-central-ledger.js','deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js','mobile-app-v11.js','pwa.js']
-          }
-          for name, extras in groups.items():
-              keep=core_names+tuple(extras)
-              s=src
+          def core_html():
               def repl(m):
                   url=m.group(1)
                   if 's3.tradingview.com' in url: return m.group(0)
-                  return m.group(0) if any(k in url for k in keep) else ''
-              s=re.sub(r'<script(?: defer)? src="([^"]+)"[^>]*></script>',repl,s)
+                  return m.group(0) if any(k in url for k in core_names) else ''
+              return re.sub(r'<script(?: defer)? src="([^"]+)"[^>]*></script>',repl,src)
+          primary=['deeprise-next-candle-v145.js?v=1450','deeprise-signal-engine-v149.js?v=1490','deeprise-ui-v146.js?v=1461','deeprise-early-breakout-v159.js?v=1590','deeprise-forecast-safety-v145.js?v=1450','deeprise-trade-monitor-v14.js?v=1440']
+          secondary=['deeprise-trade-zones-v157.js?v=1570','deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1580','deeprise-integrity-v158.js?v=1580','deeprise-signal-card-ui-v153.js?v=1531','deeprise-public-liquidity-v148.js?v=1480','deeprise-whale-radar-v147.js?v=1470','deeprise-whale-flow-v155.js?v=1550','deeprise-whale-inline-v156.js?v=1560']
+          def make(name,extras):
+              s=core_html()
+              tags=''.join(f'<script defer src="{x}"></script>' for x in extras)
+              s=s.replace('</body>',tags+'</body>')
               Path(name).write_text(s,encoding='utf-8')
+          make('core.html',[])
+          make('primary.html',primary)
+          make('secondary.html',secondary)
+          make('progressive-all.html',primary+secondary)
+          # Full production script set plus all progressive layers forced to load immediately.
+          full=src.replace('</body>',''.join(f'<script defer src="{x}"></script>' for x in primary+secondary)+'</body>')
+          Path('full-forced.html').write_text(full,encoding='utf-8')
           PY
       - name: Start local app
         run: |
@@ -52,7 +54,7 @@ jobs:
           sleep 2
       - name: Install Selenium
         run: python3 -m pip install --quiet selenium
-      - name: Create search-event browser probe
+      - name: Create browser probe
         run: |
           cat > /tmp/probe.py <<'PY'
           import sys, shutil, time
@@ -67,16 +69,14 @@ jobs:
           for a in ['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--window-size=390,844'] : o.add_argument(a)
           o.add_argument('--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1')
           d=webdriver.Chrome(options=o); w=WebDriverWait(d,25)
-          d.get('http://127.0.0.1:4173/'+name+'?isolate=search')
+          d.get('http://127.0.0.1:4173/'+name+'?isolate=progressive')
           w.until(EC.presence_of_element_located((By.ID,'search')))
           w.until(lambda x:x.execute_script('return !!window.DeepRiseBinanceUniverse'))
           w.until(lambda x:x.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length')>=20)
+          time.sleep(1.5)
           print(name,'UNIVERSE',d.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length'),flush=True)
-          inp=d.find_element(By.ID,'search')
-          t=time.time(); inp.send_keys('BTC')
-          print(name,'SEND_KEYS',round(time.time()-t,3),flush=True)
+          inp=d.find_element(By.ID,'search'); t=time.time(); inp.send_keys('BTC')
           w.until(lambda x:'BTC/USDT' in x.find_element(By.ID,'results').text)
-          print(name,'RESULT_RENDERED',round(time.time()-t,3),flush=True)
           w.until(lambda x:x.execute_script("return window.DeepRiseBinanceUniverse.state.analyzed.has('BTCUSDT')"))
           print(name,'SEARCH_ANALYZED',round(time.time()-t,3),flush=True)
           t2=time.time(); ready=d.execute_script('return document.readyState'); dt=time.time()-t2
@@ -84,13 +84,13 @@ jobs:
           assert dt<2
           d.quit()
           PY
-      - name: Probe search path independently
+      - name: Probe progressive layer groups
         run: |
           set +e
           FAIL=0
-          for v in core.html ui.html legacy.html product.html data.html all.html; do
+          for v in core.html primary.html secondary.html progressive-all.html full-forced.html; do
             echo "===== $v ====="
-            timeout 40s python3 /tmp/probe.py "$v"
+            timeout 45s python3 /tmp/probe.py "$v"
             rc=$?
             echo "RESULT $v rc=$rc"
             if [ "$v" = "core.html" ] && [ $rc -ne 0 ]; then FAIL=1; fi
