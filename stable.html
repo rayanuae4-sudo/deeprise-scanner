@@ -12,22 +12,6 @@ html,body{margin:0;min-height:100%;background:#050d18;color:#edf6ff;font-family:
 </head>
 <body>
 <div class="card"><div class="brand">⚡ DeepRise Stable</div><div id="status" class="status">Loading the scanner safely…</div><div class="bar"><i></i></div><button id="retry" hidden>Retry</button></div>
-<script>
-(async()=>{
-  const status=document.getElementById('status'),retry=document.getElementById('retry');
-  const fail=(msg)=>{status.textContent=msg;retry.hidden=false;retry.onclick=()=>location.reload()};
-  try{
-    const r=await fetch('./index.html?stable=16.3.0&t='+Date.now(),{cache:'no-store'});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    let html=await r.text();
-    const original='loadMarket();\nsetInterval(loadMarket,60000);';
-    const safe=`try{\n  const results=document.getElementById("results");\n  const top3=document.getElementById("top3");\n  const regime=document.getElementById("marketRegime");\n  if(results)results.innerHTML='<div class="loading">Ready. Search a coin instantly or tap ⚡ DEEP SCAN.</div>';\n  if(top3)top3.innerHTML='<div class="loading">Tap ⚡ DEEP SCAN to build Top Setups.</div>';\n  if(regime)regime.innerHTML='Market: <b class="yellow">READY</b>';\n}catch(e){}\nsetInterval(()=>{try{if(document.visibilityState==="visible"&&Array.isArray(marketData)&&marketData.length&&!scanRunning)loadMarket()}catch(e){}},300000);`;
-    if(!html.includes(original))throw new Error('startup marker not found');
-    html=html.replace(original,safe);
-    html=html.replace('deeprise-fast-search-v160.js?v=1601','deeprise-fast-search-v160.js?v=1630');
-    document.open();document.write(html);document.close();
-  }catch(e){fail('Could not start DeepRise safely: '+e.message)}
-})();
-</script>
+<script src="stable-loader.js?v=1631"></script>
 </body>
 </html>
