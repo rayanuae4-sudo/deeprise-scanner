@@ -1,4 +1,4 @@
-name: DeepRise PostHog Ledger Reconciliation
+name: DeepRise PostHog Proof Recovery
 
 on:
   push:
@@ -10,114 +10,20 @@ permissions:
   contents: write
 
 jobs:
-  reconcile:
+  recover-proof:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Reconcile latest PostHog audit fields and proofs
+      - name: Stamp verified proof commits
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
-          python3 - <<'PY'
-          import json
-          from datetime import datetime, timezone
-          from pathlib import Path
-
-          p=Path('forecast-ledger.json')
-          d=json.loads(p.read_text(encoding='utf-8'))
-          records=d.get('records',[])
-          byid={str(r.get('forecast_id')):r for r in records if r.get('forecast_id')}
-
-          # Newest forecast_audit snapshots observed in PostHog during this synchronization.
-          # Immutable creation fields are intentionally absent from this patch.
-          updates={
-            '2026-08-31-LINKUSDT': {
-              'status':'STOP AFTER TP1',
-              'score':75.0,
-              'rank':5,
-              'day':'2026-08-31',
-              'current':11.232,
-              'high':11.233,
-              'low':11.014,
-              'final_move':-0.9708737864077558,
-              'best_move':0.9888529306005142,
-              'worst_move':-0.979863358504135,
-              'end_reason':'STOP AFTER TP1',
-              'tp1_hit_at':'2026-08-31T02:55:59.999Z',
-              'tp2_hit_at':None,
-              'ended_at':'2026-08-31T05:16:59.999Z'
-            },
-            '2026-08-31-PUMPUSDT': {
-              'status':'TP2 HIT',
-              'score':80.0,
-              'rank':4,
-              'day':'2026-08-31',
-              'current':0.004377,
-              'high':0.004531,
-              'low':0.004371,
-              'final_move':2.2772940388479688,
-              'best_move':2.411252511721376,
-              'worst_move':-1.160973431569546,
-              'end_reason':'TP2',
-              'tp1_hit_at':'2026-08-31T01:44:59.999Z',
-              'tp2_hit_at':'2026-08-31T02:00:59.999Z',
-              'ended_at':'2026-08-31T02:00:59.999Z'
-            }
-          }
-
-          changed=[]
-          # Do not regress or overwrite newer central market observations. For this pass,
-          # only fill/normalize audit fields that are missing or lifecycle-equivalent.
-          for fid,u in updates.items():
-              r=byid.get(fid)
-              if not r:
-                  raise SystemExit(f'missing expected ledger forecast {fid}')
-              touched=False
-              # Status is already terminal in both expected rows; never regress it.
-              if r.get('status') != u['status']:
-                  terminal=str(r.get('status') or '').upper()
-                  if terminal in ('ACTIVE','TP1 HIT'):
-                      r['status']=u['status']; touched=True
-              # Persist audit values when currently absent. Keep newer central current/high/low values.
-              for k in ('score','rank','day','final_move','end_reason','tp1_hit_at','tp2_hit_at','ended_at'):
-                  v=u[k]
-                  if v is None:
-                      continue
-                  if r.get(k) is None:
-                      r[k]=v; touched=True
-                  elif k=='end_reason' and fid=='2026-08-31-LINKUSDT' and r.get(k)=='STOP_AFTER_TP1':
-                      r[k]=v; touched=True
-              # final_move is authoritative from terminal forecast_audit and should match it.
-              if r.get('final_move') != u['final_move']:
-                  r['final_move']=u['final_move']; touched=True
-              if touched:
-                  changed.append(fid)
-
-          if changed:
-              d['generated_at']=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
-              p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-          Path('.posthog_changed_ids.json').write_text(json.dumps(changed),encoding='utf-8')
-          PY
-
-          CHANGED=$(python3 -c "import json; print(len(json.load(open('.posthog_changed_ids.json'))))")
-          DATA_SHA=""
-          if [ "$CHANGED" -gt 0 ]; then
-            git add forecast-ledger.json
-            git commit -m "Sync DeepRise terminal audit data from PostHog"
-            DATA_SHA=$(git rev-parse HEAD)
-            git push origin HEAD:main
-          fi
-
-          # Stamp changed rows with a proof SHA that already contains their current audit data.
-          # Also repair any truly missing proof by finding the newest historical ledger commit
-          # whose row matches the current lifecycle/audit values.
-          export DATA_SHA
+          export DATA_SHA=c3e388848dbcd37f9ccc818afbe7afe8d87b0194
           python3 - <<'PY'
           import json, os, subprocess
           from datetime import datetime, timezone
@@ -125,50 +31,59 @@ jobs:
 
           p=Path('forecast-ledger.json')
           d=json.loads(p.read_text(encoding='utf-8'))
-          changed=set(json.loads(Path('.posthog_changed_ids.json').read_text() or '[]'))
-          data_sha=os.environ.get('DATA_SHA','').strip()
+          data_sha=os.environ['DATA_SHA']
           now=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
-          proof_changed=False
-
+          changed_ids={'2026-08-31-LINKUSDT','2026-08-31-PUMPUSDT'}
           compare_fields=('forecast_id','created_at','entry','tp1','tp2','sl','symbol','side','status','score','rank','day','current','high','low','final_move','best_move','worst_move','end_reason','tp1_hit_at','tp2_hit_at','ended_at')
-          def row_at(sha,fid):
-              try:
-                  raw=subprocess.check_output(['git','show',f'{sha}:forecast-ledger.json'],text=True,stderr=subprocess.DEVNULL)
-                  x=json.loads(raw)
-              except Exception:
-                  return None
-              return next((r for r in x.get('records',[]) if str(r.get('forecast_id'))==fid),None)
-          def matches(a,b):
-              return all(a.get(k)==b.get(k) for k in compare_fields)
-          commits=None
-          for r in d.get('records',[]):
-              fid=str(r.get('forecast_id') or '')
-              if fid in changed:
-                  if len(data_sha)!=40:
-                      raise SystemExit('data commit SHA missing for changed rows')
-                  if r.get('proof_commit')!=data_sha:
-                      r['proof_commit']=data_sha; r['proof_verified_at']=now; proof_changed=True
-                  continue
-              if r.get('proof_commit'):
-                  continue
-              if commits is None:
-                  commits=subprocess.check_output(['git','log','--format=%H','--','forecast-ledger.json'],text=True).splitlines()
-              found=None
-              for sha in commits:
-                  old=row_at(sha,fid)
-                  if old and matches(old,r):
-                      found=sha; break
-              if not found:
-                  raise SystemExit(f'no historical proof commit found for {fid}')
-              r['proof_commit']=found; r['proof_verified_at']=now; proof_changed=True
+
+          def load_at(sha):
+              raw=subprocess.check_output(['git','show',f'{sha}:forecast-ledger.json'],text=True)
+              x=json.loads(raw)
+              return {str(r.get('forecast_id')):r for r in x.get('records',[]) if r.get('forecast_id')}
+          proof_rows=load_at(data_sha)
+          current={str(r.get('forecast_id')):r for r in d.get('records',[]) if r.get('forecast_id')}
+          def matches(a,b): return all(a.get(k)==b.get(k) for k in compare_fields)
+
+          for fid in changed_ids:
+              if fid not in current or fid not in proof_rows:
+                  raise SystemExit(f'proof validation row missing: {fid}')
+              if not matches(proof_rows[fid],current[fid]):
+                  raise SystemExit(f'proof commit does not contain current lifecycle/audit data: {fid}')
+
+          proof_changed=False
+          for fid in changed_ids:
+              r=current[fid]
+              if r.get('proof_commit')!=data_sha:
+                  r['proof_commit']=data_sha
+                  r['proof_verified_at']=now
+                  proof_changed=True
+
+          # Repair any rows that still have no proof by finding the newest historical
+          # ledger commit that already contains their current lifecycle/audit data.
+          missing=[r for r in d.get('records',[]) if r.get('forecast_id') and not r.get('proof_commit')]
+          if missing:
+              commits=subprocess.check_output(['git','log','--format=%H','--','forecast-ledger.json'],text=True).splitlines()
+              cache={}
+              for r in missing:
+                  fid=str(r['forecast_id']); found=None
+                  for sha in commits:
+                      if sha not in cache:
+                          try: cache[sha]=load_at(sha)
+                          except Exception: cache[sha]={}
+                      old=cache[sha].get(fid)
+                      if old and matches(old,r):
+                          found=sha; break
+                  if not found:
+                      raise SystemExit(f'no historical proof commit found for {fid}')
+                  r['proof_commit']=found
+                  r['proof_verified_at']=now
+                  proof_changed=True
 
           if proof_changed:
               p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           Path('.proof_changed').write_text('1' if proof_changed else '0')
           PY
-
           if [ "$(cat .proof_changed)" = "1" ]; then
-            git pull --rebase origin main
             git add forecast-ledger.json
             git commit -m "Stamp DeepRise per-row GitHub proof commits"
             git push origin HEAD:main
