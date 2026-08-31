@@ -1,5 +1,6 @@
 name: DeepRise Freeze Isolation
 
+# Runtime layer isolation probe
 on:
   push:
     branches: [main]
@@ -75,7 +76,6 @@ jobs:
           print(name,'UNIVERSE',d.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length'),flush=True)
           t=time.time(); r=d.execute_async_script("""
           const done=arguments[arguments.length-1];
-          const tick=window.DeepRiseBinanceUniverse.state.ticks.get('BTCUSDT');
           Promise.race([
             window.DeepRiseBinanceUniverse.analyze('BTCUSDT'),
             new Promise(res=>setTimeout(()=>res('TIMEOUT'),12000))
