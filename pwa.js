@@ -1,15 +1,16 @@
 (()=>{'use strict';
 const L=()=>localStorage.getItem('deeprise_language')||'en';
-const copy={en:{install:'Install DeepRise',ios:'Install on iPhone',how:'Tap Share, then Add to Home Screen',ready:'DeepRise V15.9 is ready to install'},ar:{install:'تثبيت DeepRise',ios:'تثبيت على الآيفون',how:'اضغط مشاركة ثم إضافة إلى الشاشة الرئيسية',ready:'DeepRise V15.9 جاهز للتثبيت'},ru:{install:'Установить DeepRise',ios:'Установить на iPhone',how:'Нажмите Поделиться, затем На экран Домой',ready:'DeepRise V15.9 готов к установке'}};
+const copy={en:{install:'Install DeepRise',ios:'Install on iPhone',how:'Tap Share, then Add to Home Screen',ready:'DeepRise is ready to install'},ar:{install:'تثبيت DeepRise',ios:'تثبيت على الآيفون',how:'اضغط مشاركة ثم إضافة إلى الشاشة الرئيسية',ready:'DeepRise جاهز للتثبيت'},ru:{install:'Установить DeepRise',ios:'Установить на iPhone',how:'Нажмите Поделиться, затем На экран Домой',ready:'DeepRise готов к установке'}};
 const t=k=>(copy[L()]||copy.en)[k];let deferred=null,langObservers=[],langTimer=null;
-function brand(){document.title='DeepRise V15.9 PRO';const h=document.querySelector('.brand h1');if(h)h.textContent='⚡ DeepRise V15.9 PRO';const mobileSub=document.querySelector('.dr-mobile-brand small');if(mobileSub)mobileSub.textContent='V15.9 PRO Mobile';const bars=[...document.querySelectorAll('.marketbar span')];const engine=bars.find(x=>/Engine:/i.test(x.textContent||''));if(engine)engine.innerHTML='Engine: <b>V15.9 PRO</b>';const footer=document.querySelector('.footer');if(footer)footer.textContent='DeepRise V15.9 PRO analyses public market and on-chain data. Signals are probabilistic, not guarantees or financial advice.'}
+const MOBILE=/iphone|ipad|ipod|android|mobile/i.test(navigator.userAgent||'');
+function brand(){if(window.DeepRiseBinanceUniverse)return;document.title='DeepRise PRO';const h=document.querySelector('.brand h1');if(h)h.textContent='⚡ DeepRise PRO'}
 function translateRoot(root){if(!root)return;try{const nodes=[root,...root.querySelectorAll('*:not(script):not(style):not(option)')];for(const el of nodes)for(const n of el.childNodes)if(n.nodeType===3&&typeof translateTextNode==='function')translateTextNode(n)}catch(e){}}
-function refreshDynamic(){clearTimeout(langTimer);langTimer=setTimeout(()=>{['results','top3','signalResultsPanel','deepriseFastSearchResult'].forEach(id=>translateRoot(document.getElementById(id)))},280)}
+function refreshDynamic(){clearTimeout(langTimer);langTimer=setTimeout(()=>{['results','top3','signalResultsPanel','deepriseFastSearchResult'].forEach(id=>translateRoot(document.getElementById(id)))},MOBILE?420:240)}
 function languagePerformancePatch(){try{if(typeof languageObserver!=='undefined')languageObserver.disconnect()}catch(e){}langObservers.forEach(o=>{try{o.disconnect()}catch(e){}});langObservers=[];const opt={childList:true,subtree:true};['results','top3','signalResultsPanel','deepriseFastSearchResult'].forEach(id=>{const el=document.getElementById(id);if(!el)return;try{const o=new MutationObserver(refreshDynamic);o.observe(el,opt);langObservers.push(o)}catch(e){}});window.DeepRiseLanguageRefresh=refreshDynamic}
-if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=stable-v15-9-fast2',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{}));
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=stable-v15-9-fast3',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{}));
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 function button(){if(standalone||document.getElementById('deepriseInstall'))return;let b=document.createElement('button');b.id='deepriseInstall';b.textContent='⬇ '+t('install');b.style.cssText='position:fixed;right:14px;bottom:14px;z-index:99998;border:1px solid #35e0a1;background:#071b26;color:#35e0a1;border-radius:14px;padding:12px 16px;font-weight:800;box-shadow:0 10px 30px #0008';b.onclick=async()=>{if(deferred){deferred.prompt();await deferred.userChoice;deferred=null;b.remove();return}const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);alert(ios?t('how'):t('ready'))};document.body.appendChild(b)}
-function load(id,src){if(document.getElementById(id))return;let s=document.createElement('script');s.id=id;s.src=src;s.defer=true;s.async=true;document.body.appendChild(s)}
+function load(id,src){if(document.getElementById(id)||document.querySelector(`script[src*="${src.split('?')[0].replace('./','')}"]`))return;let s=document.createElement('script');s.id=id;s.src=src;s.defer=true;s.async=true;document.body.appendChild(s)}
 function fastSearchLayer(){load('dr-fast-search-v160-loader','./deeprise-fast-search-v160.js?v=1601')}
 function nextCandleLayer(){load('dr-next-candle-loader','./deeprise-next-candle-v145.js?v=1450')}
 function forecastSafetyLayer(){load('dr-forecast-safety-loader','./deeprise-forecast-safety-v145.js?v=1450')}
@@ -26,9 +27,9 @@ function integrityLayer(){load('dr-integrity-v158-loader','./deeprise-integrity-
 function signalCardUiLayer(){load('dr-signal-card-ui-v153-loader','./deeprise-signal-card-ui-v153.js?v=1531')}
 function whaleInlineLayer(){load('dr-whale-inline-v156-loader','./deeprise-whale-inline-v156.js?v=1560')}
 function earlyBreakoutLayer(){load('dr-early-breakout-v159-loader','./deeprise-early-breakout-v159.js?v=1590')}
-function idle(fn,delay=0){setTimeout(()=>{if('requestIdleCallback'in window)requestIdleCallback(fn,{timeout:1800});else setTimeout(fn,0)},delay)}
-function progressiveLayers(){const queue=[nextCandleLayer,signalEngineLayer,uiLayer,earlyBreakoutLayer,forecastSafetyLayer,tradeMonitorLayer,tradeZonesLayer,moveTimingLayer,entryRankingLayer,integrityLayer,signalCardUiLayer,publicLiquidityLayer,whaleLayer,whaleFlowLayer,whaleInlineLayer];queue.forEach((fn,i)=>idle(fn,650+i*320))}
+function idle(fn,delay=0){setTimeout(()=>{if(document.hidden)return;if('requestIdleCallback'in window)requestIdleCallback(fn,{timeout:MOBILE?3000:1800});else setTimeout(fn,0)},delay)}
+function progressiveLayers(){const primary=[nextCandleLayer,signalEngineLayer,uiLayer,earlyBreakoutLayer,forecastSafetyLayer,tradeMonitorLayer];const secondary=[tradeZonesLayer,moveTimingLayer,entryRankingLayer,integrityLayer,signalCardUiLayer,publicLiquidityLayer,whaleLayer,whaleFlowLayer,whaleInlineLayer];if(MOBILE){primary.forEach((fn,i)=>idle(fn,1800+i*950));secondary.forEach((fn,i)=>idle(fn,11000+i*1500))}else{[...primary,...secondary].forEach((fn,i)=>idle(fn,700+i*360))}}
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;button()});
 brand();languagePerformancePatch();fastSearchLayer();
-addEventListener('load',()=>{brand();languagePerformancePatch();idle(button,1200);progressiveLayers();idle(brand,1800)},{once:true});
+addEventListener('load',()=>{brand();languagePerformancePatch();idle(button,1400);progressiveLayers()},{once:true});
 })();
