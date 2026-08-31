@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-08-31T07:12:15.694Z",
+  "generated_at": "2026-08-31T07:25:46.244Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 25,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "BMTUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788161099999",
+      "symbol": "BMTUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "HIGH",
+      "trap_score": 82,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.02139,
+      "liquidity_level": 0.02148,
+      "distance_to_liquidity_pct": 0.4208,
+      "momentum_30m_pct": 1.1826,
+      "taker_buy_ratio": 0.50589,
+      "taker_acceleration_pp": -1.952,
+      "upper_wick_ratio": 0.48,
+      "volume_ratio": 7.02,
+      "atr_pct": 0.9684,
+      "quote_volume_usdt": 81828589.72,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -2.0pp",
+        "Upper-wick rejection 48% of candle range",
+        "Volume expansion 7.02x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-08-31T07:24:59.999Z",
+      "invalidation": "A sustained 5m close above 0.02148 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-08-31T07:25:22.899Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ENSOUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788160199999",
       "symbol": "ENSOUSDT",
@@ -1482,35 +1512,6 @@
       "bar_closed_at": "2026-08-30T11:04:59.999Z",
       "invalidation": "A sustained 5m close above 0.08504 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
       "created_at": "2026-08-30T11:07:20.984Z",
-      "source": "Binance closed 5m + 15m candles"
-    },
-    {
-      "id": "ENAUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788074099999",
-      "symbol": "ENAUSDT",
-      "type": "BUY_SIDE_SWEEP_CONFIRMED",
-      "severity": "MEDIUM",
-      "trap_score": 74,
-      "score_meaning": "Evidence strength, not reversal probability",
-      "price": 0.1622,
-      "liquidity_level": 0.1626,
-      "distance_to_liquidity_pct": 0.2466,
-      "momentum_30m_pct": 1.1853,
-      "taker_buy_ratio": 0.58214,
-      "taker_acceleration_pp": -7.8675,
-      "upper_wick_ratio": 0.5,
-      "volume_ratio": 2.2236,
-      "atr_pct": 0.4844,
-      "quote_volume_usdt": 24472685.55,
-      "fifteen_min_strong_bull": true,
-      "reasons": [
-        "High swept prior 5m buy-side liquidity and closed back below it",
-        "Aggressive buying decelerating -7.9pp",
-        "Upper-wick rejection 50% of candle range",
-        "Volume expansion 2.22x"
-      ],
-      "bar_closed_at": "2026-08-30T07:14:59.999Z",
-      "invalidation": "A sustained 5m close above 0.1626 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
-      "created_at": "2026-08-30T07:19:47.770Z",
       "source": "Binance closed 5m + 15m candles"
     }
   ]
