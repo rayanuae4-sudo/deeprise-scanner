@@ -1,7 +1,5 @@
-const CACHE='deeprise-pwa-recovery-v16-0-1';
-const CORE=[
-  './index.html',
-  './',
+const CACHE='deeprise-pwa-network-v16-0-2';
+const STATIC_CORE=[
   './manifest.json',
   './icon.svg',
   './mobile-app-v11.css?v=1310',
@@ -10,91 +8,70 @@ const CORE=[
   './mobile-app-v11.js?v=1310',
   './pwa.js?v=1310'
 ];
-const NAV_FALLBACK='./index.html';
-
-async function cacheUrl(cache,url){
-  const r=await fetch(new Request(url,{cache:'reload'}));
-  if(!r||!r.ok)throw new Error('core '+url+' '+(r?r.status:'no-response'));
-  await cache.put(url,r.clone());
-  return true;
-}
-
-self.addEventListener('install',e=>e.waitUntil((async()=>{
-  const c=await caches.open(CACHE);
-  let shellReady=false;
-  for(const url of ['./index.html','./']){
-    try{await cacheUrl(c,url);shellReady=true}catch(_e){}
-  }
-  if(!shellReady)throw new Error('DeepRise shell could not be cached; keeping previous worker active');
-  await Promise.allSettled(CORE.slice(2).map(url=>cacheUrl(c,url)));
-  await self.skipWaiting();
-})()));
-
-self.addEventListener('activate',e=>e.waitUntil((async()=>{
-  const keys=await caches.keys();
-  await Promise.all(keys.filter(k=>k.startsWith('deeprise-pwa-')&&k!==CACHE).map(k=>caches.delete(k)));
-  await self.clients.claim();
-})()));
-
-async function navigationFallback(cache){
-  return (await cache.match(NAV_FALLBACK))||(await cache.match('./'))||(await caches.match(NAV_FALLBACK))||(await caches.match('./'))||null;
-}
 
 function offlinePage(){
-  return new Response('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepRise</title><style>body{margin:0;background:#050d18;color:#edf6ff;font-family:Arial,sans-serif;display:grid;place-items:center;min-height:100vh}.box{max-width:520px;margin:24px;padding:24px;border:1px solid #18344c;border-radius:16px;background:#0a1827;text-align:center}button{padding:12px 18px;border:0;border-radius:10px;background:#35e0a1;color:#04110d;font-weight:700}</style></head><body><div class="box"><h2>DeepRise</h2><p>Connection is temporarily unavailable. The app shell is protected and can retry safely.</p><button onclick="location.reload()">Retry</button></div></body></html>',{status:503,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'}});
+  return new Response('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DeepRise</title><style>body{margin:0;background:#050d18;color:#edf6ff;font-family:Arial,sans-serif;display:grid;place-items:center;min-height:100vh}.box{max-width:520px;margin:24px;padding:24px;border:1px solid #18344c;border-radius:16px;background:#0a1827;text-align:center}a{display:inline-block;padding:12px 18px;border-radius:10px;background:#35e0a1;color:#04110d;font-weight:700;text-decoration:none}</style></head><body><div class="box"><h2>DeepRise</h2><p>Connection is unavailable. Reconnect and reopen the scanner.</p><a href="./recover.html">Repair app cache</a></div></body></html>',{status:503,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'}});
 }
 
-async function networkFirst(req,timeout=4500){
-  const c=await caches.open(CACHE);
-  const isNav=req.mode==='navigate';
-  let cached=(await c.match(req))||(await caches.match(req));
-  if(!cached&&isNav)cached=await navigationFallback(c);
+self.addEventListener('install',event=>{
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE);
+    await Promise.allSettled(STATIC_CORE.map(async url=>{
+      const response=await fetch(new Request(url,{cache:'reload'}));
+      if(response&&response.ok)await cache.put(url,response.clone());
+    }));
+    await self.skipWaiting();
+  })());
+});
 
-  const net=fetch(new Request(req,{cache:'no-store'})).then(async r=>{
-    if(r&&r.ok){
-      try{await c.put(req,r.clone());if(isNav)await c.put(NAV_FALLBACK,r.clone())}catch(_e){}
-    }
-    return r;
-  });
+self.addEventListener('activate',event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(key=>key.startsWith('deeprise-pwa-')&&key!==CACHE).map(key=>caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
 
-  if(!cached){
-    try{return await net}catch(_e){return isNav?offlinePage():Response.error()}
-  }
-
+async function networkOnlyNavigation(request){
   try{
-    return await Promise.race([net,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),timeout))]);
+    const response=await fetch(new Request(request,{cache:'no-store'}));
+    if(response)return response;
+  }catch(_e){}
+  return offlinePage();
+}
+
+async function networkFirst(request,timeout=5000){
+  const cache=await caches.open(CACHE);
+  const cached=(await cache.match(request))||(await caches.match(request));
+  const network=fetch(new Request(request,{cache:'no-store'})).then(async response=>{
+    if(response&&response.ok){try{await cache.put(request,response.clone())}catch(_e){}}
+    return response;
+  });
+  if(!cached){try{return await network}catch(_e){return Response.error()}}
+  try{
+    return await Promise.race([network,new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),timeout))]);
   }catch(_e){
-    net.catch(()=>{});
+    network.catch(()=>{});
     return cached;
   }
 }
 
-async function staleWhileRevalidate(req){
-  const c=await caches.open(CACHE);
-  const hit=(await c.match(req))||(await caches.match(req));
-  const refresh=fetch(new Request(req,{cache:'no-store'})).then(async r=>{
-    if(r&&r.ok){try{await c.put(req,r.clone())}catch(_e){}}
-    return r;
-  }).catch(()=>null);
-  if(hit){refresh.catch(()=>{});return hit}
-  return (await refresh)||Response.error();
-}
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET')return;
+  const url=new URL(event.request.url);
+  if(url.origin!==location.origin)return;
 
-self.addEventListener('fetch',e=>{
-  if(e.request.method!=='GET')return;
-  const u=new URL(e.request.url);
-  if(u.origin!==location.origin)return;
-  if(e.request.mode==='navigate'||u.pathname.endsWith('.html')){
-    e.respondWith(networkFirst(e.request,5000));
+  if(event.request.mode==='navigate'||url.pathname.endsWith('.html')){
+    event.respondWith(networkOnlyNavigation(event.request));
     return;
   }
-  if(u.pathname.endsWith('.json')){
-    e.respondWith(networkFirst(e.request,3500));
+
+  if(url.pathname.endsWith('.json')){
+    event.respondWith(networkFirst(event.request,4500));
     return;
   }
-  if(/\.(?:js|css|svg|png|jpg|jpeg|webp|ico|woff2?)$/i.test(u.pathname)){
-    e.respondWith(staleWhileRevalidate(e.request));
-    return;
+
+  if(/\.(?:js|css|svg|png|jpg|jpeg|webp|ico|woff2?)$/i.test(url.pathname)){
+    event.respondWith(networkFirst(event.request,5000));
   }
-  e.respondWith(networkFirst(e.request,3500));
 });
