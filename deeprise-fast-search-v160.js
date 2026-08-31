@@ -1,4 +1,4 @@
-/* DeepRise Fast Search v16.2 — bounded network, startup rescue, instant search */
+/* DeepRise Fast Search v16.4 — bounded network, no competing startup scan, instant search */
 (()=>{'use strict';
 const INPUT_ID='search',RESULTS_ID='results',FAST_ID='deepriseFastSearchResult';
 let timer=null,seq=0,lastQuery='',rescueStarted=false;
@@ -65,7 +65,7 @@ async function rescueQuickScan(){
 function init(){
   let input=document.getElementById(INPUT_ID);
   if(input&&!input.dataset.fastSearchReady){input.dataset.fastSearchReady='1';input.setAttribute('autocomplete','off');input.addEventListener('input',run,{passive:true});input.addEventListener('search',run,{passive:true})}
-  setTimeout(()=>{try{if(scanRunning&&(!marketData||!marketData.length)){scanRunning=false;rescueQuickScan()}}catch(e){rescueQuickScan()}},1400);
+  setTimeout(()=>{try{const noData=!Array.isArray(marketData)||!marketData.length;const universeReady=!!window.DeepRiseBinanceUniverse?.state?.symbols?.length;if(!scanRunning&&noData&&!universeReady)rescueQuickScan()}catch(e){}},10000);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
