@@ -125,7 +125,7 @@ button{padding:12px 15px;border:0;border-radius:9px;background:var(--green);colo
 </div>
 <div class="controls">
 <input id="search" placeholder="Search BTC, ETH, SOL, ENA...">
-<button onclick="loadMarket()">⚡ DEEP SCAN</button>
+<button onclick="window.DeepRiseBinanceUniverse?.refresh?window.DeepRiseBinanceUniverse.refresh():loadMarket()">⚡ DEEP SCAN</button>
 </div>
 <div class="filters">
 <button class="filter active" data-filter="all">ALL</button>
@@ -226,8 +226,12 @@ menuBtn.addEventListener("click",()=>dropdown.classList.toggle("active"));
 document.addEventListener("click",e=>{if(!e.target.closest(".menu-wrap"))dropdown.classList.remove("active")});
 dropdown.querySelectorAll("[data-menu]").forEach(b=>b.addEventListener("click",()=>{let f=b.dataset.menu;dropdown.classList.remove("active");if(f==="top"){document.querySelector(".hero").scrollIntoView({behavior:"smooth"});return}if(f==="signal-results"){openSignalResults();return}if(f==="forecast"){let best=[...marketData].filter(x=>x.direction!=="WAIT").sort((a,b)=>b.score-a.score)[0]||marketData[0];if(best)openChart(best.symbol);return}currentFilter=f;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.dataset.filter===f));render();document.getElementById("results").scrollIntoView({behavior:"smooth"})}));
 const languageSelect=document.getElementById("languageSelect");languageSelect.addEventListener("change",e=>setLanguage(e.target.value));setLanguage(currentLang);const languageObserver=new MutationObserver(()=>applyLanguage());languageObserver.observe(document.body,{childList:true,subtree:true});
-loadMarket();
-setInterval(loadMarket,60000);
+try{
+ const r=document.getElementById("results"),t=document.getElementById("top3"),m=document.getElementById("marketRegime");
+ if(r)r.innerHTML='<div class="loading">Loading Binance markets…</div>';
+ if(t)t.innerHTML='<div class="loading">Tap ⚡ DEEP SCAN to build Top Setups.</div>';
+ if(m)m.innerHTML='Market: <b class="yellow">READY</b>';
+}catch(e){}
 </script>
-<script src="deeprise-fast-search-v160.js?v=1601"></script><script defer src="deeprise-v86-upgrade.js?v=1310"></script><script defer src="deeprise-intelligence-v11.js?v=1310"></script><script defer src="deeprise-v12-experience.js?v=1310"></script><script defer src="deeprise-analytics-config.js?v=1310"></script><script defer src="deeprise-analytics.js?v=1310"></script><script defer src="deeprise-central-ledger.js?v=1310"></script><script defer src="deeprise-v13-product.js?v=1310"></script><script defer src="deeprise-central-forecast-bridge.js?v=1310"></script><script defer src="deeprise-predictive-intelligence.js?v=1310"></script><script defer src="deeprise-performance.js?v=1310"></script><script defer src="deeprise-v13-gate-hotfix.js?v=1310"></script><script defer src="mobile-app-v11.js?v=1310"></script><script defer src="pwa.js?v=1310"></script></body>
+<script src="deeprise-fast-search-v160.js?v=1651"></script><script defer src="deeprise-v86-upgrade.js?v=1310"></script><script defer src="deeprise-intelligence-v11.js?v=1310"></script><script defer src="deeprise-v12-experience.js?v=1310"></script><script defer src="deeprise-analytics-config.js?v=1651"></script><script defer src="deeprise-analytics.js?v=1310"></script><script defer src="deeprise-central-ledger.js?v=1310"></script><script defer src="deeprise-v13-product.js?v=1651"></script><script defer src="deeprise-central-forecast-bridge.js?v=1310"></script><script defer src="deeprise-predictive-intelligence.js?v=1310"></script><script defer src="deeprise-performance.js?v=1310"></script><script defer src="deeprise-v13-gate-hotfix.js?v=1651"></script><script defer src="mobile-app-v11.js?v=1310"></script><script defer src="pwa.js?v=1651"></script></body>
 </html>

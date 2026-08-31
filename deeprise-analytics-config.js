@@ -33,7 +33,7 @@ window.DEEPRISE_ANALYTICS_CONFIG = {
 (()=>{
   if (document.querySelector('script[data-deeprise-early-breakout]')) return;
   const s = document.createElement('script');
-  s.src = 'deeprise-early-breakout-v160.js?v=1600';
+  s.src = 'deeprise-early-breakout-v160.js?v=1601';
   s.async = true;
   s.dataset.deepriseEarlyBreakout = 'v160';
   document.head.appendChild(s);

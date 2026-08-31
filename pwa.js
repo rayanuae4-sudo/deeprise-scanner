@@ -32,5 +32,5 @@ function idle(fn,delay=0){setTimeout(()=>{if(document.hidden)return;if('requestI
 function progressiveLayers(){const primary=[nextCandleLayer,signalEngineLayer,uiLayer,earlyBreakoutLayer,forecastSafetyLayer,tradeMonitorLayer];const secondary=[tradeZonesLayer,moveTimingLayer,entryRankingLayer,integrityLayer,signalCardUiLayer,publicLiquidityLayer,whaleLayer,whaleFlowLayer,whaleInlineLayer];if(MOBILE){primary.forEach((fn,i)=>idle(fn,2600+i*1200));secondary.forEach((fn,i)=>idle(fn,14000+i*1700))}else{[...primary,...secondary].forEach((fn,i)=>idle(fn,900+i*420))}}
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;button()});
 brand();languagePerformancePatch();fastSearchLayer();
-addEventListener('load',()=>{brand();languagePerformancePatch();idle(button,1800);progressiveLayers()},{once:true});
+window.DeepRiseLoadOptionalLayers=progressiveLayers;addEventListener('load',()=>{brand();languagePerformancePatch();idle(button,1800)},{once:true});
 })();
