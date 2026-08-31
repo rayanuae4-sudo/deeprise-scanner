@@ -82,12 +82,12 @@ jobs:
           pui=Path('deeprise-public-liquidity-v148.js').read_text(encoding='utf-8')
           sm=Path('scripts/enrich_smart_money.py').read_text(encoding='utf-8')
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
-          assert 'stable-v15-9-fast3' in pwa
+          assert 'recovery-v16-0-1' in pwa
           for marker in ['deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1580','deeprise-integrity-v158.js?v=1580','deeprise-whale-flow-v155.js?v=1550','deeprise-whale-inline-v156.js?v=1560','deeprise-trade-zones-v157.js?v=1570']:
               assert marker in pwa, f'pwa missing {marker}'
-          assert "deeprise-pwa-fast-v15-9-3" in sw
-          for marker in ['./index.html','./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1310','./mobile-app-v11.js?v=1310','./pwa.js?v=1310']:
-              assert marker in sw, f'lightweight service worker core missing {marker}'
+          assert "deeprise-pwa-recovery-v16-0-1" in sw
+          for marker in ['./index.html','./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1310','./mobile-app-v11.js?v=1310','./pwa.js?v=1310','shellReady','navigationFallback','offlinePage']:
+              assert marker in sw, f'resilient service worker core missing {marker}'
           for marker in ['Signal confidence','Expected move','Buy / accumulation zone','Distribution / sell zone','deeprise_v149_tracking_stats','DeepRiseNextCandleV14']:
               assert marker in signal, f'signal engine missing {marker}'
           for marker in ['POTENTIAL MOVE STARTING','MOVE EXTENDED — DO NOT CHASE','EARLY_START','EXTENDED','RELOAD','@kline_1m','volumePace','excursionAtr','givebackAtr','earlyStrong']:
