@@ -1,4 +1,4 @@
-name: DeepRise V15.8 Integrity Gate
+name: DeepRise Stability Integrity Gate
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
       - name: Run whale-flow regression
         run: node scripts/deeprise-whale-flow-regression.js
 
-      - name: Verify V15.8 runtime and PWA wiring
+      - name: Verify runtime and resilient PWA wiring
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -51,10 +51,10 @@ jobs:
           ui=Path('deeprise-signal-card-ui-v153.js').read_text(encoding='utf-8')
           for marker in ['deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1580','deeprise-integrity-v158.js?v=1580','deeprise-whale-flow-v155.js?v=1550','deeprise-signal-card-ui-v153.js?v=1531','deeprise-whale-inline-v156.js?v=1560','deeprise-trade-zones-v157.js?v=1570']:
               assert marker in pwa, f'pwa.js missing {marker}'
-          assert 'stable-v15-8' in pwa, 'service-worker registration not bumped to V15.8'
-          assert "deeprise-pwa-stable-v15-8" in sw, 'service-worker cache is not V15.8'
-          for f in ['./deeprise-move-timing-v158.js','./deeprise-entry-ranking-v158.js','./deeprise-integrity-v158.js','./deeprise-whale-flow-v155.js','./deeprise-signal-card-ui-v153.js','./deeprise-whale-inline-v156.js','./deeprise-trade-zones-v157.js']:
-              assert f in sw, f'{f} missing from PWA core cache'
+          assert 'recovery-v16-0-1' in pwa, 'service-worker recovery registration missing'
+          assert "deeprise-pwa-recovery-v16-0-1" in sw, 'service-worker recovery cache missing'
+          for marker in ['./index.html','./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1310','./mobile-app-v11.js?v=1310','./pwa.js?v=1310','shellReady','navigationFallback','offlinePage']:
+              assert marker in sw, f'resilient service-worker wiring missing: {marker}'
           for marker in ['POTENTIAL MOVE STARTING','MOVE EXTENDED — DO NOT CHASE','EARLY_START','EXTENDED','RELOAD','@kline_1m','excursionAtr','givebackAtr','earlyStrong','selfTest']:
               assert marker in timing, f'move timing missing: {marker}'
           for marker in ['strictReady','fastTrack','EARLY_FLOW','timingAssist','timingSafe','entryAllowed','patchAnalyze','whaleFlow','whaleConflict']:
@@ -69,5 +69,5 @@ jobs:
               assert marker in zones, f'trade-zone advisor missing: {marker}'
           for marker in ['Signal Quality:','dr-quality-pills','DeepRiseEntryRank']:
               assert marker in ui, f'signal-quality UI missing: {marker}'
-          print('DeepRise V15.8 integrity + early timing + anti-chase + whale-flow + trade-zone wiring: PASS')
+          print('DeepRise stability integrity + resilient PWA wiring: PASS')
           PY
