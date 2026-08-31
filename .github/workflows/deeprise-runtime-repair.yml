@@ -30,11 +30,13 @@ jobs:
           safe='''try{\n  const results=document.getElementById("results");\n  const top3=document.getElementById("top3");\n  const regime=document.getElementById("marketRegime");\n  if(results)results.innerHTML='<div class="loading">Loading Binance markets…</div>';\n  if(top3)top3.innerHTML='<div class="loading">Tap ⚡ DEEP SCAN to build Top Setups.</div>';\n  if(regime)regime.innerHTML='Market: <b class="yellow">READY</b>';\n}catch(e){}'''
           if old in s:
               s=s.replace(old,safe,1)
+          s=s.replace('<button onclick="loadMarket()">⚡ DEEP SCAN</button>','<button onclick="window.DeepRiseBinanceUniverse&&window.DeepRiseBinanceUniverse.refresh?window.DeepRiseBinanceUniverse.refresh():loadMarket()">⚡ DEEP SCAN</button>')
           s=s.replace('deeprise-fast-search-v160.js?v=1601','deeprise-fast-search-v160.js?v=1650')
           s=s.replace('deeprise-v13-gate-hotfix.js?v=1310','deeprise-v13-gate-hotfix.js?v=1650')
           s=s.replace('deeprise-v13-product.js?v=1310','deeprise-v13-product.js?v=1650')
           s=s.replace('pwa.js?v=1310','pwa.js?v=1650')
           assert 'setInterval(loadMarket,60000)' not in s, 'old automatic deep scan still present'
+          assert 'window.DeepRiseBinanceUniverse&&window.DeepRiseBinanceUniverse.refresh' in s, 'direct deep scan handler missing'
           p.write_text(s,encoding='utf-8')
 
           p=Path('deeprise-v13-gate-hotfix.js')
