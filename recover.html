@@ -15,6 +15,7 @@ html,body{margin:0;min-height:100%;background:#050d18;color:#edf6ff;font-family:
 <script>
 (async()=>{
   const s=document.getElementById('status'),b=document.getElementById('retry');
+  const fresh=()=> './?source=repair&v=16.2.0&t='+Date.now();
   try{
     if('serviceWorker'in navigator){
       const regs=await navigator.serviceWorker.getRegistrations();
@@ -26,13 +27,13 @@ html,body{margin:0;min-height:100%;background:#050d18;color:#edf6ff;font-family:
     }
     try{localStorage.removeItem('deeprise_sw_cleanup_1602')}catch(_e){}
     try{sessionStorage.clear()}catch(_e){}
-    s.textContent='Repair complete. Opening the fresh scanner…';
-    const target='./?source=repair&v=16.0.2&t='+Date.now();
+    s.textContent='Repair complete. Opening DeepRise v16.2…';
+    const target=fresh();
     setTimeout(()=>location.replace(target),350);
-    b.hidden=false;b.onclick=()=>location.replace(target);
+    b.hidden=false;b.onclick=()=>location.replace(fresh());
   }catch(e){
     s.textContent='Repair completed as far as Safari allowed. Tap below to reopen DeepRise.';
-    b.hidden=false;b.onclick=()=>location.replace('./?source=repair&v=16.0.2&t='+Date.now());
+    b.hidden=false;b.onclick=()=>location.replace(fresh());
   }
 })();
 </script>
