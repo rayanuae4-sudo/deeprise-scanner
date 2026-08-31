@@ -1,0 +1,167 @@
+name: DeepRise Runtime Repair
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deeprise-runtime-repair.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repair-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch startup, stable launcher and cache keys
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          old='loadMarket();\nsetInterval(loadMarket,60000);'
+          safe='''try{\n  const results=document.getElementById("results");\n  const top3=document.getElementById("top3");\n  const regime=document.getElementById("marketRegime");\n  if(results)results.innerHTML='<div class="loading">Loading Binance markets…</div>';\n  if(top3)top3.innerHTML='<div class="loading">Tap ⚡ DEEP SCAN to build Top Setups.</div>';\n  if(regime)regime.innerHTML='Market: <b class="yellow">READY</b>';\n}catch(e){}'''
+          if old in s:
+              s=s.replace(old,safe,1)
+          s=s.replace('deeprise-fast-search-v160.js?v=1601','deeprise-fast-search-v160.js?v=1650')
+          s=s.replace('deeprise-v13-gate-hotfix.js?v=1310','deeprise-v13-gate-hotfix.js?v=1650')
+          s=s.replace('pwa.js?v=1310','pwa.js?v=1650')
+          assert 'setInterval(loadMarket,60000)' not in s, 'old automatic deep scan still present'
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('stable-loader.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('DeepRise Stable Loader v16.4.1','DeepRise Stable Loader v16.5.0')
+          s=s.replace("./index.html?stable=16.4.1&t=","./index.html?stable=16.5.0&t=")
+          s=s.replace("if(!startup.test(html))throw new Error('startup marker not found');\n    const safe=", "const safe=")
+          s=s.replace('    html=html.replace(startup,safe);','    if(startup.test(html))html=html.replace(startup,safe);')
+          s=s.replace('deeprise-fast-search-v160.js?v=1641','deeprise-fast-search-v160.js?v=1650')
+          s=s.replace('deeprise-v13-gate-hotfix.js?v=1641','deeprise-v13-gate-hotfix.js?v=1650')
+          s=s.replace('pwa.js?v=1641','pwa.js?v=1650')
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('stable.html')
+          s=p.read_text(encoding='utf-8').replace('stable-loader.js?v=1641','stable-loader.js?v=1650')
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('manifest.json')
+          s=p.read_text(encoding='utf-8').replace('./stable.html?source=pwa&v=16.4.1','./stable.html?source=pwa&v=16.5.0')
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('recover.html')
+          s=p.read_text(encoding='utf-8').replace("./stable.html?source=repair&v=16.4.1&t=","./stable.html?source=repair&v=16.5.0&t=")
+          p.write_text(s,encoding='utf-8')
+          PY
+
+      - name: Validate JavaScript syntax
+        run: |
+          set -e
+          node --check deeprise-fast-search-v160.js
+          node --check deeprise-v13-gate-hotfix.js
+          node --check stable-loader.js
+          node --check pwa.js
+
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 > /tmp/deeprise-http.log 2>&1 &
+          echo $! > /tmp/deeprise-http.pid
+          sleep 2
+          curl -fsS http://127.0.0.1:4173/index.html >/dev/null
+          curl -fsS http://127.0.0.1:4173/stable.html >/dev/null
+
+      - name: Install browser test dependency
+        run: python3 -m pip install --quiet selenium
+
+      - name: Browser smoke test root and stable app
+        run: |
+          python3 - <<'PY'
+          import shutil, time
+          from selenium import webdriver
+          from selenium.webdriver.chrome.options import Options
+          from selenium.webdriver.common.by import By
+          from selenium.webdriver.support.ui import WebDriverWait, Select
+          from selenium.webdriver.support import expected_conditions as EC
+
+          chrome=shutil.which('google-chrome') or shutil.which('chromium') or shutil.which('chromium-browser')
+          if not chrome:
+              raise SystemExit('Chrome/Chromium not found')
+
+          opts=Options()
+          opts.binary_location=chrome
+          opts.add_argument('--headless=new')
+          opts.add_argument('--no-sandbox')
+          opts.add_argument('--disable-dev-shm-usage')
+          opts.add_argument('--disable-gpu')
+          opts.add_argument('--window-size=390,844')
+          opts.set_capability('goog:loggingPrefs', {'browser':'ALL'})
+          d=webdriver.Chrome(options=opts)
+          w=WebDriverWait(d, 75)
+
+          def fatal_console():
+              bad=[]
+              for row in d.get_log('browser'):
+                  msg=row.get('message','')
+                  if row.get('level')=='SEVERE' and not any(x in msg for x in ['favicon','s3.tradingview.com','ERR_BLOCKED_BY_CLIENT']):
+                      bad.append(msg)
+              return bad
+
+          def check(url, stable=False):
+              d.get(url)
+              w.until(EC.presence_of_element_located((By.ID,'search')))
+              w.until(lambda x: x.execute_script('return !!window.DeepRiseBinanceUniverse'))
+              w.until(lambda x: x.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length') >= 20)
+              cards=w.until(lambda x: x.find_elements(By.CSS_SELECTOR,'.dr-market-card'))
+              assert len(cards)>=10, f'only {len(cards)} market cards rendered'
+
+              analyzed=d.execute_script('return window.DeepRiseBinanceUniverse.state.analyzed.size')
+              assert analyzed==0, f'deep scan started automatically ({analyzed} analyzed)'
+
+              search=d.find_element(By.ID,'search')
+              search.clear(); search.send_keys('BTC')
+              w.until(lambda x: 'BTC/USDT' in x.find_element(By.ID,'results').text)
+              w.until(lambda x: x.execute_script("return window.DeepRiseBinanceUniverse.state.analyzed.has('BTCUSDT')"))
+
+              Select(d.find_element(By.ID,'languageSelect')).select_by_value('ar')
+              w.until(lambda x: x.find_element(By.TAG_NAME,'html').get_attribute('dir')=='rtl')
+              Select(d.find_element(By.ID,'languageSelect')).select_by_value('en')
+
+              search.clear()
+              d.execute_script("document.getElementById('search').dispatchEvent(new Event('input',{bubbles:true}))")
+              btn=d.find_element(By.XPATH,"//button[contains(.,'DEEP SCAN')]")
+              d.execute_script('arguments[0].click()',btn)
+              w.until(lambda x: x.execute_script('return window.DeepRiseBinanceUniverse.state.analyzed.size') >= 3)
+              w.until(lambda x: x.execute_script('return window.scanRunning===false'))
+
+              first=d.find_element(By.CSS_SELECTOR,'[data-open-symbol]')
+              d.execute_script('arguments[0].click()',first)
+              w.until(lambda x: 'active' in x.find_element(By.ID,'chartPanel').get_attribute('class'))
+              w.until(EC.presence_of_element_located((By.CSS_SELECTOR,'#tradingview_chart iframe')))
+
+              bad=fatal_console()
+              assert not bad, 'console errors: '+ ' | '.join(bad[:5])
+              print(('STABLE' if stable else 'ROOT')+' PASS', d.title)
+
+          check('http://127.0.0.1:4173/index.html?smoke=1650', False)
+          check('http://127.0.0.1:4173/stable.html?smoke=1650', True)
+          d.quit()
+          print('DEEPRISE BROWSER SMOKE: PASS')
+          PY
+
+      - name: Commit repaired runtime only after browser PASS
+        run: |
+          if git diff --quiet; then
+            echo 'No runtime changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html stable-loader.js stable.html manifest.json recover.html
+          git commit -m 'Repair scanner startup after browser smoke test'
+          git push
