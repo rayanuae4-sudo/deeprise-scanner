@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<title>DeepRise Stable</title>
+<style>
+html,body{margin:0;min-height:100%;background:#050d18;color:#edf6ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}body{display:grid;place-items:center;min-height:100vh;padding:22px;box-sizing:border-box}.card{width:min(520px,100%);background:#0a1827;border:1px solid #193b55;border-radius:18px;padding:24px;box-sizing:border-box}.brand{font-size:24px;font-weight:900;color:#35e0a1}.status{margin:16px 0;line-height:1.6;color:#cfe2ef}.bar{height:8px;background:#102638;border-radius:999px;overflow:hidden}.bar i{display:block;width:22%;height:100%;background:#35e0a1;border-radius:999px;animation:p 1s ease-in-out infinite alternate}@keyframes p{to{width:100%}}button{width:100%;margin-top:16px;padding:13px;border:0;border-radius:12px;background:#35e0a1;color:#04110d;font-weight:900;font-size:16px}
+</style>
+</head>
+<body>
+<div class="card"><div class="brand">⚡ DeepRise Stable</div><div id="status" class="status">Loading the scanner safely…</div><div class="bar"><i></i></div><button id="retry" hidden>Retry</button></div>
+<script>
+(async()=>{
+  const status=document.getElementById('status'),retry=document.getElementById('retry');
+  const fail=(msg)=>{status.textContent=msg;retry.hidden=false;retry.onclick=()=>location.reload()};
+  try{
+    const r=await fetch('./index.html?stable=16.3.0&t='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    let html=await r.text();
+    const original='loadMarket();\nsetInterval(loadMarket,60000);';
+    const safe=`try{\n  const results=document.getElementById("results");\n  const top3=document.getElementById("top3");\n  const regime=document.getElementById("marketRegime");\n  if(results)results.innerHTML='<div class="loading">Ready. Search a coin instantly or tap ⚡ DEEP SCAN.</div>';\n  if(top3)top3.innerHTML='<div class="loading">Tap ⚡ DEEP SCAN to build Top Setups.</div>';\n  if(regime)regime.innerHTML='Market: <b class="yellow">READY</b>';\n}catch(e){}\nsetInterval(()=>{try{if(document.visibilityState==="visible"&&Array.isArray(marketData)&&marketData.length&&!scanRunning)loadMarket()}catch(e){}},300000);`;
+    if(!html.includes(original))throw new Error('startup marker not found');
+    html=html.replace(original,safe);
+    html=html.replace('deeprise-fast-search-v160.js?v=1601','deeprise-fast-search-v160.js?v=1630');
+    document.open();document.write(html);document.close();
+  }catch(e){fail('Could not start DeepRise safely: '+e.message)}
+})();
+</script>
+</body>
+</html>
