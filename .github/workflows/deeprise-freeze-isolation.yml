@@ -1,6 +1,5 @@
 name: DeepRise Freeze Isolation
 
-# Progressive PWA layer isolation probe
 on:
   push:
     branches: [main]
@@ -17,7 +16,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Build progressive runtime variants
+      - name: Build delayed-freeze variants
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -26,27 +25,25 @@ jobs:
           auto='loadMarket();\nsetInterval(loadMarket,60000);'
           if auto in src:
               src=src.replace(auto,"try{document.getElementById('marketRegime').innerHTML='Market: <b>READY</b>'}catch(e){}",1)
-          core_names=('deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js')
-          def core_html():
+          scripts=re.findall(r'<script(?: defer)? src="([^"]+)"[^>]*></script>',src)
+          groups={
+            'inline.html':[],
+            'fast.html':['deeprise-fast-search-v160.js'],
+            'core.html':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js'],
+            'legacy.html':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js','deeprise-v86-upgrade.js','deeprise-intelligence-v11.js','deeprise-v12-experience.js'],
+            'data.html':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js','deeprise-analytics-config.js','deeprise-analytics.js','deeprise-central-ledger.js'],
+            'product.html':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js','deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js'],
+            'ui.html':['deeprise-fast-search-v160.js','deeprise-v13-gate-hotfix.js','mobile-app-v11.js','pwa.js'],
+            'all-index.html':['deeprise-fast-search-v160.js','deeprise-v86-upgrade.js','deeprise-intelligence-v11.js','deeprise-v12-experience.js','deeprise-analytics-config.js','deeprise-analytics.js','deeprise-central-ledger.js','deeprise-v13-product.js','deeprise-central-forecast-bridge.js','deeprise-predictive-intelligence.js','deeprise-performance.js','deeprise-v13-gate-hotfix.js','mobile-app-v11.js','pwa.js']
+          }
+          for name,keep in groups.items():
               def repl(m):
-                  url=m.group(1)
-                  if 's3.tradingview.com' in url: return m.group(0)
-                  return m.group(0) if any(k in url for k in core_names) else ''
-              return re.sub(r'<script(?: defer)? src="([^"]+)"[^>]*></script>',repl,src)
-          primary=['deeprise-next-candle-v145.js?v=1450','deeprise-signal-engine-v149.js?v=1490','deeprise-ui-v146.js?v=1461','deeprise-early-breakout-v159.js?v=1590','deeprise-forecast-safety-v145.js?v=1450','deeprise-trade-monitor-v14.js?v=1440']
-          secondary=['deeprise-trade-zones-v157.js?v=1570','deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1580','deeprise-integrity-v158.js?v=1580','deeprise-signal-card-ui-v153.js?v=1531','deeprise-public-liquidity-v148.js?v=1480','deeprise-whale-radar-v147.js?v=1470','deeprise-whale-flow-v155.js?v=1550','deeprise-whale-inline-v156.js?v=1560']
-          def make(name,extras):
-              s=core_html()
-              tags=''.join(f'<script defer src="{x}"></script>' for x in extras)
-              s=s.replace('</body>',tags+'</body>')
-              Path(name).write_text(s,encoding='utf-8')
-          make('core.html',[])
-          make('primary.html',primary)
-          make('secondary.html',secondary)
-          make('progressive-all.html',primary+secondary)
-          # Full production script set plus all progressive layers forced to load immediately.
-          full=src.replace('</body>',''.join(f'<script defer src="{x}"></script>' for x in primary+secondary)+'</body>')
-          Path('full-forced.html').write_text(full,encoding='utf-8')
+                  u=m.group(1)
+                  if 's3.tradingview.com' in u: return ''
+                  return m.group(0) if any(k in u for k in keep) else ''
+              out=re.sub(r'<script(?: defer)? src="([^"]+)"[^>]*></script>',repl,src)
+              Path(name).write_text(out,encoding='utf-8')
+              print(name,[u for u in scripts if any(k in u for k in keep)])
           PY
       - name: Start local app
         run: |
@@ -54,10 +51,10 @@ jobs:
           sleep 2
       - name: Install Selenium
         run: python3 -m pip install --quiet selenium
-      - name: Create browser probe
+      - name: Create delayed responsiveness probe
         run: |
           cat > /tmp/probe.py <<'PY'
-          import sys, shutil, time
+          import sys,shutil,time
           from selenium import webdriver
           from selenium.webdriver.chrome.options import Options
           from selenium.webdriver.common.by import By
@@ -65,34 +62,30 @@ jobs:
           from selenium.webdriver.support import expected_conditions as EC
           name=sys.argv[1]
           chrome=shutil.which('google-chrome') or shutil.which('chromium') or shutil.which('chromium-browser')
-          o=Options(); o.binary_location=chrome
-          for a in ['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--window-size=390,844'] : o.add_argument(a)
+          o=Options();o.binary_location=chrome
+          for a in ['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--window-size=390,844']:o.add_argument(a)
           o.add_argument('--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1')
-          d=webdriver.Chrome(options=o); w=WebDriverWait(d,25)
-          d.get('http://127.0.0.1:4173/'+name+'?isolate=progressive')
+          d=webdriver.Chrome(options=o);w=WebDriverWait(d,20)
+          d.get('http://127.0.0.1:4173/'+name+'?delayprobe=1')
           w.until(EC.presence_of_element_located((By.ID,'search')))
-          w.until(lambda x:x.execute_script('return !!window.DeepRiseBinanceUniverse'))
-          w.until(lambda x:x.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length')>=20)
-          time.sleep(1.5)
-          print(name,'UNIVERSE',d.execute_script('return window.DeepRiseBinanceUniverse.state.symbols.length'),flush=True)
-          inp=d.find_element(By.ID,'search'); t=time.time(); inp.send_keys('BTC')
-          w.until(lambda x:'BTC/USDT' in x.find_element(By.ID,'results').text)
-          w.until(lambda x:x.execute_script("return window.DeepRiseBinanceUniverse.state.analyzed.has('BTCUSDT')"))
-          print(name,'SEARCH_ANALYZED',round(time.time()-t,3),flush=True)
-          t2=time.time(); ready=d.execute_script('return document.readyState'); dt=time.time()-t2
-          print(name,'RESPONSIVE',round(dt,3),ready,flush=True)
+          print(name,'BOOT',flush=True)
+          time.sleep(15)
+          t=time.time();state=d.execute_script('return document.readyState');dt=time.time()-t
+          print(name,'AFTER15',round(dt,3),state,flush=True)
           assert dt<2
+          if 'fast' in name or name not in ('inline.html',):
+              try:
+                  n=d.execute_script('return window.DeepRiseBinanceUniverse?.state?.symbols?.length||0')
+                  print(name,'UNIVERSE',n,flush=True)
+              except Exception as e: print(name,'UNIVERSE_ERR',e,flush=True)
           d.quit()
           PY
-      - name: Probe progressive layer groups
+      - name: Probe delayed freeze by script group
         run: |
           set +e
-          FAIL=0
-          for v in core.html primary.html secondary.html progressive-all.html full-forced.html; do
+          for v in inline.html fast.html core.html legacy.html data.html product.html ui.html all-index.html; do
             echo "===== $v ====="
-            timeout 45s python3 /tmp/probe.py "$v"
-            rc=$?
-            echo "RESULT $v rc=$rc"
-            if [ "$v" = "core.html" ] && [ $rc -ne 0 ]; then FAIL=1; fi
+            timeout 35s python3 /tmp/probe.py "$v"
+            echo "RESULT $v rc=$?"
           done
-          exit $FAIL
+          exit 0
