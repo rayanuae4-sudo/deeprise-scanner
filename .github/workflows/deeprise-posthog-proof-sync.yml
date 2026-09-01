@@ -1,0 +1,275 @@
+name: DeepRise PostHog Ledger Proof Sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deeprise-posthog-proof-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deeprise-central-ledger
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reconcile authoritative PostHog audit data
+        id: reconcile
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git rebase origin/main
+          python3 - <<'PY'
+          import json, pathlib
+          from datetime import datetime, timezone
+
+          path = pathlib.Path('forecast-ledger.json')
+          data = json.loads(path.read_text())
+          records = data.setdefault('records', [])
+          by_id = {r.get('forecast_id'): r for r in records if r.get('forecast_id')}
+
+          # Latest authoritative forecast_audit snapshot for this ID, source=daily-top5.
+          fid = '2026-09-01-ZECUSDT'
+          audit = {
+              'status': 'STOP AFTER TP1',
+              'symbol': 'ZECUSDT',
+              'side': 'LONG',
+              'created_at': '2026-09-01T00:29:47.200Z',
+              'entry': 853.78,
+              'tp1': 859.4528571428572,
+              'tp2': 863.9911428571429,
+              'sl': 848.1071428571428,
+              'score': 75.0,
+              'rank': 5,
+              'day': '2026-09-01',
+              'current': 847.11,
+              'high': 860.53,
+              'low': 846.76,
+              'final_move': -0.781231699032533,
+              'best_move': 0.7906017943732577,
+              'worst_move': -0.822225866148186,
+              'end_reason': 'STOP AFTER TP1',
+              'tp1_hit_at': '2026-09-01T00:48:59.999Z',
+              'tp2_hit_at': None,
+              'ended_at': '2026-09-01T02:12:59.999Z',
+          }
+
+          immutable = {'created_at','entry','tp1','tp2','sl','symbol','side'}
+          mutable_audit = ['score','rank','day','current','high','low','final_move','best_move','worst_move','end_reason','tp1_hit_at','tp2_hit_at','ended_at']
+          terminal = {'TP2 HIT','STOP HIT','STOP AFTER TP1','TIME EXPIRED'}
+          changed = []
+
+          row = by_id.get(fid)
+          if row is None:
+              row = {
+                  'forecast_id': fid,
+                  'source': 'daily-top5',
+                  'symbol': audit['symbol'],
+                  'side': audit['side'],
+                  'created_at': audit['created_at'],
+                  'entry': audit['entry'],
+                  'tp1': audit['tp1'],
+                  'tp2': audit['tp2'],
+                  'sl': audit['sl'],
+                  'status': audit['status'],
+              }
+              for key in mutable_audit:
+                  if key in audit:
+                      row[key] = audit[key]
+              records.append(row)
+              by_id[fid] = row
+              changed.append(fid)
+          else:
+              # Immutable creation fields are intentionally never changed for an existing forecast_id.
+              row_changed = False
+              old_status = row.get('status')
+              new_status = audit.get('status')
+              if new_status and new_status != old_status:
+                  # Never regress terminal outcomes; TP1 may advance to STOP AFTER TP1 or TP2.
+                  can_advance = old_status not in terminal or new_status == old_status
+                  if can_advance:
+                      row['status'] = new_status
+                      row_changed = True
+              for key in mutable_audit:
+                  if key not in audit:
+                      continue
+                  value = audit[key]
+                  # Persist explicit audit null only for hit timestamps/ended fields where absence is meaningful;
+                  # otherwise enrich only with present values.
+                  if value is None and key not in {'tp1_hit_at','tp2_hit_at','ended_at'}:
+                      continue
+                  if row.get(key) != value:
+                      row[key] = value
+                      row_changed = True
+              if row_changed:
+                  changed.append(fid)
+
+          # Sanity guard: existing immutable fields must remain exactly untouched.
+          # The known record's originals are checked explicitly before any write.
+          if fid in by_id and fid not in changed:
+              pass
+          row = by_id[fid]
+          originals = {
+              'created_at': '2026-09-01T00:29:47.200Z',
+              'entry': 853.78,
+              'tp1': 859.4528571428572,
+              'tp2': 863.9911428571429,
+              'sl': 848.1071428571428,
+              'symbol': 'ZECUSDT',
+              'side': 'LONG',
+          }
+          for k,v in originals.items():
+              if row.get(k) != v:
+                  raise SystemExit(f'Immutable field mismatch for {fid}: {k}')
+
+          pathlib.Path('/tmp/deeprise_changed_ids.json').write_text(json.dumps(changed))
+          missing = [r['forecast_id'] for r in records if r.get('forecast_id') and not r.get('proof_commit')]
+          pathlib.Path('/tmp/deeprise_missing_proofs.json').write_text(json.dumps(missing))
+          if changed:
+              data['generated_at'] = datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+              path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
+              print('Changed:', ','.join(changed))
+          else:
+              print('No lifecycle/audit changes')
+          print('Missing proofs:', len(missing))
+          PY
+
+          if git diff --quiet -- forecast-ledger.json; then
+            echo "data_changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git add forecast-ledger.json
+            git commit -m "Sync DeepRise ZEC audit result from PostHog"
+            DATA_SHA=$(git rev-parse HEAD)
+            git push origin HEAD:main
+            echo "data_changed=true" >> "$GITHUB_OUTPUT"
+            echo "data_sha=$DATA_SHA" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Recover missing proofs when no data commit exists
+        id: recover
+        if: steps.reconcile.outputs.data_changed != 'true'
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, subprocess
+          path = pathlib.Path('forecast-ledger.json')
+          data = json.loads(path.read_text())
+          missing = [r for r in data.get('records',[]) if r.get('forecast_id') and not r.get('proof_commit')]
+          recovered = {}
+          if missing:
+              shas = subprocess.check_output(['git','log','--format=%H','--','forecast-ledger.json'], text=True).splitlines()
+              for row in missing:
+                  fid = row['forecast_id']
+                  target = {k:v for k,v in row.items() if k not in {'proof_commit','proof_verified_at'}}
+                  for sha in shas:
+                      try:
+                          raw = subprocess.check_output(['git','show',f'{sha}:forecast-ledger.json'], text=True, stderr=subprocess.DEVNULL)
+                          old = json.loads(raw)
+                      except Exception:
+                          continue
+                      found = next((r for r in old.get('records',[]) if r.get('forecast_id') == fid), None)
+                      if not found:
+                          continue
+                      candidate = {k:v for k,v in found.items() if k not in {'proof_commit','proof_verified_at'}}
+                      if candidate == target:
+                          recovered[fid] = sha
+                          break
+                  if fid not in recovered:
+                      raise SystemExit(f'Unable to recover proof commit for {fid}')
+          pathlib.Path('/tmp/deeprise_recovered_proofs.json').write_text(json.dumps(recovered))
+          print('Recovered proofs:', len(recovered))
+          PY
+
+      - name: Stamp proof commit for changed and unproved rows
+        id: stamp
+        shell: bash
+        env:
+          DATA_CHANGED: ${{ steps.reconcile.outputs.data_changed }}
+          DATA_SHA: ${{ steps.reconcile.outputs.data_sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          from datetime import datetime, timezone
+
+          path = pathlib.Path('forecast-ledger.json')
+          data = json.loads(path.read_text())
+          by_id = {r.get('forecast_id'): r for r in data.get('records',[]) if r.get('forecast_id')}
+          changed = json.loads(pathlib.Path('/tmp/deeprise_changed_ids.json').read_text())
+          missing = json.loads(pathlib.Path('/tmp/deeprise_missing_proofs.json').read_text())
+          recovered = {}
+          rp = pathlib.Path('/tmp/deeprise_recovered_proofs.json')
+          if rp.exists():
+              recovered = json.loads(rp.read_text())
+
+          data_sha = os.environ.get('DATA_SHA','').strip()
+          if os.environ.get('DATA_CHANGED') == 'true' and not data_sha:
+              raise SystemExit('Data commit SHA missing after ledger change')
+
+          stamp_ids = set(changed) | set(missing)
+          if not stamp_ids:
+              pathlib.Path('/tmp/deeprise_stamp_count').write_text('0')
+              raise SystemExit(0)
+
+          now = datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+          for fid in sorted(stamp_ids):
+              row = by_id.get(fid)
+              if row is None:
+                  raise SystemExit(f'Cannot stamp missing row {fid}')
+              proof_sha = data_sha if data_sha else recovered.get(fid)
+              if not proof_sha:
+                  raise SystemExit(f'No valid proof SHA for {fid}')
+              # Changed rows always receive the first data commit SHA. Missing-only rows use recovered SHA.
+              if fid in changed or not row.get('proof_commit'):
+                  row['proof_commit'] = proof_sha
+                  row['proof_verified_at'] = now
+
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
+          pathlib.Path('/tmp/deeprise_stamp_count').write_text(str(len(stamp_ids)))
+          print('Stamped:', ','.join(sorted(stamp_ids)))
+          PY
+
+          if git diff --quiet -- forecast-ledger.json; then
+            echo "proof_changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git add forecast-ledger.json
+          git commit -m "Stamp DeepRise PostHog ledger proof"
+          PROOF_SHA=$(git rev-parse HEAD)
+          git push origin HEAD:main
+          echo "proof_changed=true" >> "$GITHUB_OUTPUT"
+          echo "proof_sha=$PROOF_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Verify stamped proof points to prior data commit
+        if: steps.reconcile.outputs.data_changed == 'true'
+        shell: bash
+        env:
+          DATA_SHA: ${{ steps.reconcile.outputs.data_sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          fid = '2026-09-01-ZECUSDT'
+          sha = os.environ['DATA_SHA']
+          current = json.load(open('forecast-ledger.json'))
+          row = next(r for r in current['records'] if r.get('forecast_id') == fid)
+          if row.get('proof_commit') != sha:
+              raise SystemExit('Proof SHA does not equal first data commit')
+          raw = subprocess.check_output(['git','show',f'{sha}:forecast-ledger.json'], text=True)
+          proved = json.loads(raw)
+          proved_row = next(r for r in proved['records'] if r.get('forecast_id') == fid)
+          fields = ['status','score','rank','day','current','high','low','final_move','best_move','worst_move','end_reason','tp1_hit_at','tp2_hit_at','ended_at']
+          for k in fields:
+              if proved_row.get(k) != row.get(k):
+                  raise SystemExit(f'Proof commit does not contain current {k}')
+          print('Proof verified for', fid, sha)
+          PY
