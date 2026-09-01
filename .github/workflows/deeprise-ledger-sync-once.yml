@@ -1,0 +1,144 @@
+name: DeepRise Ledger Audit Sync Once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deeprise-ledger-sync-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Merge verified daily-top5 audit data
+        id: merge
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, datetime, os
+          path='forecast-ledger.json'
+          with open(path, encoding='utf-8') as f:
+              data=json.load(f)
+          updates={
+            '2026-09-01-0GUSDT': {
+              'final_move': 3.6833192209991585,
+              'end_reason': 'TP2 HIT'
+            },
+            '2026-09-01-UNIUSDT': {
+              'final_move': -0.8453879391320837,
+              'end_reason': 'STOP HIT'
+            },
+            '2026-09-01-DOGEUSDT': {
+              'final_move': -0.25313404050143196,
+              'end_reason': 'STOP HIT'
+            },
+            '2026-09-01-BTCUSDT': {
+              'final_move': -0.19123928286729228,
+              'end_reason': 'STOP AFTER TP1'
+            }
+          }
+          allowed={'score','rank','day','current','high','low','final_move','best_move','worst_move','end_reason','tp1_hit_at','tp2_hit_at','ended_at','status'}
+          immutable={'created_at','entry','tp1','tp2','sl','symbol','side'}
+          records=data.get('records',[])
+          by_id={r.get('forecast_id'):r for r in records}
+          changed=[]
+          for fid, patch in updates.items():
+              r=by_id.get(fid)
+              if not r:
+                  raise SystemExit(f'Missing expected existing forecast_id {fid}; refusing unsafe partial sync')
+              before={k:r.get(k) for k in immutable}
+              for k,v in patch.items():
+                  if k not in allowed:
+                      raise SystemExit(f'Forbidden update key {k}')
+                  if v is not None and r.get(k)!=v:
+                      r[k]=v
+                      if fid not in changed: changed.append(fid)
+              after={k:r.get(k) for k in immutable}
+              if before!=after:
+                  raise SystemExit(f'Immutable fields changed for {fid}')
+          missing=[r.get('forecast_id') for r in records if r.get('forecast_id') and not r.get('proof_commit')]
+          if changed:
+              data['generated_at']=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+              with open(path,'w',encoding='utf-8') as f:
+                  json.dump(data,f,ensure_ascii=False,indent=2)
+                  f.write('\n')
+          with open('/tmp/sync-state.json','w',encoding='utf-8') as f:
+              json.dump({'changed':changed,'missing':missing},f)
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+              f.write('changed='+json.dumps(changed,separators=(',',':'))+'\n')
+              f.write('missing='+json.dumps(missing,separators=(',',':'))+'\n')
+              f.write('needs_write='+('true' if changed else 'false')+'\n')
+              f.write('needs_proof='+('true' if changed or missing else 'false')+'\n')
+          print('changed', changed)
+          print('missing proof', missing)
+          PY
+
+      - name: Commit lifecycle and audit data
+        id: data_commit
+        if: steps.merge.outputs.needs_write == 'true'
+        shell: bash
+        run: |
+          git config user.name 'DeepRise Ledger Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add forecast-ledger.json
+          git commit -m 'Sync DeepRise daily-top5 audit data for 2026-09-01'
+          git push origin HEAD:main
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve proof SHA and stamp changed/missing rows
+        if: steps.merge.outputs.needs_proof == 'true'
+        shell: bash
+        env:
+          DATA_SHA: ${{ steps.data_commit.outputs.sha }}
+          CHANGED_JSON: ${{ steps.merge.outputs.changed }}
+          MISSING_JSON: ${{ steps.merge.outputs.missing }}
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+          if [ -n "$DATA_SHA" ]; then
+            PROOF_SHA="$DATA_SHA"
+          else
+            PROOF_SHA="$(git log -1 --format=%H -- forecast-ledger.json)"
+          fi
+          python3 - <<'PY'
+          import json, datetime, os
+          path='forecast-ledger.json'
+          with open(path,encoding='utf-8') as f: data=json.load(f)
+          changed=json.loads(os.environ.get('CHANGED_JSON') or '[]')
+          missing=json.loads(os.environ.get('MISSING_JSON') or '[]')
+          targets=set(changed+missing)
+          proof=os.environ['PROOF_SHA']
+          now=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+          stamped=[]
+          for r in data.get('records',[]):
+              fid=r.get('forecast_id')
+              if fid in targets:
+                  if fid in changed or not r.get('proof_commit'):
+                      r['proof_commit']=proof
+                      r['proof_verified_at']=now
+                      stamped.append(fid)
+          with open(path,'w',encoding='utf-8') as f:
+              json.dump(data,f,ensure_ascii=False,indent=2); f.write('\n')
+          print('proof SHA',proof)
+          print('stamped',stamped)
+          PY
+          git config user.name 'DeepRise Ledger Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add forecast-ledger.json
+          if git diff --cached --quiet; then
+            echo 'No proof changes required.'
+            exit 0
+          fi
+          git commit -m 'Stamp DeepRise per-row proof commits for 2026-09-01'
+          git push origin HEAD:main
+
+      - name: No-op report
+        if: steps.merge.outputs.needs_proof != 'true'
+        run: echo 'No ledger or proof changes required.'
