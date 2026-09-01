@@ -2,11 +2,553 @@
   "version": 1,
   "ledger": "DeepRise Central Forecast Ledger",
   "started_at": "2026-08-28T13:47:00Z",
-  "generated_at": "2026-08-31T23:57:38.512Z",
+  "generated_at": "2026-09-01T00:30:34.809Z",
   "source": "GitHub Actions central V13.1 publisher + Binance public market data; optional CoinGlass authenticated intelligence; historical verified imports retained",
   "integrity_note_ar": "هذا سجل مركزي موحّد يبدأ من 28 أغسطس 2026. يعرض توصيات DeepRise التي تم تسجيلها فعليًا بعد تفعيل السجل المركزي، ولا تُحذف النتائج بسبب تحديث التطبيق. كل تحديث للسجل يُحفظ في GitHub بتاريخ Commit قابل للمراجعة.",
   "integrity_note_en": "This is a unified central ledger starting August 28, 2026. It shows DeepRise forecasts actually recorded after central tracking was enabled. App updates do not delete results, and every ledger refresh is preserved in GitHub commit history.",
   "records": [
+    {
+      "forecast_id": "2026-09-01-ZECUSDT",
+      "source": "central-v13.1-publisher",
+      "method": "V13.1 Predictive Confluence / closed Binance candles + optional authenticated external intelligence",
+      "symbol": "ZECUSDT",
+      "side": "LONG",
+      "created_at": "2026-09-01T00:29:47.200Z",
+      "entry": 853.78,
+      "tp1": 859.4528571428572,
+      "tp2": 863.9911428571429,
+      "sl": 848.1071428571428,
+      "status": "ACTIVE",
+      "score": 75.0,
+      "predictive": {
+        "model_version": "V13.1 Predictive Confluence",
+        "score": 70.7,
+        "coverage_pct": 75.0,
+        "grade": "B",
+        "order_flow": {
+          "available": true,
+          "provider": "Binance closed 15m klines",
+          "taker_buy_ratio": 0.45423,
+          "cvd_proxy_pct": -9.1544,
+          "taker_ratio_acceleration_pp": 12.1216,
+          "alignment": "CONFLICTING",
+          "score": 60.0
+        },
+        "liquidity_proxy": {
+          "available": true,
+          "provider": "Binance swing-liquidity proxy",
+          "target_price": 870.92,
+          "distance_pct": 2.0075,
+          "atr_distance": 3.021,
+          "alignment": "AHEAD",
+          "score": 80.0,
+          "note": "Swing-liquidity proxy; not a liquidation heatmap."
+        },
+        "liquidation_map": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "large_orders": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "smart_money": {
+          "available": false,
+          "provider": "Nansen",
+          "reason": "NANSEN_API_KEY not configured; no Smart Money wallet value inferred"
+        },
+        "explanation": "Technical trend + closed-candle order flow + liquidity target; CoinGlass liquidation/large-order layers are included only when authenticated data is available.",
+        "liquidity_sweep": {
+          "available": true,
+          "type": "NONE",
+          "severity": "LOW",
+          "trap_score": 32,
+          "score_meaning": "Evidence strength, not reversal probability",
+          "liquidity_level": 858.65,
+          "distance_pct": -0.0163,
+          "momentum_30m_pct": 1.3011,
+          "taker_buy_ratio": 0.52582,
+          "taker_acceleration_pp": -13.904,
+          "upper_wick_ratio": 0.4136,
+          "volume_ratio": 1.894,
+          "evidence": [
+            "aggressive buying decelerating",
+            "upper-wick rejection",
+            "volume expansion"
+          ],
+          "captured_at": "2026-09-01T00:29:48.478Z"
+        },
+        "whale_divergence": {
+          "available": true,
+          "type": "BEARISH_WHALE_DIVERGENCE",
+          "strength": 84.9,
+          "wallet_confirmed": false,
+          "sources": [
+            "Binance order flow"
+          ],
+          "evidence": [
+            "Price rising while CVD proxy is negative",
+            "Price rising with sub-49% taker-buy participation"
+          ],
+          "action": "AVOID_CHASING_LONG",
+          "note": "Wallet-confirmed only when labelled Nansen Smart Money data is available; otherwise large-order/order-flow evidence is a proxy, not a wallet claim."
+        },
+        "whale_arrival_radar": {
+          "available": true,
+          "provider": "DeepRise public whale radar / GeckoTerminal + Binance",
+          "captured_at": "2026-08-31T23:57:18.984Z",
+          "signal": "NEUTRAL",
+          "arrival_score": 34.1,
+          "distribution_score": 38.5,
+          "large_net_usd_6h": 0,
+          "fresh_large_buyers_30m": 0,
+          "repeat_buyers_6h": 0,
+          "rotation_in_30m": 0,
+          "large_buy_ratio": 0.5,
+          "evidence": [],
+          "wallet_identity_note": "Public DEX sender addresses only unless a labelled provider explicitly confirms Smart Money."
+        },
+        "score_before_whale_radar": 70.7,
+        "whale_radar_adjustment": 0.0
+      },
+      "rank": 5,
+      "day": "2026-09-01",
+      "current": 858.26,
+      "high": 858.46,
+      "low": 853.78,
+      "best_move": 0.5481505774321329,
+      "worst_move": 0.0,
+      "final_move": null,
+      "end_reason": null,
+      "tp1_hit_at": null,
+      "tp2_hit_at": null,
+      "ended_at": null,
+      "proof_commit": null,
+      "proof_verified_at": null,
+      "quality": {
+        "count": 5,
+        "required": 5,
+        "volume_ratio": 0.7397,
+        "quote_volume_usdt": 170711473.68,
+        "atr_pct": 0.6644,
+        "rsi_15m": 54.71,
+        "candle_confirmed": true,
+        "trend_15m": "LONG",
+        "trend_1h": "LONG",
+        "rr": 1.8,
+        "momentum_15m_pct": 0.9638
+      },
+      "opened_at": "2026-09-01T00:29:47.200Z",
+      "status_history": [
+        {
+          "event": "SIGNAL_OPENED",
+          "at": "2026-09-01T00:29:47.200Z",
+          "status": "ACTIVE"
+        }
+      ],
+      "last_checked_at": "2026-09-01T00:30:59.999Z"
+    },
+    {
+      "forecast_id": "2026-09-01-UNIUSDT",
+      "source": "central-v13.1-publisher",
+      "method": "V13.1 Predictive Confluence / closed Binance candles + optional authenticated external intelligence",
+      "symbol": "UNIUSDT",
+      "side": "LONG",
+      "created_at": "2026-09-01T00:29:47.200Z",
+      "entry": 5.323,
+      "tp1": 5.362500000000001,
+      "tp2": 5.394100000000001,
+      "sl": 5.2835,
+      "status": "ACTIVE",
+      "score": 90.0,
+      "predictive": {
+        "model_version": "V13.1 Predictive Confluence",
+        "score": 75.3,
+        "coverage_pct": 75.0,
+        "grade": "B",
+        "order_flow": {
+          "available": true,
+          "provider": "Binance closed 15m klines",
+          "taker_buy_ratio": 0.65344,
+          "cvd_proxy_pct": 30.6889,
+          "taker_ratio_acceleration_pp": 20.2933,
+          "alignment": "ALIGNED",
+          "score": 81.9
+        },
+        "liquidity_proxy": {
+          "available": true,
+          "provider": "Binance swing-liquidity proxy",
+          "target_price": 5.294,
+          "distance_pct": -0.5448,
+          "atr_distance": 0.734,
+          "alignment": "BEHIND",
+          "score": 35.0,
+          "note": "Swing-liquidity proxy; not a liquidation heatmap."
+        },
+        "liquidation_map": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "large_orders": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "smart_money": {
+          "available": false,
+          "provider": "Nansen",
+          "reason": "NANSEN_API_KEY not configured; no Smart Money wallet value inferred"
+        },
+        "explanation": "Technical trend + closed-candle order flow + liquidity target; CoinGlass liquidation/large-order layers are included only when authenticated data is available.",
+        "liquidity_sweep": {
+          "available": true,
+          "type": "NONE",
+          "severity": "LOW",
+          "trap_score": 20,
+          "score_meaning": "Evidence strength, not reversal probability",
+          "liquidity_level": 5.405,
+          "distance_pct": 0.9714,
+          "momentum_30m_pct": 2.3518,
+          "taker_buy_ratio": 0.63571,
+          "taker_acceleration_pp": -13.4116,
+          "upper_wick_ratio": 0.18,
+          "volume_ratio": 2.4429,
+          "evidence": [
+            "aggressive buying decelerating",
+            "volume expansion"
+          ],
+          "captured_at": "2026-09-01T00:29:49.655Z"
+        },
+        "whale_divergence": {
+          "available": true,
+          "type": "NONE",
+          "strength": 0,
+          "wallet_confirmed": false,
+          "sources": [
+            "Binance order flow"
+          ],
+          "evidence": [],
+          "note": "No multi-source whale/flow divergence confirmed at forecast creation."
+        },
+        "whale_arrival_radar": {
+          "available": true,
+          "provider": "DeepRise public whale radar / GeckoTerminal + Binance",
+          "captured_at": "2026-09-01T00:28:45.420Z",
+          "signal": "NEUTRAL",
+          "arrival_score": 54.5,
+          "distribution_score": 38.5,
+          "large_net_usd_6h": 0,
+          "fresh_large_buyers_30m": 0,
+          "repeat_buyers_6h": 0,
+          "rotation_in_30m": 0,
+          "large_buy_ratio": 0.5,
+          "evidence": [
+            "CEX taker-buy 75%",
+            "15m volume 2.3x"
+          ],
+          "wallet_identity_note": "Public DEX sender addresses only unless a labelled provider explicitly confirms Smart Money."
+        },
+        "score_before_whale_radar": 75.3,
+        "whale_radar_adjustment": 0.0
+      },
+      "rank": 4,
+      "day": "2026-09-01",
+      "current": 5.354,
+      "high": 5.355,
+      "low": 5.323,
+      "best_move": 0.601164756716138,
+      "worst_move": 0.0,
+      "final_move": null,
+      "end_reason": null,
+      "tp1_hit_at": null,
+      "tp2_hit_at": null,
+      "ended_at": null,
+      "proof_commit": null,
+      "proof_verified_at": null,
+      "quality": {
+        "count": 6,
+        "required": 5,
+        "volume_ratio": 2.6689,
+        "quote_volume_usdt": 39260491.89,
+        "atr_pct": 0.7421,
+        "rsi_15m": 66.33,
+        "candle_confirmed": true,
+        "trend_15m": "LONG",
+        "trend_1h": "LONG",
+        "rr": 1.8,
+        "momentum_15m_pct": 2.2278
+      },
+      "opened_at": "2026-09-01T00:29:47.200Z",
+      "status_history": [
+        {
+          "event": "SIGNAL_OPENED",
+          "at": "2026-09-01T00:29:47.200Z",
+          "status": "ACTIVE"
+        }
+      ],
+      "last_checked_at": "2026-09-01T00:30:59.999Z"
+    },
+    {
+      "forecast_id": "2026-09-01-DOGEUSDT",
+      "source": "central-v13.1-publisher",
+      "method": "V13.1 Predictive Confluence / closed Binance candles + optional authenticated external intelligence",
+      "symbol": "DOGEUSDT",
+      "side": "SHORT",
+      "created_at": "2026-09-01T00:29:47.200Z",
+      "entry": 0.08296,
+      "tp1": 0.08275071428571429,
+      "tp2": 0.08258328571428572,
+      "sl": 0.08316928571428572,
+      "status": "ACTIVE",
+      "score": 75.0,
+      "predictive": {
+        "model_version": "V13.1 Predictive Confluence",
+        "score": 75.4,
+        "coverage_pct": 70.0,
+        "grade": "B",
+        "order_flow": {
+          "available": true,
+          "provider": "Binance closed 15m klines",
+          "taker_buy_ratio": 0.42723,
+          "cvd_proxy_pct": -14.5531,
+          "taker_ratio_acceleration_pp": -13.7517,
+          "alignment": "ALIGNED",
+          "score": 73.0
+        },
+        "liquidity_proxy": {
+          "available": true,
+          "provider": "Binance swing-liquidity proxy",
+          "target_price": 0.08207,
+          "distance_pct": 1.0728,
+          "atr_distance": 4.253,
+          "alignment": "AHEAD",
+          "score": 80.0,
+          "note": "Swing-liquidity proxy; not a liquidation heatmap."
+        },
+        "liquidation_map": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "large_orders": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "smart_money": {
+          "available": false,
+          "provider": "Nansen",
+          "reason": "NANSEN_API_KEY not configured; no Smart Money wallet value inferred"
+        },
+        "explanation": "Technical trend + closed-candle order flow + liquidity target; CoinGlass liquidation/large-order layers are included only when authenticated data is available.",
+        "liquidity_sweep": {
+          "available": true,
+          "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+          "severity": "MEDIUM",
+          "trap_score": 71,
+          "score_meaning": "Evidence strength, not reversal probability",
+          "liquidity_level": 0.08319,
+          "distance_pct": 0.0601,
+          "momentum_30m_pct": 0.3864,
+          "taker_buy_ratio": 0.44717,
+          "taker_acceleration_pp": 42.5004,
+          "upper_wick_ratio": 0.375,
+          "volume_ratio": 2.2538,
+          "evidence": [
+            "rising into nearby prior-high liquidity",
+            "weak taker-buy participation",
+            "upper-wick rejection",
+            "volume expansion",
+            "15m structure not strongly bullish"
+          ],
+          "captured_at": "2026-09-01T00:29:50.866Z"
+        },
+        "liquidity_sweep_supports_short": true,
+        "whale_divergence": {
+          "available": true,
+          "type": "NONE",
+          "strength": 0,
+          "wallet_confirmed": false,
+          "sources": [
+            "Binance order flow"
+          ],
+          "evidence": [],
+          "note": "No multi-source whale/flow divergence confirmed at forecast creation."
+        },
+        "whale_arrival_radar": {
+          "available": false,
+          "reason": "No fresh public on-chain whale snapshot within 45 minutes"
+        }
+      },
+      "rank": 3,
+      "day": "2026-09-01",
+      "current": 0.08313,
+      "high": 0.08315,
+      "low": 0.08296,
+      "best_move": -0.0,
+      "worst_move": -0.22902603664416069,
+      "final_move": null,
+      "end_reason": null,
+      "tp1_hit_at": null,
+      "tp2_hit_at": null,
+      "ended_at": null,
+      "proof_commit": null,
+      "proof_verified_at": null,
+      "quality": {
+        "count": 5,
+        "required": 5,
+        "volume_ratio": 1.851,
+        "quote_volume_usdt": 36781023.55,
+        "atr_pct": 0.2523,
+        "rsi_15m": 46.98,
+        "candle_confirmed": false,
+        "trend_15m": "SHORT",
+        "trend_1h": "SHORT",
+        "rr": 1.8,
+        "momentum_15m_pct": 0.1086
+      },
+      "opened_at": "2026-09-01T00:29:47.200Z",
+      "status_history": [
+        {
+          "event": "SIGNAL_OPENED",
+          "at": "2026-09-01T00:29:47.200Z",
+          "status": "ACTIVE"
+        }
+      ],
+      "last_checked_at": "2026-09-01T00:30:59.999Z"
+    },
+    {
+      "forecast_id": "2026-09-01-BTCUSDT",
+      "source": "central-v13.1-publisher",
+      "method": "V13.1 Predictive Confluence / closed Binance candles + optional authenticated external intelligence",
+      "symbol": "BTCUSDT",
+      "side": "LONG",
+      "created_at": "2026-09-01T00:29:47.200Z",
+      "entry": 78754.74,
+      "tp1": 78880.05071428572,
+      "tp2": 78980.2992857143,
+      "sl": 78629.42928571429,
+      "status": "TP1 HIT",
+      "score": 78.9,
+      "predictive": {
+        "model_version": "V13.1 Predictive Confluence",
+        "score": 76.6,
+        "coverage_pct": 70.0,
+        "grade": "B",
+        "order_flow": {
+          "available": true,
+          "provider": "Binance closed 15m klines",
+          "taker_buy_ratio": 0.62326,
+          "cvd_proxy_pct": 24.652,
+          "taker_ratio_acceleration_pp": 5.4474,
+          "alignment": "ALIGNED",
+          "score": 71.7
+        },
+        "liquidity_proxy": {
+          "available": true,
+          "provider": "Binance swing-liquidity proxy",
+          "target_price": 79250.0,
+          "distance_pct": 0.6289,
+          "atr_distance": 3.952,
+          "alignment": "AHEAD",
+          "score": 80.0,
+          "note": "Swing-liquidity proxy; not a liquidation heatmap."
+        },
+        "liquidation_map": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "large_orders": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "smart_money": {
+          "available": false,
+          "provider": "Nansen",
+          "reason": "NANSEN_API_KEY not configured; no Smart Money wallet value inferred"
+        },
+        "explanation": "Technical trend + closed-candle order flow + liquidity target; CoinGlass liquidation/large-order layers are included only when authenticated data is available.",
+        "liquidity_sweep": {
+          "available": true,
+          "type": "NONE",
+          "severity": "LOW",
+          "trap_score": 12,
+          "score_meaning": "Evidence strength, not reversal probability",
+          "liquidity_level": 78839.03,
+          "distance_pct": -0.011,
+          "momentum_30m_pct": 0.3707,
+          "taker_buy_ratio": 0.72152,
+          "taker_acceleration_pp": -2.6483,
+          "upper_wick_ratio": 0.2334,
+          "volume_ratio": 1.0396,
+          "evidence": [
+            "aggressive buying decelerating"
+          ],
+          "captured_at": "2026-09-01T00:29:52.194Z"
+        },
+        "whale_divergence": {
+          "available": true,
+          "type": "NONE",
+          "strength": 0,
+          "wallet_confirmed": false,
+          "sources": [
+            "Binance order flow"
+          ],
+          "evidence": [],
+          "note": "No multi-source whale/flow divergence confirmed at forecast creation."
+        },
+        "whale_arrival_radar": {
+          "available": false,
+          "reason": "No fresh public on-chain whale snapshot within 45 minutes"
+        }
+      },
+      "rank": 2,
+      "day": "2026-09-01",
+      "current": 78891.93,
+      "high": 78891.93,
+      "low": 78754.74,
+      "best_move": 0.1741990386864178,
+      "worst_move": 0.0,
+      "final_move": null,
+      "end_reason": null,
+      "tp1_hit_at": "2026-09-01T00:29:59.999Z",
+      "tp2_hit_at": null,
+      "ended_at": null,
+      "proof_commit": null,
+      "proof_verified_at": null,
+      "quality": {
+        "count": 6,
+        "required": 5,
+        "volume_ratio": 1.4649,
+        "quote_volume_usdt": 1181601823.12,
+        "atr_pct": 0.1591,
+        "rsi_15m": 50.79,
+        "candle_confirmed": true,
+        "trend_15m": "LONG",
+        "trend_1h": "LONG",
+        "rr": 1.8,
+        "momentum_15m_pct": 0.3788
+      },
+      "opened_at": "2026-09-01T00:29:47.200Z",
+      "status_history": [
+        {
+          "event": "SIGNAL_OPENED",
+          "at": "2026-09-01T00:29:47.200Z",
+          "status": "ACTIVE"
+        },
+        {
+          "event": "TP1_HIT",
+          "at": "2026-09-01T00:29:59.999Z",
+          "status": "TP1 HIT"
+        }
+      ],
+      "last_checked_at": "2026-09-01T00:30:59.999Z"
+    },
     {
       "forecast_id": "2026-08-31-LINKUSDT",
       "source": "central-v13.1-publisher",
@@ -2567,5 +3109,8 @@
   "liquidity_sweep_gate": "V13.3 blocks newly-created LONG forecasts before commit when closed-candle evidence shows a confirmed or HIGH upward buy-side liquidity sweep trap.",
   "whale_divergence_schema": "V13.3: divergence requires at least two pieces of opposing flow evidence; wallet_confirmed is true only with labelled Nansen Smart Money data.",
   "lifecycle_timeline": "Append-only timestamps: opened_at, tp1_hit_at, tp2_hit_at, cancelled_at, ended_at, status_history[]",
-  "whale_arrival_gate": "V14.7 uses fresh public DEX large-wallet flow as a capped confluence factor; only very strong opposing multi-wallet evidence can block a new forecast."
+  "whale_arrival_gate": "V14.7 uses fresh public DEX large-wallet flow as a capped confluence factor; only very strong opposing multi-wallet evidence can block a new forecast.",
+  "trap_gate_last_removed": [
+    "2026-09-01-DASHUSDT"
+  ]
 }
