@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-02T23:20:26.395Z",
+  "generated_at": "2026-09-02T23:35:14.551Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 24,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "TRUMPUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788392099999",
+      "symbol": "TRUMPUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 75,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 2.197,
+      "liquidity_level": 2.2,
+      "distance_to_liquidity_pct": 0.1365,
+      "momentum_30m_pct": 0.1824,
+      "taker_buy_ratio": 0.4914,
+      "taker_acceleration_pp": -15.4422,
+      "upper_wick_ratio": 0.4,
+      "volume_ratio": 0.4098,
+      "atr_pct": 0.3219,
+      "quote_volume_usdt": 28559848.6,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Taker buy ratio weak at 49.1%",
+        "Aggressive buying decelerating -15.4pp",
+        "Upper-wick rejection 40% of candle range",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-02T23:34:59.999Z",
+      "invalidation": "A sustained 5m close above 2.2 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-02T23:35:08.386Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "TRUMPUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788389099999",
       "symbol": "TRUMPUSDT",
@@ -1638,36 +1668,6 @@
       "bar_closed_at": "2026-09-01T23:39:59.999Z",
       "invalidation": "A sustained 5m close above 831.51 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
       "created_at": "2026-09-01T23:43:18.874Z",
-      "source": "Binance closed 5m + 15m candles"
-    },
-    {
-      "id": "ARBUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788305399999",
-      "symbol": "ARBUSDT",
-      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
-      "severity": "MEDIUM",
-      "trap_score": 75,
-      "score_meaning": "Evidence strength, not reversal probability",
-      "price": 0.1091,
-      "liquidity_level": 0.1094,
-      "distance_to_liquidity_pct": 0.275,
-      "momentum_30m_pct": 0.6458,
-      "taker_buy_ratio": 0.43173,
-      "taker_acceleration_pp": -23.1776,
-      "upper_wick_ratio": 0.3333,
-      "volume_ratio": 0.3631,
-      "atr_pct": 0.4256,
-      "quote_volume_usdt": 56067771.47,
-      "fifteen_min_strong_bull": false,
-      "reasons": [
-        "Price is rising into nearby prior-high liquidity",
-        "Taker buy ratio weak at 43.2%",
-        "Aggressive buying decelerating -23.2pp",
-        "Upper-wick rejection 33% of candle range",
-        "15m structure is not strongly bullish"
-      ],
-      "bar_closed_at": "2026-09-01T23:29:59.999Z",
-      "invalidation": "A sustained 5m close above 0.1094 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
-      "created_at": "2026-09-01T23:30:13.972Z",
       "source": "Binance closed 5m + 15m candles"
     }
   ]
