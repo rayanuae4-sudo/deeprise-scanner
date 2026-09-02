@@ -13,7 +13,8 @@ const standalone=matchMedia('(display-mode: standalone)').matches||navigator.sta
 function button(){if(standalone||document.getElementById('deepriseInstall'))return;let b=document.createElement('button');b.id='deepriseInstall';b.textContent='⬇ '+t('install');b.style.cssText='position:fixed;right:14px;bottom:14px;z-index:99998;border:1px solid #35e0a1;background:#071b26;color:#35e0a1;border-radius:14px;padding:12px 16px;font-weight:800;box-shadow:0 10px 30px #0008';b.onclick=async()=>{if(deferred){deferred.prompt();await deferred.userChoice;deferred=null;b.remove();return}const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);alert(ios?t('how'):t('ready'))};document.body.appendChild(b)}
 function load(id,src){if(document.getElementById(id)||document.querySelector(`script[src*="${src.split('?')[0].replace('./','')}"]`))return;let s=document.createElement('script');s.id=id;s.src=src;s.defer=true;s.async=true;document.body.appendChild(s)}
 function fastSearchLayer(){load('dr-fast-search-v160-loader','./deeprise-fast-search-v160.js?v=1601')}
-function notificationCenterLayer(){load('dr-notification-center-v167-loader','./deeprise-notification-center-v167.js?v=1670')}
+function notificationCenterLayer(){load('dr-notification-center-v167-loader','./deeprise-notification-center-v167.js?v=1680')}
+function experienceLayer(){load('dr-experience-v169-loader','./deeprise-experience-v169.js?v=1690')}
 function nextCandleLayer(){load('dr-next-candle-loader','./deeprise-next-candle-v145.js?v=1450')}
 function forecastSafetyLayer(){load('dr-forecast-safety-loader','./deeprise-forecast-safety-v145.js?v=1450')}
 function signalEngineLayer(){load('dr-signal-engine-v149-loader','./deeprise-signal-engine-v149.js?v=1490')}
@@ -32,6 +33,6 @@ function earlyBreakoutLayer(){load('dr-early-breakout-v159-loader','./deeprise-e
 function idle(fn,delay=0){setTimeout(()=>{if(document.hidden)return;if('requestIdleCallback'in window)requestIdleCallback(fn,{timeout:MOBILE?3000:1800});else setTimeout(fn,0)},delay)}
 function progressiveLayers(){const primary=[nextCandleLayer,signalEngineLayer,uiLayer,earlyBreakoutLayer,forecastSafetyLayer,tradeMonitorLayer];const secondary=[tradeZonesLayer,moveTimingLayer,entryRankingLayer,integrityLayer,signalCardUiLayer,publicLiquidityLayer,whaleLayer,whaleFlowLayer,whaleInlineLayer];if(MOBILE){primary.forEach((fn,i)=>idle(fn,2600+i*1200));secondary.forEach((fn,i)=>idle(fn,14000+i*1700))}else{[...primary,...secondary].forEach((fn,i)=>idle(fn,900+i*420))}}
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;button()});
-brand();languagePerformancePatch();fastSearchLayer();notificationCenterLayer();
+brand();languagePerformancePatch();fastSearchLayer();notificationCenterLayer();experienceLayer();
 window.DeepRiseLoadOptionalLayers=progressiveLayers;addEventListener('load',()=>{brand();languagePerformancePatch();idle(button,1800)},{once:true});
 })();
