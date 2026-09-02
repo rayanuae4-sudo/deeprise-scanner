@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-02T18:57:31.047Z",
+  "generated_at": "2026-09-02T19:17:02.440Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 24,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "NEARUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788376499999",
+      "symbol": "NEARUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 71,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 1.862,
+      "liquidity_level": 1.864,
+      "distance_to_liquidity_pct": 0.1074,
+      "momentum_30m_pct": 0.7576,
+      "taker_buy_ratio": 0.38827,
+      "taker_acceleration_pp": -15.9556,
+      "upper_wick_ratio": 0.2,
+      "volume_ratio": 2.28,
+      "atr_pct": 0.2954,
+      "quote_volume_usdt": 26369357.31,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Taker buy ratio weak at 38.8%",
+        "Aggressive buying decelerating -16.0pp",
+        "Volume expansion 2.28x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-02T19:14:59.999Z",
+      "invalidation": "A sustained 5m close above 1.864 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-02T19:16:59.711Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "LINKUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788373199999",
       "symbol": "LINKUSDT",
@@ -1904,36 +1934,6 @@
       "bar_closed_at": "2026-09-01T19:29:59.999Z",
       "invalidation": "A sustained 5m close above 0.1086 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
       "created_at": "2026-09-01T19:32:20.326Z",
-      "source": "Binance closed 5m + 15m candles"
-    },
-    {
-      "id": "PEPEUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788289199999",
-      "symbol": "PEPEUSDT",
-      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
-      "severity": "MEDIUM",
-      "trap_score": 67,
-      "score_meaning": "Evidence strength, not reversal probability",
-      "price": 3.5e-06,
-      "liquidity_level": 3.52e-06,
-      "distance_to_liquidity_pct": 0.5714,
-      "momentum_30m_pct": 0.8646,
-      "taker_buy_ratio": 0.51773,
-      "taker_acceleration_pp": -3.3025,
-      "upper_wick_ratio": 0.5,
-      "volume_ratio": 2.5373,
-      "atr_pct": 0.6531,
-      "quote_volume_usdt": 22227541.3,
-      "fifteen_min_strong_bull": false,
-      "reasons": [
-        "Price is rising into nearby prior-high liquidity",
-        "Aggressive buying decelerating -3.3pp",
-        "Upper-wick rejection 50% of candle range",
-        "Volume expansion 2.54x",
-        "15m structure is not strongly bullish"
-      ],
-      "bar_closed_at": "2026-09-01T18:59:59.999Z",
-      "invalidation": "A sustained 5m close above 3.52e-06 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
-      "created_at": "2026-09-01T19:00:13.356Z",
       "source": "Binance closed 5m + 15m candles"
     }
   ]
