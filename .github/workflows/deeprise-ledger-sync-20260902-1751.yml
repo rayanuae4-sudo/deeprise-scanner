@@ -1,0 +1,220 @@
+name: DeepRise one-time ledger sync 2026-09-02 17:51
+
+on:
+  push:
+    paths:
+      - '.github/workflows/deeprise-ledger-sync-20260902-1751.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Configure git
+        run: |
+          git config user.name "DeepRise Ledger Sync"
+          git config user.email "actions@users.noreply.github.com"
+      - name: Merge authoritative PostHog audit data
+        run: |
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+
+          path = 'forecast-ledger.json'
+          with open(path, encoding='utf-8') as f:
+              ledger = json.load(f)
+
+          audits = {
+              '2026-09-02-LINKUSDT': {
+                  'status': 'TP2 HIT', 'score': 80.0, 'rank': 2, 'day': '2026-09-02',
+                  'current': 11.096, 'high': 11.195, 'low': 11.086,
+                  'final_move': 0.680272108843542, 'best_move': 0.7697815968492686,
+                  'worst_move': -0.20587182241317295, 'end_reason': 'TP2 HIT',
+                  'tp1_hit_at': '2026-09-02T01:05:59.999Z',
+                  'tp2_hit_at': '2026-09-02T01:50:59.999Z',
+                  'ended_at': '2026-09-02T01:50:59.999Z'
+              },
+              '2026-09-02-XRPUSDT': {
+                  'status': 'TP2 HIT', 'score': 81.0, 'rank': 4, 'day': '2026-09-02',
+                  'current': 1.3288, 'high': 1.3447, 'low': 1.328,
+                  'final_move': 1.0647010647010633, 'best_move': 1.1242647606283889,
+                  'worst_move': -0.119127391854668, 'end_reason': 'TP2 HIT',
+                  'tp1_hit_at': '2026-09-02T01:40:59.999Z',
+                  'tp2_hit_at': '2026-09-02T01:50:59.999Z',
+                  'ended_at': '2026-09-02T01:50:59.999Z'
+              },
+              '2026-09-02-DOGEUSDT': {
+                  'status': 'TP2 HIT', 'score': 88.8, 'rank': 1, 'day': '2026-09-02',
+                  'current': 0.08068, 'high': 0.0814, 'low': 0.08039,
+                  'final_move': 0.7626076260762553, 'best_move': 1.119311193111924,
+                  'worst_move': -0.12300123001230366, 'end_reason': 'TP2 HIT',
+                  'tp1_hit_at': '2026-09-02T01:36:59.999Z',
+                  'tp2_hit_at': '2026-09-02T01:40:59.999Z',
+                  'ended_at': '2026-09-02T01:40:59.999Z'
+              },
+              '2026-09-02-ETHUSDT': {
+                  'status': 'TP2 HIT', 'score': 81.0, 'rank': 3, 'day': '2026-09-02',
+                  'current': 2397.65, 'high': 2415.0, 'low': 2391.09,
+                  'final_move': 0.47693367757788185, 'best_move': 0.749230015690235,
+                  'worst_move': -0.24324032642354232, 'end_reason': 'TP2 HIT',
+                  'tp1_hit_at': '2026-09-02T01:39:59.999Z',
+                  'tp2_hit_at': '2026-09-02T01:40:59.999Z',
+                  'ended_at': '2026-09-02T01:40:59.999Z'
+              },
+              '2026-09-02-UNIUSDT': {
+                  'status': 'STOP AFTER TP1', 'score': 77.6, 'rank': 5, 'day': '2026-09-02',
+                  'current': 5.79, 'high': 5.916, 'low': 5.789,
+                  'final_move': -0.9748589020010326, 'best_move': 1.1800923550538729,
+                  'worst_move': -0.9919616897554424, 'end_reason': 'STOP AFTER TP1',
+                  'tp1_hit_at': '2026-09-02T00:56:59.999Z',
+                  'tp2_hit_at': None,
+                  'ended_at': '2026-09-02T01:39:59.999Z'
+              }
+          }
+
+          immutable = {
+              '2026-09-02-UNIUSDT': dict(symbol='UNIUSDT', side='LONG', created_at='2026-09-02T00:49:07.170Z', entry=5.847, tp1=5.903642857142858, tp2=5.948957142857143, sl=5.790357142857143),
+              '2026-09-02-ETHUSDT': dict(symbol='ETHUSDT', side='SHORT', created_at='2026-09-02T00:49:07.170Z', entry=2409.14, tp1=2401.5049999999997, tp2=2395.397, sl=2416.775),
+              '2026-09-02-XRPUSDT': dict(symbol='XRPUSDT', side='SHORT', created_at='2026-09-02T00:49:07.170Z', entry=1.3431, tp1=1.3367857142857142, tp2=1.3317342857142858, sl=1.3494142857142857),
+              '2026-09-02-DOGEUSDT': dict(symbol='DOGEUSDT', side='SHORT', created_at='2026-09-02T00:49:07.170Z', entry=0.0813, tp1=0.08100857142857143, tp2=0.08077542857142857, sl=0.08159142857142856),
+              '2026-09-02-LINKUSDT': dict(symbol='LINKUSDT', side='SHORT', created_at='2026-09-02T00:49:07.170Z', entry=11.172, tp1=11.124571428571429, tp2=11.086628571428571, sl=11.219428571428573),
+          }
+
+          records = ledger.setdefault('records', [])
+          by_id = {r.get('forecast_id'): r for r in records if r.get('forecast_id')}
+          terminal = {'TP2 HIT', 'STOP HIT', 'STOP AFTER TP1', 'TIME EXPIRED'}
+          changed = []
+
+          for fid, audit in audits.items():
+              rec = by_id.get(fid)
+              if rec is None:
+                  rec = {'forecast_id': fid, 'source': 'daily-top5', **immutable[fid]}
+                  records.append(rec)
+                  by_id[fid] = rec
+              dirty = False
+
+              incoming_status = audit['status']
+              current_status = rec.get('status')
+              if current_status not in terminal and current_status != incoming_status:
+                  rec['status'] = incoming_status
+                  dirty = True
+              elif current_status is None:
+                  rec['status'] = incoming_status
+                  dirty = True
+
+              for key in ('score','rank','day','current','high','low','final_move','best_move','worst_move','end_reason','tp1_hit_at','tp2_hit_at','ended_at'):
+                  value = audit.get(key)
+                  if value is None:
+                      continue
+                  if rec.get(key) != value:
+                      rec[key] = value
+                      dirty = True
+
+              if dirty or fid not in changed and rec.get('forecast_id') == fid and all(k in rec for k in immutable[fid]) is False:
+                  # New rows are already dirty through status/audit fields; immutable fields on existing rows are never touched.
+                  pass
+              if dirty:
+                  changed.append(fid)
+
+          if changed:
+              ledger['generated_at'] = datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+              with open(path, 'w', encoding='utf-8') as f:
+                  json.dump(ledger, f, ensure_ascii=False, indent=2)
+                  f.write('\n')
+
+          with open('/tmp/changed_ids.json','w',encoding='utf-8') as f:
+              json.dump(changed,f)
+          print('changed_ids=' + ','.join(changed))
+          PY
+      - name: Commit authoritative data before proof stamp
+        run: |
+          CHANGED=$(python3 -c "import json; print(len(json.load(open('/tmp/changed_ids.json'))))")
+          if [ "$CHANGED" -gt 0 ]; then
+            git add forecast-ledger.json
+            git commit -m "Sync DeepRise forecast audit lifecycle for 2026-09-02"
+            DATA_SHA=$(git rev-parse HEAD)
+            git push origin HEAD:main
+            echo "DATA_SHA=$DATA_SHA" >> "$GITHUB_ENV"
+            echo "DATA_SHA=$DATA_SHA"
+          else
+            echo "DATA_SHA=" >> "$GITHUB_ENV"
+          fi
+      - name: Stamp changed rows and recover missing proofs
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          from datetime import datetime, timezone
+
+          path='forecast-ledger.json'
+          with open(path,encoding='utf-8') as f: ledger=json.load(f)
+          with open('/tmp/changed_ids.json',encoding='utf-8') as f: changed=set(json.load(f))
+          data_sha=os.environ.get('DATA_SHA','').strip()
+          now=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
+          proof_dirty=[]
+
+          # If a data commit was just written, it is the newest ledger commit and contains
+          # every row's current data; it is therefore valid for changed rows and missing proofs.
+          if data_sha:
+              for rec in ledger.get('records',[]):
+                  fid=rec.get('forecast_id')
+                  if fid in changed or not rec.get('proof_commit'):
+                      rec['proof_commit']=data_sha
+                      rec['proof_verified_at']=now
+                      proof_dirty.append(fid)
+          else:
+              # Proof-only recovery: find the newest historical ledger commit containing
+              # the row's current immutable/lifecycle/audit data, ignoring proof metadata.
+              keys=('forecast_id','created_at','entry','tp1','tp2','sl','symbol','side','status','score','rank','day','current','high','low','final_move','best_move','worst_move','end_reason','tp1_hit_at','tp2_hit_at','ended_at')
+              commits=subprocess.check_output(['git','log','--format=%H','--','forecast-ledger.json'],text=True).splitlines()
+              for rec in ledger.get('records',[]):
+                  if rec.get('proof_commit'):
+                      continue
+                  current={k:rec.get(k) for k in keys}
+                  found=None
+                  for sha in commits:
+                      try:
+                          raw=subprocess.check_output(['git','show',f'{sha}:forecast-ledger.json'],text=True,stderr=subprocess.DEVNULL)
+                          old=json.loads(raw)
+                      except Exception:
+                          continue
+                      match=next((r for r in old.get('records',[]) if r.get('forecast_id')==rec.get('forecast_id')),None)
+                      if match and all(match.get(k)==current.get(k) for k in keys):
+                          found=sha; break
+                  if found:
+                      rec['proof_commit']=found
+                      rec['proof_verified_at']=now
+                      proof_dirty.append(rec.get('forecast_id'))
+                  else:
+                      raise RuntimeError(f"No historical proof commit contains current data for {rec.get('forecast_id')}")
+
+          if proof_dirty:
+              with open(path,'w',encoding='utf-8') as f:
+                  json.dump(ledger,f,ensure_ascii=False,indent=2); f.write('\n')
+          with open('/tmp/proof_ids.json','w',encoding='utf-8') as f: json.dump(proof_dirty,f)
+          print('proof_ids=' + ','.join(x for x in proof_dirty if x))
+          PY
+      - name: Commit proof stamps
+        run: |
+          PROOFS=$(python3 -c "import json; print(len(json.load(open('/tmp/proof_ids.json'))))")
+          if [ "$PROOFS" -gt 0 ]; then
+            git add forecast-ledger.json
+            git commit -m "Stamp DeepRise per-row proof commits for 2026-09-02"
+            PROOF_SHA=$(git rev-parse HEAD)
+            git push origin HEAD:main
+            echo "PROOF_SHA=$PROOF_SHA"
+          fi
+      - name: Remove one-time workflow
+        if: always()
+        run: |
+          git pull --ff-only origin main || true
+          if [ -f .github/workflows/deeprise-ledger-sync-20260902-1751.yml ]; then
+            git rm .github/workflows/deeprise-ledger-sync-20260902-1751.yml
+            git commit -m "Remove one-time DeepRise ledger sync workflow"
+            git push origin HEAD:main
+          fi
