@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-03T09:38:07.797Z",
+  "generated_at": "2026-09-03T09:53:42.236Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 25,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "ARBUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788428999999",
+      "symbol": "ARBUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 74,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.1381,
+      "liquidity_level": 0.1394,
+      "distance_to_liquidity_pct": 0.9413,
+      "momentum_30m_pct": 0.4364,
+      "taker_buy_ratio": 0.5412,
+      "taker_acceleration_pp": -3.1005,
+      "upper_wick_ratio": 0.6667,
+      "volume_ratio": 3.0538,
+      "atr_pct": 1.0448,
+      "quote_volume_usdt": 46234161.05,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -3.1pp",
+        "Upper-wick rejection 67% of candle range",
+        "Volume expansion 3.05x"
+      ],
+      "bar_closed_at": "2026-09-03T09:49:59.999Z",
+      "invalidation": "A sustained 5m close above 0.1394 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-03T09:53:26.085Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "UNIUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788427199999",
       "symbol": "UNIUSDT",
