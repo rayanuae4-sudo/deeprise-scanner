@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-05T05:47:34.128Z",
+  "generated_at": "2026-09-05T06:01:08.435Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 31,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "XRPUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788587999999",
+      "symbol": "XRPUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "HIGH",
+      "trap_score": 86,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 1.3991,
+      "liquidity_level": 1.4001,
+      "distance_to_liquidity_pct": 0.0715,
+      "momentum_30m_pct": 0.0286,
+      "taker_buy_ratio": 0.44506,
+      "taker_acceleration_pp": 11.2721,
+      "upper_wick_ratio": 0.4091,
+      "volume_ratio": 1.5738,
+      "atr_pct": 0.1378,
+      "quote_volume_usdt": 208192247.25,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Taker buy ratio weak at 44.5%",
+        "Upper-wick rejection 41% of candle range",
+        "Volume expansion 1.57x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-05T05:59:59.999Z",
+      "invalidation": "A sustained 5m close above 1.4001 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-05T06:00:32.610Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "XRPUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788587099999",
       "symbol": "XRPUSDT",
