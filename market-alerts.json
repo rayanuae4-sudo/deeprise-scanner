@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-06T19:58:13.578Z",
+  "generated_at": "2026-09-06T20:19:04.322Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 27,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "MARSCOINUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788725699999",
+      "symbol": "MARSCOINUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 74,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.1901,
+      "liquidity_level": 0.1904,
+      "distance_to_liquidity_pct": 0.1578,
+      "momentum_30m_pct": 5.2602,
+      "taker_buy_ratio": 0.44978,
+      "taker_acceleration_pp": 1.7479,
+      "upper_wick_ratio": 0.2105,
+      "volume_ratio": 4.0907,
+      "atr_pct": 1.3376,
+      "quote_volume_usdt": 55876555.12,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Taker buy ratio weak at 45.0%",
+        "Volume expansion 4.09x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-06T20:14:59.999Z",
+      "invalidation": "A sustained 5m close above 0.1904 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-06T20:18:48.882Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "WLDUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788724499999",
       "symbol": "WLDUSDT",
