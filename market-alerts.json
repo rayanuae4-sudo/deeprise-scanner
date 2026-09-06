@@ -1,12 +1,40 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-06T19:31:46.864Z",
+  "generated_at": "2026-09-06T19:44:55.792Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 27,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "ENAUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788723599999",
+      "symbol": "ENAUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 66,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.1754,
+      "liquidity_level": 0.1759,
+      "distance_to_liquidity_pct": 0.2851,
+      "momentum_30m_pct": 0.1142,
+      "taker_buy_ratio": 0.47852,
+      "taker_acceleration_pp": 7.6076,
+      "upper_wick_ratio": 0.2857,
+      "volume_ratio": 0.7567,
+      "atr_pct": 0.3706,
+      "quote_volume_usdt": 60837328.14,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Taker buy ratio weak at 47.9%",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-06T19:39:59.999Z",
+      "invalidation": "A sustained 5m close above 0.1759 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-06T19:44:40.823Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "PEPEUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788720299999",
       "symbol": "PEPEUSDT",
