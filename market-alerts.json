@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-08T06:48:39.059Z",
+  "generated_at": "2026-09-08T07:04:02.279Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 34,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "AVAXUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788850799999",
+      "symbol": "AVAXUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 75,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 8.047,
+      "liquidity_level": 8.082,
+      "distance_to_liquidity_pct": 0.4349,
+      "momentum_30m_pct": 0.2741,
+      "taker_buy_ratio": 0.41307,
+      "taker_acceleration_pp": -22.111,
+      "upper_wick_ratio": 0.3182,
+      "volume_ratio": 1.0498,
+      "atr_pct": 0.2388,
+      "quote_volume_usdt": 40325311.92,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Taker buy ratio weak at 41.3%",
+        "Aggressive buying decelerating -22.1pp",
+        "Upper-wick rejection 32% of candle range",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-08T06:59:59.999Z",
+      "invalidation": "A sustained 5m close above 8.082 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-08T07:03:40.053Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "NEARUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788846899999",
       "symbol": "NEARUSDT",
@@ -2327,35 +2357,6 @@
       "bar_closed_at": "2026-09-07T07:04:59.999Z",
       "invalidation": "A sustained 5m close above 7.123 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
       "created_at": "2026-09-07T07:09:33.838Z",
-      "source": "Binance closed 5m + 15m candles"
-    },
-    {
-      "id": "UNIUSDT-BUY_SIDE_SWEEP_CONFIRMED-1788763799999",
-      "symbol": "UNIUSDT",
-      "type": "BUY_SIDE_SWEEP_CONFIRMED",
-      "severity": "MEDIUM",
-      "trap_score": 74,
-      "score_meaning": "Evidence strength, not reversal probability",
-      "price": 7.061,
-      "liquidity_level": 7.069,
-      "distance_to_liquidity_pct": 0.1133,
-      "momentum_30m_pct": 0.5268,
-      "taker_buy_ratio": 0.63692,
-      "taker_acceleration_pp": -3.7688,
-      "upper_wick_ratio": 0.6111,
-      "volume_ratio": 0.2575,
-      "atr_pct": 0.3844,
-      "quote_volume_usdt": 71436526.16,
-      "fifteen_min_strong_bull": false,
-      "reasons": [
-        "High swept prior 5m buy-side liquidity and closed back below it",
-        "Aggressive buying decelerating -3.8pp",
-        "Upper-wick rejection 61% of candle range",
-        "15m structure is not strongly bullish"
-      ],
-      "bar_closed_at": "2026-09-07T06:49:59.999Z",
-      "invalidation": "A sustained 5m close above 7.069 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
-      "created_at": "2026-09-07T06:51:09.405Z",
       "source": "Binance closed 5m + 15m candles"
     }
   ]
