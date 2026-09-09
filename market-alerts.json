@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-09T16:40:48.236Z",
+  "generated_at": "2026-09-09T16:56:13.702Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 34,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "AVAXUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788972899999",
+      "symbol": "AVAXUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 75,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 7.949,
+      "liquidity_level": 7.96,
+      "distance_to_liquidity_pct": 0.1384,
+      "momentum_30m_pct": 0.4803,
+      "taker_buy_ratio": 0.27577,
+      "taker_acceleration_pp": -9.8803,
+      "upper_wick_ratio": 0.875,
+      "volume_ratio": 0.1664,
+      "atr_pct": 0.2444,
+      "quote_volume_usdt": 21705862.17,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Taker buy ratio weak at 27.6%",
+        "Aggressive buying decelerating -9.9pp",
+        "Upper-wick rejection 87% of candle range",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-09T16:54:59.999Z",
+      "invalidation": "A sustained 5m close above 7.96 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-09T16:56:12.286Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "AVAXUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1788971999999",
       "symbol": "AVAXUSDT",
