@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-10T17:52:00.625Z",
+  "generated_at": "2026-09-10T18:10:47.494Z",
   "source": "Binance public market data; closed candles only",
-  "scanned_symbols": 33,
+  "scanned_symbols": 34,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "SNDKBUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789063799999",
+      "symbol": "SNDKBUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 74,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 1708.04,
+      "liquidity_level": 1711.12,
+      "distance_to_liquidity_pct": 0.1803,
+      "momentum_30m_pct": 0.4322,
+      "taker_buy_ratio": 0.56617,
+      "taker_acceleration_pp": -12.8242,
+      "upper_wick_ratio": 0.9007,
+      "volume_ratio": 0.3075,
+      "atr_pct": 0.2538,
+      "quote_volume_usdt": 22243071.19,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -12.8pp",
+        "Upper-wick rejection 90% of candle range",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-10T18:09:59.999Z",
+      "invalidation": "A sustained 5m close above 1711.12 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-10T18:10:45.567Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "TRXUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1789062599999",
       "symbol": "TRXUSDT",
