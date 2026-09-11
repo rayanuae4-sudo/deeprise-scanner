@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-11T05:11:51.332Z",
+  "generated_at": "2026-09-11T05:29:55.289Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 32,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "SNDKBUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789104299999",
+      "symbol": "SNDKBUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 70,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 1685.69,
+      "liquidity_level": 1686.86,
+      "distance_to_liquidity_pct": 0.0694,
+      "momentum_30m_pct": 0.1622,
+      "taker_buy_ratio": 0.83788,
+      "taker_acceleration_pp": 17.5587,
+      "upper_wick_ratio": 0.4816,
+      "volume_ratio": 5.6679,
+      "atr_pct": 0.1722,
+      "quote_volume_usdt": 22400596.69,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Upper-wick rejection 48% of candle range",
+        "Volume expansion 5.67x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-11T05:24:59.999Z",
+      "invalidation": "A sustained 5m close above 1686.86 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-11T05:29:50.628Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ETHFIUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789103399999",
       "symbol": "ETHFIUSDT",
