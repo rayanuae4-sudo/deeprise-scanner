@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-11T08:58:25.452Z",
+  "generated_at": "2026-09-11T09:20:04.527Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 32,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "牛来USDT-BUY_SIDE_SWEEP_CONFIRMED-1789118099999",
+      "symbol": "牛来USDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 74,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.13507,
+      "liquidity_level": 0.13841,
+      "distance_to_liquidity_pct": 2.4728,
+      "momentum_30m_pct": 1.6711,
+      "taker_buy_ratio": 0.52263,
+      "taker_acceleration_pp": -5.5647,
+      "upper_wick_ratio": 0.7862,
+      "volume_ratio": 1.6207,
+      "atr_pct": 2.569,
+      "quote_volume_usdt": 86548080.34,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -5.6pp",
+        "Upper-wick rejection 79% of candle range",
+        "Volume expansion 1.62x"
+      ],
+      "bar_closed_at": "2026-09-11T09:14:59.999Z",
+      "invalidation": "A sustained 5m close above 0.13841 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-11T09:19:42.699Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "TAOUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789111499999",
       "symbol": "TAOUSDT",
