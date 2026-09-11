@@ -2,11 +2,136 @@
   "version": 1,
   "ledger": "DeepRise Central Forecast Ledger",
   "started_at": "2026-08-28T13:47:00Z",
-  "generated_at": "2026-09-11T00:29:11.043Z",
+  "generated_at": "2026-09-11T00:48:49.954Z",
   "source": "GitHub Actions central V13.1 publisher + Binance public market data; optional CoinGlass authenticated intelligence; historical verified imports retained",
   "integrity_note_ar": "هذا سجل مركزي موحّد يبدأ من 28 أغسطس 2026. يعرض توصيات DeepRise التي تم تسجيلها فعليًا بعد تفعيل السجل المركزي، ولا تُحذف النتائج بسبب تحديث التطبيق. كل تحديث للسجل يُحفظ في GitHub بتاريخ Commit قابل للمراجعة.",
   "integrity_note_en": "This is a unified central ledger starting August 28, 2026. It shows DeepRise forecasts actually recorded after central tracking was enabled. App updates do not delete results, and every ledger refresh is preserved in GitHub commit history.",
   "records": [
+    {
+      "forecast_id": "2026-09-11-TRXUSDT",
+      "source": "central-v13.1-publisher",
+      "method": "V13.1 Predictive Confluence / closed Binance candles + optional authenticated external intelligence",
+      "symbol": "TRXUSDT",
+      "side": "LONG",
+      "created_at": "2026-09-11T00:48:09.996Z",
+      "entry": 0.3408,
+      "tp1": 0.3412142857142857,
+      "tp2": 0.3415457142857143,
+      "sl": 0.3403857142857143,
+      "status": "ACTIVE",
+      "score": 90.0,
+      "predictive": {
+        "model_version": "V13.1 Predictive Confluence",
+        "score": 77.1,
+        "coverage_pct": 70.0,
+        "grade": "B",
+        "order_flow": {
+          "available": true,
+          "provider": "Binance closed 15m klines",
+          "taker_buy_ratio": 0.53476,
+          "cvd_proxy_pct": 6.9515,
+          "taker_ratio_acceleration_pp": 63.2797,
+          "alignment": "ALIGNED",
+          "score": 68.8
+        },
+        "liquidity_proxy": {
+          "available": true,
+          "provider": "Binance swing-liquidity proxy",
+          "target_price": 0.3411,
+          "distance_pct": 0.088,
+          "atr_distance": 0.724,
+          "alignment": "AHEAD",
+          "score": 65.0,
+          "note": "Swing-liquidity proxy; not a liquidation heatmap."
+        },
+        "liquidation_map": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "large_orders": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "smart_money": {
+          "available": false,
+          "provider": "Nansen",
+          "reason": "NANSEN_API_KEY not configured; no Smart Money wallet value inferred"
+        },
+        "explanation": "Technical trend + closed-candle order flow + liquidity target; CoinGlass liquidation/large-order layers are included only when authenticated data is available.",
+        "liquidity_sweep": {
+          "available": true,
+          "type": "NONE",
+          "severity": "LOW",
+          "trap_score": 20,
+          "score_meaning": "Evidence strength, not reversal probability",
+          "liquidity_level": 0.3407,
+          "distance_pct": -0.0293,
+          "momentum_30m_pct": 0.1175,
+          "taker_buy_ratio": 0.92381,
+          "taker_acceleration_pp": -1.5654,
+          "upper_wick_ratio": 0.0,
+          "volume_ratio": 1.4981,
+          "evidence": [
+            "aggressive buying decelerating",
+            "volume expansion"
+          ],
+          "captured_at": "2026-09-11T00:48:10.988Z"
+        },
+        "whale_divergence": {
+          "available": true,
+          "type": "NONE",
+          "strength": 0,
+          "wallet_confirmed": false,
+          "sources": [
+            "Binance order flow"
+          ],
+          "evidence": [],
+          "note": "No multi-source whale/flow divergence confirmed at forecast creation."
+        },
+        "whale_arrival_radar": {
+          "available": false,
+          "reason": "No fresh public on-chain whale snapshot within 45 minutes"
+        }
+      },
+      "rank": 5,
+      "day": "2026-09-11",
+      "current": 0.3406,
+      "high": 0.3408,
+      "low": 0.3406,
+      "best_move": 0.0,
+      "worst_move": -0.05868544600938321,
+      "final_move": null,
+      "end_reason": null,
+      "tp1_hit_at": null,
+      "tp2_hit_at": null,
+      "ended_at": null,
+      "proof_commit": null,
+      "proof_verified_at": null,
+      "quality": {
+        "count": 6,
+        "required": 5,
+        "volume_ratio": 1.502,
+        "quote_volume_usdt": 31787533.1,
+        "atr_pct": 0.1216,
+        "rsi_15m": 64.58,
+        "candle_confirmed": true,
+        "trend_15m": "LONG",
+        "trend_1h": "LONG",
+        "rr": 1.8,
+        "momentum_15m_pct": 0.2353
+      },
+      "opened_at": "2026-09-11T00:48:09.996Z",
+      "status_history": [
+        {
+          "event": "SIGNAL_OPENED",
+          "at": "2026-09-11T00:48:09.996Z",
+          "status": "ACTIVE"
+        }
+      ],
+      "last_checked_at": "2026-09-11T00:48:59.999Z"
+    },
     {
       "forecast_id": "2026-09-11-TAOUSDT",
       "source": "central-v13.1-publisher",
@@ -98,10 +223,10 @@
       },
       "rank": 5,
       "day": "2026-09-11",
-      "current": 236.0,
+      "current": 234.9,
       "high": 236.3,
-      "low": 235.6,
-      "best_move": -0.0,
+      "low": 234.6,
+      "best_move": 0.4244482173174873,
       "worst_move": -0.29711375212224833,
       "final_move": null,
       "end_reason": null,
@@ -131,7 +256,7 @@
           "status": "ACTIVE"
         }
       ],
-      "last_checked_at": "2026-09-11T00:29:59.999Z"
+      "last_checked_at": "2026-09-11T00:48:59.999Z"
     },
     {
       "forecast_id": "2026-09-11-BCHUSDT",
@@ -231,11 +356,11 @@
       },
       "rank": 3,
       "day": "2026-09-11",
-      "current": 225.8,
-      "high": 225.9,
-      "low": 225.7,
-      "best_move": 0.08853474988933911,
-      "worst_move": -0.0,
+      "current": 225.5,
+      "high": 226.0,
+      "low": 224.9,
+      "best_move": 0.44267374944665777,
+      "worst_move": -0.04426737494466327,
       "final_move": null,
       "end_reason": null,
       "tp1_hit_at": null,
@@ -264,7 +389,7 @@
           "status": "ACTIVE"
         }
       ],
-      "last_checked_at": "2026-09-11T00:29:59.999Z"
+      "last_checked_at": "2026-09-11T00:48:59.999Z"
     },
     {
       "forecast_id": "2026-09-11-BTCUSDT",
@@ -361,10 +486,10 @@
       },
       "rank": 2,
       "day": "2026-09-11",
-      "current": 76817.99,
+      "current": 76769.28,
       "high": 76857.06,
-      "low": 76790.41,
-      "best_move": 0.0360331791639092,
+      "low": 76686.09,
+      "best_move": 0.17183452491463927,
       "worst_move": -0.05073023815093706,
       "final_move": null,
       "end_reason": null,
@@ -394,7 +519,7 @@
           "status": "ACTIVE"
         }
       ],
-      "last_checked_at": "2026-09-11T00:29:59.999Z"
+      "last_checked_at": "2026-09-11T00:48:59.999Z"
     },
     {
       "forecast_id": "2026-09-11-SAHARAUSDT",
@@ -492,10 +617,10 @@
       },
       "rank": 1,
       "day": "2026-09-11",
-      "current": 0.00911,
+      "current": 0.00909,
       "high": 0.00915,
-      "low": 0.00905,
-      "best_move": 1.0928961748633814,
+      "low": 0.009,
+      "best_move": 1.6393442622950911,
       "worst_move": -0.0,
       "final_move": null,
       "end_reason": null,
@@ -530,7 +655,7 @@
           "status": "TP1 HIT"
         }
       ],
-      "last_checked_at": "2026-09-11T00:29:59.999Z"
+      "last_checked_at": "2026-09-11T00:48:59.999Z"
     },
     {
       "forecast_id": "2026-09-10-WLDUSDT",
