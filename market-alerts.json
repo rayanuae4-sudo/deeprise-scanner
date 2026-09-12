@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-12T21:59:25.852Z",
+  "generated_at": "2026-09-12T22:19:00.758Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 17,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "牛来USDT-UPWARD_LIQUIDITY_SWEEP_RISK-1789251299999",
+      "symbol": "牛来USDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 71,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.134,
+      "liquidity_level": 0.13545,
+      "distance_to_liquidity_pct": 1.0821,
+      "momentum_30m_pct": 1.3999,
+      "taker_buy_ratio": 0.39263,
+      "taker_acceleration_pp": -1.8975,
+      "upper_wick_ratio": 0.0,
+      "volume_ratio": 2.3531,
+      "atr_pct": 0.9142,
+      "quote_volume_usdt": 50473285.55,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Taker buy ratio weak at 39.3%",
+        "Aggressive buying decelerating -1.9pp",
+        "Volume expansion 2.35x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-12T22:14:59.999Z",
+      "invalidation": "A sustained 5m close above 0.13545 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-12T22:18:49.407Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "BTCUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789249499999",
       "symbol": "BTCUSDT",
