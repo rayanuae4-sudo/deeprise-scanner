@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-13T00:50:21.057Z",
+  "generated_at": "2026-09-13T01:04:59.373Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 19,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "ZECUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789261199999",
+      "symbol": "ZECUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "HIGH",
+      "trap_score": 86,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 1126.68,
+      "liquidity_level": 1128.31,
+      "distance_to_liquidity_pct": 0.1447,
+      "momentum_30m_pct": 0.5237,
+      "taker_buy_ratio": 0.47817,
+      "taker_acceleration_pp": 47.9403,
+      "upper_wick_ratio": 0.7726,
+      "volume_ratio": 1.9961,
+      "atr_pct": 0.319,
+      "quote_volume_usdt": 220428930.9,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Taker buy ratio weak at 47.8%",
+        "Upper-wick rejection 77% of candle range",
+        "Volume expansion 2.00x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-13T00:59:59.999Z",
+      "invalidation": "A sustained 5m close above 1128.31 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-13T01:04:38.060Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "UNIUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789257599999",
       "symbol": "UNIUSDT",
