@@ -1,28 +1,28 @@
 {
   "version": "14.7",
-  "generated_at": "2026-09-14T20:55:41.436Z",
+  "generated_at": "2026-09-14T21:16:28.978Z",
   "status": "OK",
   "method": "Binance pre-move order flow + GeckoTerminal public DEX large-wallet trades + optional Nansen labelled Smart Money",
   "score_note": "Arrival/distribution scores measure evidence strength, not future-price probability.",
   "wallet_note": "Unlabelled addresses are public DEX transaction senders; DeepRise does not infer real-world identity.",
   "geckoterminal_call_budget": 8,
   "scanned_symbols": [
-    "RLUSDUSDT",
-    "SUIUSDT",
     "UUSDT",
-    "XRPUSDT",
-    "BTCUSDT"
+    "USD1USDT",
+    "RLUSDUSDT",
+    "TRXUSDT",
+    "ZECUSDT"
   ],
   "errors": [
-    "USD1USDT: HTTPError: HTTP Error 429: Too Many Requests",
-    "ZECUSDT: HTTPError: HTTP Error 429: Too Many Requests",
-    "SOLUSDT: HTTPError: HTTP Error 429: Too Many Requests"
+    "DOGEUSDT: HTTPError: HTTP Error 429: Too Many Requests",
+    "XRPUSDT: HTTPError: HTTP Error 429: Too Many Requests",
+    "SUIUSDT: HTTPError: HTTP Error 429: Too Many Requests"
   ],
   "nansen_status": {
     "available": false,
     "reason": "NANSEN_API_KEY not configured"
   },
-  "rotation_index": 7,
+  "rotation_index": 0,
   "pool_cache": {
     "SOL": {
       "network": "solana",
@@ -532,6 +532,15 @@
     }
   },
   "wallet_profiles": {
+    "2fast4uuabwcrab6levwhtx5xx84mwahhv2bljftygn4": {
+      "symbols": [
+        "USD1"
+      ],
+      "last_symbol": "USD1",
+      "last_side": "SELL",
+      "last_seen": "2026-09-14T21:02:30Z",
+      "last_trade_usd": 20024.72
+    },
     "0x7de358d2f5da7d60e34d2ffdc69ebf391bfc9336": {
       "symbols": [
         "ETH"
@@ -4020,17 +4029,17 @@
     "USD1USDT": {
       "symbol": "USD1USDT",
       "base": "USD1",
-      "quote_volume_24h": 176750151.32,
-      "change_24h_pct": -0.019,
-      "volume_ratio_15m": 1.144,
-      "taker_buy_ratio": 0.45634,
-      "taker_acceleration_pp": -2.866,
-      "momentum_1h_pct": -0.008,
-      "pre_score": 51.5,
-      "captured_at": "2026-09-14T20:02:36.148Z",
-      "signal": "ACCUMULATION",
-      "arrival_score": 79.1,
-      "distribution_score": 8.3,
+      "quote_volume_24h": 185907582.04,
+      "change_24h_pct": -0.024,
+      "volume_ratio_15m": 1.609,
+      "taker_buy_ratio": 0.53813,
+      "taker_acceleration_pp": 5.613,
+      "momentum_1h_pct": -0.007,
+      "pre_score": 70.0,
+      "captured_at": "2026-09-14T21:16:28.301Z",
+      "signal": "WHALE_ARRIVAL",
+      "arrival_score": 86.3,
+      "distribution_score": 8.8,
       "score_meaning": "Evidence strength, not probability",
       "pool": {
         "network": "solana",
@@ -4045,12 +4054,12 @@
       },
       "large_trade_threshold_usd": 20000,
       "large_buy_usd_6h": 225982.98,
-      "large_sell_usd_6h": 0,
-      "large_net_usd_6h": 225982.98,
-      "large_buy_ratio": 1.0,
-      "large_trade_count_6h": 7,
+      "large_sell_usd_6h": 20024.72,
+      "large_net_usd_6h": 205958.26,
+      "large_buy_ratio": 0.9186,
+      "large_trade_count_6h": 8,
       "largest_trade_usd": 56009.55,
-      "unique_large_wallets_6h": 3,
+      "unique_large_wallets_6h": 4,
       "fresh_large_buyers_30m": 0,
       "repeat_buyers_6h": 3,
       "rotation_in_30m": 0,
@@ -4078,9 +4087,10 @@
         "available": false
       },
       "evidence": [
-        "large DEX buys 100%",
-        "large-wallet net buy $225,983",
-        "3 repeat buyer wallet(s)"
+        "large DEX buys 92%",
+        "large-wallet net buy $205,958",
+        "3 repeat buyer wallet(s)",
+        "15m volume 1.6x"
       ]
     },
     "NEARUSDT": {
@@ -4131,17 +4141,17 @@
     "ZECUSDT": {
       "symbol": "ZECUSDT",
       "base": "ZEC",
-      "quote_volume_24h": 263225700.58,
-      "change_24h_pct": 9.638,
-      "volume_ratio_15m": 0.84,
-      "taker_buy_ratio": 0.59581,
-      "taker_acceleration_pp": -1.712,
-      "momentum_1h_pct": -0.72,
-      "pre_score": 60.4,
-      "captured_at": "2026-09-14T20:02:34.592Z",
+      "quote_volume_24h": 294560546.7,
+      "change_24h_pct": 6.711,
+      "volume_ratio_15m": 3.092,
+      "taker_buy_ratio": 0.2813,
+      "taker_acceleration_pp": -30.06,
+      "momentum_1h_pct": -2.247,
+      "pre_score": 49.9,
+      "captured_at": "2026-09-14T21:16:28.920Z",
       "signal": "NEUTRAL",
-      "arrival_score": 44.9,
-      "distribution_score": 33.5,
+      "arrival_score": 40.0,
+      "distribution_score": 56.0,
       "score_meaning": "Evidence strength, not probability",
       "pool": {
         "network": "near",
@@ -4170,52 +4180,7 @@
         "available": false
       },
       "evidence": [
-        "CEX taker-buy 60%"
-      ]
-    },
-    "牛来USDT": {
-      "symbol": "牛来USDT",
-      "base": "牛来",
-      "quote_volume_24h": 27432624.45,
-      "change_24h_pct": -13.58,
-      "volume_ratio_15m": 2.179,
-      "taker_buy_ratio": 0.42319,
-      "taker_acceleration_pp": 0.556,
-      "momentum_1h_pct": -4.606,
-      "pre_score": 57.1,
-      "captured_at": "2026-09-14T13:02:43.469Z",
-      "signal": "NEUTRAL",
-      "arrival_score": 41.3,
-      "distribution_score": 50.5,
-      "score_meaning": "Evidence strength, not probability",
-      "pool": {
-        "network": "solana",
-        "pool_address": "DGSAWm2UAp86VmwN823djbEHKcGAYGr2GsFkuBswJQXE",
-        "token_address": "GtyHJ6EFBDe4CYDz5aj9Sxk8C658oXgroBy1Z3Crx2pp",
-        "token_side": "base",
-        "token_symbol": "牛来",
-        "quote_symbol": "USDC",
-        "reserve_usd": 36937643.99,
-        "pool_name": "牛来 / USDC",
-        "updated_at": "2026-09-10T19:03:58.819Z"
-      },
-      "large_trade_threshold_usd": 55406.47,
-      "large_buy_usd_6h": 0,
-      "large_sell_usd_6h": 0,
-      "large_net_usd_6h": 0,
-      "large_buy_ratio": 0.5,
-      "large_trade_count_6h": 0,
-      "largest_trade_usd": 0.0,
-      "unique_large_wallets_6h": 0,
-      "fresh_large_buyers_30m": 0,
-      "repeat_buyers_6h": 0,
-      "rotation_in_30m": 0,
-      "top_buy_wallets": [],
-      "nansen": {
-        "available": false
-      },
-      "evidence": [
-        "15m volume 2.2x"
+        "15m volume 3.1x"
       ]
     },
     "SOLUSDT": {
@@ -4533,17 +4498,17 @@
     "UUSDT": {
       "symbol": "UUSDT",
       "base": "U",
-      "quote_volume_24h": 36841066.65,
+      "quote_volume_24h": 37150035.65,
       "change_24h_pct": 0.02,
-      "volume_ratio_15m": 4.774,
-      "taker_buy_ratio": 0.43618,
-      "taker_acceleration_pp": 19.342,
+      "volume_ratio_15m": 1.66,
+      "taker_buy_ratio": 0.51765,
+      "taker_acceleration_pp": 19.866,
       "momentum_1h_pct": -0.01,
-      "pre_score": 73.3,
-      "captured_at": "2026-09-14T20:55:41.061Z",
+      "pre_score": 71.8,
+      "captured_at": "2026-09-14T21:16:27.892Z",
       "signal": "NEUTRAL",
-      "arrival_score": 44.2,
-      "distribution_score": 51.8,
+      "arrival_score": 44.4,
+      "distribution_score": 42.2,
       "score_meaning": "Evidence strength, not probability",
       "pool": {
         "network": "bsc",
@@ -4572,7 +4537,7 @@
         "available": false
       },
       "evidence": [
-        "15m volume 4.8x"
+        "15m volume 1.7x"
       ]
     },
     "XAUTUSDT": {
@@ -4621,17 +4586,17 @@
     "TRXUSDT": {
       "symbol": "TRXUSDT",
       "base": "TRX",
-      "quote_volume_24h": 31027741.63,
-      "change_24h_pct": -0.029,
-      "volume_ratio_15m": 0.966,
-      "taker_buy_ratio": 0.76065,
-      "taker_acceleration_pp": 21.975,
-      "momentum_1h_pct": 0.264,
-      "pre_score": 72.5,
-      "captured_at": "2026-09-14T17:17:28.693Z",
+      "quote_volume_24h": 36795524.27,
+      "change_24h_pct": -0.644,
+      "volume_ratio_15m": 3.726,
+      "taker_buy_ratio": 0.12532,
+      "taker_acceleration_pp": -46.51,
+      "momentum_1h_pct": -0.382,
+      "pre_score": 51.0,
+      "captured_at": "2026-09-14T21:16:28.694Z",
       "signal": "NEUTRAL",
-      "arrival_score": 47.8,
-      "distribution_score": 31.8,
+      "arrival_score": 40.0,
+      "distribution_score": 56.0,
       "score_meaning": "Evidence strength, not probability",
       "pool": {
         "network": "solana",
@@ -4660,23 +4625,23 @@
         "available": false
       },
       "evidence": [
-        "CEX taker-buy 76%"
+        "15m volume 3.7x"
       ]
     },
     "RLUSDUSDT": {
       "symbol": "RLUSDUSDT",
       "base": "RLUSD",
-      "quote_volume_24h": 50404885.85,
+      "quote_volume_24h": 50544129.37,
       "change_24h_pct": -0.01,
-      "volume_ratio_15m": 9.817,
-      "taker_buy_ratio": 0.89216,
-      "taker_acceleration_pp": 30.443,
-      "momentum_1h_pct": -0.01,
-      "pre_score": 93.0,
-      "captured_at": "2026-09-14T20:55:40.729Z",
+      "volume_ratio_15m": 0.145,
+      "taker_buy_ratio": 0.92173,
+      "taker_acceleration_pp": 48.792,
+      "momentum_1h_pct": 0.0,
+      "pre_score": 69.0,
+      "captured_at": "2026-09-14T21:16:28.477Z",
       "signal": "NEUTRAL",
-      "arrival_score": 56.0,
-      "distribution_score": 40.0,
+      "arrival_score": 43.7,
+      "distribution_score": 27.7,
       "score_meaning": "Evidence strength, not probability",
       "pool": {
         "network": "solana",
@@ -4705,8 +4670,7 @@
         "available": false
       },
       "evidence": [
-        "CEX taker-buy 89%",
-        "15m volume 9.8x"
+        "CEX taker-buy 92%"
       ]
     }
   },
@@ -4795,17 +4759,17 @@
     {
       "symbol": "USD1USDT",
       "base": "USD1",
-      "quote_volume_24h": 176750151.32,
-      "change_24h_pct": -0.019,
-      "volume_ratio_15m": 1.144,
-      "taker_buy_ratio": 0.45634,
-      "taker_acceleration_pp": -2.866,
-      "momentum_1h_pct": -0.008,
-      "pre_score": 51.5,
-      "captured_at": "2026-09-14T20:02:36.148Z",
-      "signal": "ACCUMULATION",
-      "arrival_score": 79.1,
-      "distribution_score": 8.3,
+      "quote_volume_24h": 185907582.04,
+      "change_24h_pct": -0.024,
+      "volume_ratio_15m": 1.609,
+      "taker_buy_ratio": 0.53813,
+      "taker_acceleration_pp": 5.613,
+      "momentum_1h_pct": -0.007,
+      "pre_score": 70.0,
+      "captured_at": "2026-09-14T21:16:28.301Z",
+      "signal": "WHALE_ARRIVAL",
+      "arrival_score": 86.3,
+      "distribution_score": 8.8,
       "score_meaning": "Evidence strength, not probability",
       "pool": {
         "network": "solana",
@@ -4820,12 +4784,12 @@
       },
       "large_trade_threshold_usd": 20000,
       "large_buy_usd_6h": 225982.98,
-      "large_sell_usd_6h": 0,
-      "large_net_usd_6h": 225982.98,
-      "large_buy_ratio": 1.0,
-      "large_trade_count_6h": 7,
+      "large_sell_usd_6h": 20024.72,
+      "large_net_usd_6h": 205958.26,
+      "large_buy_ratio": 0.9186,
+      "large_trade_count_6h": 8,
       "largest_trade_usd": 56009.55,
-      "unique_large_wallets_6h": 3,
+      "unique_large_wallets_6h": 4,
       "fresh_large_buyers_30m": 0,
       "repeat_buyers_6h": 3,
       "rotation_in_30m": 0,
@@ -4853,9 +4817,10 @@
         "available": false
       },
       "evidence": [
-        "large DEX buys 100%",
-        "large-wallet net buy $225,983",
-        "3 repeat buyer wallet(s)"
+        "large DEX buys 92%",
+        "large-wallet net buy $205,958",
+        "3 repeat buyer wallet(s)",
+        "15m volume 1.6x"
       ]
     },
     {
@@ -4924,30 +4889,75 @@
       ]
     },
     {
-      "symbol": "RLUSDUSDT",
-      "base": "RLUSD",
-      "quote_volume_24h": 50404885.85,
-      "change_24h_pct": -0.01,
-      "volume_ratio_15m": 9.817,
-      "taker_buy_ratio": 0.89216,
-      "taker_acceleration_pp": 30.443,
-      "momentum_1h_pct": -0.01,
-      "pre_score": 93.0,
-      "captured_at": "2026-09-14T20:55:40.729Z",
+      "symbol": "ZECUSDT",
+      "base": "ZEC",
+      "quote_volume_24h": 294560546.7,
+      "change_24h_pct": 6.711,
+      "volume_ratio_15m": 3.092,
+      "taker_buy_ratio": 0.2813,
+      "taker_acceleration_pp": -30.06,
+      "momentum_1h_pct": -2.247,
+      "pre_score": 49.9,
+      "captured_at": "2026-09-14T21:16:28.920Z",
       "signal": "NEUTRAL",
-      "arrival_score": 56.0,
-      "distribution_score": 40.0,
+      "arrival_score": 40.0,
+      "distribution_score": 56.0,
+      "score_meaning": "Evidence strength, not probability",
+      "pool": {
+        "network": "near",
+        "pool_address": "nep141:eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near___nep141:zec.omft.near",
+        "token_address": "zec.omft.near",
+        "token_side": "quote",
+        "token_symbol": "ZEC",
+        "quote_symbol": "USDC",
+        "reserve_usd": 47959894.28,
+        "pool_name": "USDC / ZEC",
+        "updated_at": "2026-09-14T04:52:20.287Z"
+      },
+      "large_trade_threshold_usd": 71939.84,
+      "large_buy_usd_6h": 0,
+      "large_sell_usd_6h": 0,
+      "large_net_usd_6h": 0,
+      "large_buy_ratio": 0.5,
+      "large_trade_count_6h": 0,
+      "largest_trade_usd": 0.0,
+      "unique_large_wallets_6h": 0,
+      "fresh_large_buyers_30m": 0,
+      "repeat_buyers_6h": 0,
+      "rotation_in_30m": 0,
+      "top_buy_wallets": [],
+      "nansen": {
+        "available": false
+      },
+      "evidence": [
+        "15m volume 3.1x"
+      ]
+    },
+    {
+      "symbol": "TRXUSDT",
+      "base": "TRX",
+      "quote_volume_24h": 36795524.27,
+      "change_24h_pct": -0.644,
+      "volume_ratio_15m": 3.726,
+      "taker_buy_ratio": 0.12532,
+      "taker_acceleration_pp": -46.51,
+      "momentum_1h_pct": -0.382,
+      "pre_score": 51.0,
+      "captured_at": "2026-09-14T21:16:28.694Z",
+      "signal": "NEUTRAL",
+      "arrival_score": 40.0,
+      "distribution_score": 56.0,
       "score_meaning": "Evidence strength, not probability",
       "pool": {
         "network": "solana",
-        "pool_address": "2X4qZvSdnsVu9jPR4BZaRG78NAyTKWoVcrJ4BGUbuuBG",
-        "token_address": "CsDirgEj1SSs3jBBohC876FXhT9wa4JsXeV9x39HBozH",
+        "pool_address": "91Xdg8yny9utfNaZ9fMr2cJzjuw5ayLXaP1gW614C4yv",
+        "token_address": "4nPSKNfazy58ApRHXnrTRCRwemWbYUzSasKZiN2Q3L9C",
         "token_side": "base",
-        "token_symbol": "RLUSD",
+        "token_symbol": "TRX",
         "quote_symbol": "USDC",
-        "reserve_usd": 1013657625.48,
-        "pool_name": "RLUSD / USDC",
-        "updated_at": "2026-09-08T16:15:54.961Z"
+        "reserve_usd": 695249493.05,
+        "pool_name": "TRX / USDC",
+        "updated_at": "2026-09-12T08:36:23.323Z"
       },
       "large_trade_threshold_usd": 200000,
       "large_buy_usd_6h": 0,
@@ -4965,8 +4975,7 @@
         "available": false
       },
       "evidence": [
-        "CEX taker-buy 89%",
-        "15m volume 9.8x"
+        "15m volume 3.7x"
       ]
     },
     {
@@ -5016,96 +5025,6 @@
       ]
     },
     {
-      "symbol": "UUSDT",
-      "base": "U",
-      "quote_volume_24h": 36841066.65,
-      "change_24h_pct": 0.02,
-      "volume_ratio_15m": 4.774,
-      "taker_buy_ratio": 0.43618,
-      "taker_acceleration_pp": 19.342,
-      "momentum_1h_pct": -0.01,
-      "pre_score": 73.3,
-      "captured_at": "2026-09-14T20:55:41.061Z",
-      "signal": "NEUTRAL",
-      "arrival_score": 44.2,
-      "distribution_score": 51.8,
-      "score_meaning": "Evidence strength, not probability",
-      "pool": {
-        "network": "bsc",
-        "pool_address": "0xa0909f81785f87f3e79309f0e73a7d82208094e4",
-        "token_address": "0xce24439f2d9c6a2289f741120fe202248b666666",
-        "token_side": "base",
-        "token_symbol": "U",
-        "quote_symbol": "USDT",
-        "reserve_usd": 18960189.22,
-        "pool_name": "U / USDT 0.01%",
-        "updated_at": "2026-09-14T10:22:38.207Z"
-      },
-      "large_trade_threshold_usd": 28440.28,
-      "large_buy_usd_6h": 0,
-      "large_sell_usd_6h": 0,
-      "large_net_usd_6h": 0,
-      "large_buy_ratio": 0.5,
-      "large_trade_count_6h": 0,
-      "largest_trade_usd": 0.0,
-      "unique_large_wallets_6h": 0,
-      "fresh_large_buyers_30m": 0,
-      "repeat_buyers_6h": 0,
-      "rotation_in_30m": 0,
-      "top_buy_wallets": [],
-      "nansen": {
-        "available": false
-      },
-      "evidence": [
-        "15m volume 4.8x"
-      ]
-    },
-    {
-      "symbol": "牛来USDT",
-      "base": "牛来",
-      "quote_volume_24h": 27432624.45,
-      "change_24h_pct": -13.58,
-      "volume_ratio_15m": 2.179,
-      "taker_buy_ratio": 0.42319,
-      "taker_acceleration_pp": 0.556,
-      "momentum_1h_pct": -4.606,
-      "pre_score": 57.1,
-      "captured_at": "2026-09-14T13:02:43.469Z",
-      "signal": "NEUTRAL",
-      "arrival_score": 41.3,
-      "distribution_score": 50.5,
-      "score_meaning": "Evidence strength, not probability",
-      "pool": {
-        "network": "solana",
-        "pool_address": "DGSAWm2UAp86VmwN823djbEHKcGAYGr2GsFkuBswJQXE",
-        "token_address": "GtyHJ6EFBDe4CYDz5aj9Sxk8C658oXgroBy1Z3Crx2pp",
-        "token_side": "base",
-        "token_symbol": "牛来",
-        "quote_symbol": "USDC",
-        "reserve_usd": 36937643.99,
-        "pool_name": "牛来 / USDC",
-        "updated_at": "2026-09-10T19:03:58.819Z"
-      },
-      "large_trade_threshold_usd": 55406.47,
-      "large_buy_usd_6h": 0,
-      "large_sell_usd_6h": 0,
-      "large_net_usd_6h": 0,
-      "large_buy_ratio": 0.5,
-      "large_trade_count_6h": 0,
-      "largest_trade_usd": 0.0,
-      "unique_large_wallets_6h": 0,
-      "fresh_large_buyers_30m": 0,
-      "repeat_buyers_6h": 0,
-      "rotation_in_30m": 0,
-      "top_buy_wallets": [],
-      "nansen": {
-        "available": false
-      },
-      "evidence": [
-        "15m volume 2.2x"
-      ]
-    },
-    {
       "symbol": "FILUSDT",
       "base": "FIL",
       "quote_volume_24h": 44443329.4,
@@ -5148,51 +5067,6 @@
       },
       "evidence": [
         "15m volume 2.6x"
-      ]
-    },
-    {
-      "symbol": "TRXUSDT",
-      "base": "TRX",
-      "quote_volume_24h": 31027741.63,
-      "change_24h_pct": -0.029,
-      "volume_ratio_15m": 0.966,
-      "taker_buy_ratio": 0.76065,
-      "taker_acceleration_pp": 21.975,
-      "momentum_1h_pct": 0.264,
-      "pre_score": 72.5,
-      "captured_at": "2026-09-14T17:17:28.693Z",
-      "signal": "NEUTRAL",
-      "arrival_score": 47.8,
-      "distribution_score": 31.8,
-      "score_meaning": "Evidence strength, not probability",
-      "pool": {
-        "network": "solana",
-        "pool_address": "91Xdg8yny9utfNaZ9fMr2cJzjuw5ayLXaP1gW614C4yv",
-        "token_address": "4nPSKNfazy58ApRHXnrTRCRwemWbYUzSasKZiN2Q3L9C",
-        "token_side": "base",
-        "token_symbol": "TRX",
-        "quote_symbol": "USDC",
-        "reserve_usd": 695249493.05,
-        "pool_name": "TRX / USDC",
-        "updated_at": "2026-09-12T08:36:23.323Z"
-      },
-      "large_trade_threshold_usd": 200000,
-      "large_buy_usd_6h": 0,
-      "large_sell_usd_6h": 0,
-      "large_net_usd_6h": 0,
-      "large_buy_ratio": 0.5,
-      "large_trade_count_6h": 0,
-      "largest_trade_usd": 0.0,
-      "unique_large_wallets_6h": 0,
-      "fresh_large_buyers_30m": 0,
-      "repeat_buyers_6h": 0,
-      "rotation_in_30m": 0,
-      "top_buy_wallets": [],
-      "nansen": {
-        "available": false
-      },
-      "evidence": [
-        "CEX taker-buy 76%"
       ]
     },
     {
@@ -5286,32 +5160,32 @@
       ]
     },
     {
-      "symbol": "ZECUSDT",
-      "base": "ZEC",
-      "quote_volume_24h": 263225700.58,
-      "change_24h_pct": 9.638,
-      "volume_ratio_15m": 0.84,
-      "taker_buy_ratio": 0.59581,
-      "taker_acceleration_pp": -1.712,
-      "momentum_1h_pct": -0.72,
-      "pre_score": 60.4,
-      "captured_at": "2026-09-14T20:02:34.592Z",
+      "symbol": "UUSDT",
+      "base": "U",
+      "quote_volume_24h": 37150035.65,
+      "change_24h_pct": 0.02,
+      "volume_ratio_15m": 1.66,
+      "taker_buy_ratio": 0.51765,
+      "taker_acceleration_pp": 19.866,
+      "momentum_1h_pct": -0.01,
+      "pre_score": 71.8,
+      "captured_at": "2026-09-14T21:16:27.892Z",
       "signal": "NEUTRAL",
-      "arrival_score": 44.9,
-      "distribution_score": 33.5,
+      "arrival_score": 44.4,
+      "distribution_score": 42.2,
       "score_meaning": "Evidence strength, not probability",
       "pool": {
-        "network": "near",
-        "pool_address": "nep141:eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near___nep141:zec.omft.near",
-        "token_address": "zec.omft.near",
-        "token_side": "quote",
-        "token_symbol": "ZEC",
-        "quote_symbol": "USDC",
-        "reserve_usd": 47959894.28,
-        "pool_name": "USDC / ZEC",
-        "updated_at": "2026-09-14T04:52:20.287Z"
+        "network": "bsc",
+        "pool_address": "0xa0909f81785f87f3e79309f0e73a7d82208094e4",
+        "token_address": "0xce24439f2d9c6a2289f741120fe202248b666666",
+        "token_side": "base",
+        "token_symbol": "U",
+        "quote_symbol": "USDT",
+        "reserve_usd": 18960189.22,
+        "pool_name": "U / USDT 0.01%",
+        "updated_at": "2026-09-14T10:22:38.207Z"
       },
-      "large_trade_threshold_usd": 71939.84,
+      "large_trade_threshold_usd": 28440.28,
       "large_buy_usd_6h": 0,
       "large_sell_usd_6h": 0,
       "large_net_usd_6h": 0,
@@ -5327,11 +5201,109 @@
         "available": false
       },
       "evidence": [
-        "CEX taker-buy 60%"
+        "15m volume 1.7x"
+      ]
+    },
+    {
+      "symbol": "RLUSDUSDT",
+      "base": "RLUSD",
+      "quote_volume_24h": 50544129.37,
+      "change_24h_pct": -0.01,
+      "volume_ratio_15m": 0.145,
+      "taker_buy_ratio": 0.92173,
+      "taker_acceleration_pp": 48.792,
+      "momentum_1h_pct": 0.0,
+      "pre_score": 69.0,
+      "captured_at": "2026-09-14T21:16:28.477Z",
+      "signal": "NEUTRAL",
+      "arrival_score": 43.7,
+      "distribution_score": 27.7,
+      "score_meaning": "Evidence strength, not probability",
+      "pool": {
+        "network": "solana",
+        "pool_address": "2X4qZvSdnsVu9jPR4BZaRG78NAyTKWoVcrJ4BGUbuuBG",
+        "token_address": "CsDirgEj1SSs3jBBohC876FXhT9wa4JsXeV9x39HBozH",
+        "token_side": "base",
+        "token_symbol": "RLUSD",
+        "quote_symbol": "USDC",
+        "reserve_usd": 1013657625.48,
+        "pool_name": "RLUSD / USDC",
+        "updated_at": "2026-09-08T16:15:54.961Z"
+      },
+      "large_trade_threshold_usd": 200000,
+      "large_buy_usd_6h": 0,
+      "large_sell_usd_6h": 0,
+      "large_net_usd_6h": 0,
+      "large_buy_ratio": 0.5,
+      "large_trade_count_6h": 0,
+      "largest_trade_usd": 0.0,
+      "unique_large_wallets_6h": 0,
+      "fresh_large_buyers_30m": 0,
+      "repeat_buyers_6h": 0,
+      "rotation_in_30m": 0,
+      "top_buy_wallets": [],
+      "nansen": {
+        "available": false
+      },
+      "evidence": [
+        "CEX taker-buy 92%"
+      ]
+    },
+    {
+      "symbol": "BNBUSDT",
+      "base": "BNB",
+      "quote_volume_24h": 97424963.78,
+      "change_24h_pct": 1.356,
+      "volume_ratio_15m": 1.3,
+      "taker_buy_ratio": 0.52519,
+      "taker_acceleration_pp": 15.152,
+      "momentum_1h_pct": 0.361,
+      "pre_score": 69.5,
+      "captured_at": "2026-09-14T20:22:03.696Z",
+      "signal": "NEUTRAL",
+      "arrival_score": 43.0,
+      "distribution_score": 40.0,
+      "score_meaning": "Evidence strength, not probability",
+      "pool": {
+        "network": "solana",
+        "pool_address": "D9vrqRtSsZKYW5b89B6dwYJE1gZCV4YaSAtqzjz5KPAt",
+        "token_address": "BNBRuH6ARQ6N2En9o4WSZjdyZvozJDd9uMvt23Y8H197",
+        "token_side": "base",
+        "token_symbol": "BNB",
+        "quote_symbol": "USDC",
+        "reserve_usd": 639006285.91,
+        "pool_name": "BNB / USDC",
+        "updated_at": "2026-09-14T05:10:23.501Z"
+      },
+      "large_trade_threshold_usd": 200000,
+      "large_buy_usd_6h": 0,
+      "large_sell_usd_6h": 0,
+      "large_net_usd_6h": 0,
+      "large_buy_ratio": 0.5,
+      "large_trade_count_6h": 0,
+      "largest_trade_usd": 0.0,
+      "unique_large_wallets_6h": 0,
+      "fresh_large_buyers_30m": 0,
+      "repeat_buyers_6h": 0,
+      "rotation_in_30m": 0,
+      "top_buy_wallets": [],
+      "nansen": {
+        "available": false
+      },
+      "evidence": [
+        "15m volume 1.3x"
       ]
     }
   ],
   "events": [
+    {
+      "key": "USD1USDT|WHALE_ARRIVAL|2026-09-14T21:16",
+      "at": "2026-09-14T21:16:28.301Z",
+      "symbol": "USD1USDT",
+      "signal": "WHALE_ARRIVAL",
+      "arrival_score": 86.3,
+      "distribution_score": 8.8
+    },
     {
       "key": "ETHUSDT|WHALE_ARRIVAL|2026-09-14T20:39",
       "at": "2026-09-14T20:39:54.543Z",
@@ -6523,14 +6495,6 @@
       "signal": "DISTRIBUTION",
       "arrival_score": 29.7,
       "distribution_score": 82.2
-    },
-    {
-      "key": "SOLUSDT|DISTRIBUTION|2026-09-01T18:02",
-      "at": "2026-09-01T18:02:51.340Z",
-      "symbol": "SOLUSDT",
-      "signal": "DISTRIBUTION",
-      "arrival_score": 11.3,
-      "distribution_score": 87.5
     }
   ]
 }
