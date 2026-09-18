@@ -36,6 +36,9 @@ jobs:
       - name: Run whale-flow regression
         run: node scripts/deeprise-whale-flow-regression.js
 
+      - name: Run V17 pre-move regression
+        run: node scripts/deeprise-pre-move-regression.js
+
       - name: Verify runtime and cacheless PWA wiring
         run: |
           python3 - <<'PY'
@@ -49,11 +52,12 @@ jobs:
           inline=Path('deeprise-whale-inline-v156.js').read_text(encoding='utf-8')
           zones=Path('deeprise-trade-zones-v157.js').read_text(encoding='utf-8')
           ui=Path('deeprise-signal-card-ui-v153.js').read_text(encoding='utf-8')
+          premove=Path('deeprise-pre-move-v170.js').read_text(encoding='utf-8')
           for marker in ['deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1580','deeprise-integrity-v158.js?v=1580','deeprise-whale-flow-v155.js?v=1550','deeprise-signal-card-ui-v153.js?v=1531','deeprise-whale-inline-v156.js?v=1560','deeprise-trade-zones-v157.js?v=1570']:
               assert marker in pwa, f'pwa.js missing {marker}'
-          assert 'network-v16-0-2' in pwa, 'service-worker network-only registration missing'
-          assert "deeprise-pwa-network-v16-0-2" in sw, 'service-worker network cache missing'
-          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1310','./mobile-app-v11.js?v=1310','./pwa.js?v=1310','networkOnlyNavigation','offlinePage']:
+          assert 'network-v17-0-0' in pwa, 'service-worker network-only registration missing'
+          assert "deeprise-pwa-network-v17-0-0" in sw, 'service-worker network cache missing'
+          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1700','./deeprise-pre-move-v170.js?v=1700','./mobile-app-v11.js?v=1310','./pwa.js?v=1700','networkOnlyNavigation','offlinePage']:
               assert marker in sw, f'cacheless service-worker wiring missing: {marker}'
           assert "event.request.mode==='navigate'" in sw
           assert "cache:'no-store'" in sw
@@ -71,5 +75,7 @@ jobs:
               assert marker in zones, f'trade-zone advisor missing: {marker}'
           for marker in ['Signal Quality:','dr-quality-pills','DeepRiseEntryRank']:
               assert marker in ui, f'signal-quality UI missing: {marker}'
+          for marker in ['PRE-MOVE RADAR','ARMED','IGNITION','LATE','interval=4h','MAX_COINS=120','extended']:
+              assert marker in premove, f'pre-move engine missing: {marker}'
           print('DeepRise stability integrity + cacheless PWA wiring: PASS')
           PY
