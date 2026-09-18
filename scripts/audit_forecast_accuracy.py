@@ -49,7 +49,11 @@ def main():
     data=json.loads(LEDGER.read_text(encoding='utf-8'));raw=data.get('records',[]);rows=[r for r in raw if r.get('audit_eligible') is not False and r.get('legacy') is not True and r.get('source') != 'daily-top5'];now=datetime.datetime.now(datetime.timezone.utc)
     groups={'all':rows,'7d':[r for r in rows if stamp(r['created_at'])>=now-datetime.timedelta(days=7)],'30d':[r for r in rows if stamp(r['created_at'])>=now-datetime.timedelta(days=30)],'long':[r for r in rows if r.get('side')=='LONG'],'short':[r for r in rows if r.get('side')=='SHORT'],'top3':[r for r in rows if int(r.get('rank') or 99)<=3],'v17':[r for r in rows if r.get('source')=='central-v17-pre-move']}
     report={'generated_at':data.get('generated_at'),'raw_records':len(raw),'audited_records':len(rows),'excluded_records':len(raw)-len(rows),'excluded_legacy_records':sum(r.get('source')=='daily-top5' for r in raw),'proofed_audited_records':sum(bool(r.get('proof_commit')) for r in rows),'unique_audited_forecast_ids':len({r.get('forecast_id') for r in rows}),'groups':{k:stats(v) for k,v in groups.items()},'sources':{}}
-    for source in sorted({r.get('source','unknown') for r in raw}): report['sources'][source]=stats([r for r in raw if r.get('source','unknown')==source])
+    # Source breakdown must use the same audit-eligible population as the
+    # headline groups.  Otherwise quality-migration cancellations look like
+    # completed losses and make the per-engine accuracy disagree with "all".
+    for source in sorted({r.get('source','unknown') for r in rows}):
+        report['sources'][source]=stats([r for r in rows if r.get('source','unknown')==source])
     if args.replay_binance:
         checked=[r for r in rows if completed(r) and r.get('ended_at')]
         with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool: outcomes=dict(pool.map(replay_one,checked))
