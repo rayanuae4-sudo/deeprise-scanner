@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-18T17:18:33.045Z",
+  "generated_at": "2026-09-18T17:32:17.224Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 45,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "COTIUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1789752599999",
+      "symbol": "COTIUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 67,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.02061,
+      "liquidity_level": 0.02075,
+      "distance_to_liquidity_pct": 0.6793,
+      "momentum_30m_pct": 1.3274,
+      "taker_buy_ratio": 0.72064,
+      "taker_acceleration_pp": -10.3644,
+      "upper_wick_ratio": 0.8,
+      "volume_ratio": 1.4054,
+      "atr_pct": 0.662,
+      "quote_volume_usdt": 22422663.89,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Aggressive buying decelerating -10.4pp",
+        "Upper-wick rejection 80% of candle range",
+        "Volume expansion 1.41x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-18T17:29:59.999Z",
+      "invalidation": "A sustained 5m close above 0.02075 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-18T17:32:13.217Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "PROVEUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789749899999",
       "symbol": "PROVEUSDT",
