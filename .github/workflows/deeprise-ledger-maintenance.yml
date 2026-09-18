@@ -34,6 +34,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Sync with latest authoritative main before generating data
+        run: |
+          git fetch origin main
+          git rebase origin/main
+
       - name: Publish public Whale Arrival Radar
         env:
           NANSEN_API_KEY: ${{ secrets.NANSEN_API_KEY }}
