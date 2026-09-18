@@ -31,11 +31,12 @@ jobs:
             node --check "$f"
           done
 
-      - name: Run V15.8 regressions
+      - name: Run signal and V17 pre-move regressions
         run: |
           node scripts/deeprise-entry-regression.js
           node scripts/deeprise-move-timing-regression.js
           node scripts/deeprise-whale-flow-regression.js
+          node scripts/deeprise-pre-move-regression.js
 
       - name: Validate direct production index and repair route
         run: |
@@ -47,12 +48,12 @@ jobs:
           assert 'document.write' not in s, 'legacy document.write loader detected'
           assert 'https://data-api.binance.vision' in s, 'stable Binance spot endpoint missing'
           assert 'deeprise-predictive-intelligence.js' in s, 'predictive UI is not loaded'
-          assert 'getRegistrations' in repair and 'caches.keys' in repair and 'v=16.0.2' in repair, 'repair route incomplete'
+          assert 'getRegistrations' in repair and 'caches.keys' in repair and 'v=17.0.0' in repair, 'repair route incomplete'
           PY
 
       - name: Validate Python and JSON
         run: |
-          python3 -m py_compile scripts/maintain_ledger.py scripts/publish_forecasts.py scripts/enrich_smart_money.py scripts/apply_trap_gate.py scripts/publish_liquidity_alerts.py scripts/publish_whale_radar.py scripts/publish_public_liquidity.py scripts/apply_whale_gate.py
+          python3 -m py_compile scripts/maintain_ledger.py scripts/publish_forecasts.py scripts/audit_forecast_accuracy.py scripts/enrich_smart_money.py scripts/apply_trap_gate.py scripts/publish_liquidity_alerts.py scripts/publish_whale_radar.py scripts/publish_public_liquidity.py scripts/apply_whale_gate.py
           python3 - <<'PY'
           import json
           for f in ['manifest.json','forecast-ledger.json','market-alerts.json','whale-radar.json','public-liquidity.json']:
@@ -85,13 +86,17 @@ jobs:
           pui=Path('deeprise-public-liquidity-v148.js').read_text(encoding='utf-8')
           sm=Path('scripts/enrich_smart_money.py').read_text(encoding='utf-8')
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
-          assert 'network-v16-0-2' in pwa
+          premove=Path('deeprise-pre-move-v170.js').read_text(encoding='utf-8')
+          assert 'network-v17-0-0' in pwa
+          assert 'deeprise-pre-move-v170.js?v=1700' in pwa
           for marker in ['deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1580','deeprise-integrity-v158.js?v=1580','deeprise-whale-flow-v155.js?v=1550','deeprise-whale-inline-v156.js?v=1560','deeprise-trade-zones-v157.js?v=1570']:
               assert marker in pwa, f'pwa missing {marker}'
-          assert "deeprise-pwa-network-v16-0-2" in sw
-          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1310','./mobile-app-v11.js?v=1310','./pwa.js?v=1310','networkOnlyNavigation','offlinePage']:
+          assert "deeprise-pwa-network-v17-0-0" in sw
+          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1700','./mobile-app-v11.js?v=1310','./deeprise-pre-move-v170.js?v=1700','./pwa.js?v=1700','networkOnlyNavigation','offlinePage']:
               assert marker in sw, f'cacheless service worker core missing {marker}'
           assert "event.request.mode==='navigate'" in sw and "cache:'no-store'" in sw
+          for marker in ['PRE-MOVE RADAR','ARMED','IGNITION','LATE','interval=4h','MAX_COINS=120','extended']:
+              assert marker in premove, f'pre-move engine missing {marker}'
           for marker in ['Signal confidence','Expected move','Buy / accumulation zone','Distribution / sell zone','deeprise_v149_tracking_stats','DeepRiseNextCandleV14']:
               assert marker in signal, f'signal engine missing {marker}'
           for marker in ['POTENTIAL MOVE STARTING','MOVE EXTENDED — DO NOT CHASE','EARLY_START','EXTENDED','RELOAD','@kline_1m','volumePace','excursionAtr','givebackAtr','earlyStrong']:

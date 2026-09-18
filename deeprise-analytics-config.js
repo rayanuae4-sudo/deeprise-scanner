@@ -3,7 +3,7 @@ window.DEEPRISE_ANALYTICS_CONFIG = {
   projectKey: 'phc_uAhM4tgLTToN6oC2y5MfLf5j9eZM3ePkCBoYesiZwK62',
   host: 'https://us.i.posthog.com',
   enabled: true,
-  version: 'V14.4 PRO'
+  version: 'V17.0 PRO'
 };
 
 // Narrow DOM guard for the Early Breakout inline badge. It prevents an identical
@@ -28,13 +28,5 @@ window.DEEPRISE_ANALYTICS_CONFIG = {
   } catch (_) {}
 })();
 
-// DeepRise precision early-entry engine. Loaded here so the live root page gets the feature
-// without altering the existing scanner bootstrap or the rest of the production modules.
-(()=>{
-  if (document.querySelector('script[data-deeprise-early-breakout]')) return;
-  const s = document.createElement('script');
-  s.src = 'deeprise-early-breakout-v160.js?v=1601';
-  s.async = true;
-  s.dataset.deepriseEarlyBreakout = 'v160';
-  document.head.appendChild(s);
-})();
+// V17 pre-move is loaded explicitly by index.html. Analytics configuration stays
+// side-effect free so an older early-entry engine cannot be injected in parallel.
