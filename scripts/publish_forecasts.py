@@ -20,7 +20,7 @@ COINGLASS_KEY = os.environ.get('COINGLASS_API_KEY', '').strip()
 MAX_DAILY = 5
 MIN_QUOTE_VOLUME = 1_000_000.0
 UNIVERSE = 140
-EXCLUDED_BASES = {'USDC','FDUSD','TUSD','USDP','DAI','EUR','TRY','BRL','GBP','BIDR','AEUR','EURI'}
+EXCLUDED_BASES = {'USDC','FDUSD','TUSD','USDP','DAI','RLUSD','USDE','USDS','USD1','BFUSD','EUR','TRY','BRL','GBP','BIDR','AEUR','EURI','PAXG','XAUT','NVDAB','SPYB','GOOGLB','SNDKB'}
 
 
 def now_iso():
@@ -141,6 +141,8 @@ def pre_move_setup(bars, quote_volume, live_price=None):
     current_atr = atr(bars, 14)
     if not current_atr or current_atr <= 0:
         return None
+    if current_atr / close * 100.0 < .2:
+        return None
     old_atrs = [atr(bars[:-back], 14) for back in (12,18,24,30) if len(bars)-back > 15]
     old_atr = median(old_atrs) or current_atr
     atr_ratio = current_atr / old_atr
@@ -229,14 +231,14 @@ def pre_move_setup(bars, quote_volume, live_price=None):
         raw_score = clamp(round(score))
         final_score = clamp(round(score-(28 if extended else 0)))
         directional_repair = ema_near and (rsi_zone or ema_turning)
-        compressed = atr_ratio <= .92 or bb_ratio <= .92 or width <= 6
+        compressed = atr_ratio <= .92 or bb_ratio <= .92
         small_break = -.8 <= distance_atr < 0
         stage = 'NONE'
         if extended and raw_score >= 62:
             stage = 'LATE'
         elif small_break and raw_score >= 72 and volume_build >= 1.05 and flow_evidence:
             stage = 'IGNITION'
-        elif -.35 <= distance_atr <= 1.5 and raw_score >= 72 and base_quality and flow_evidence and directional_repair:
+        elif -.35 <= distance_atr <= 1.5 and raw_score >= 72 and base_quality and compressed and flow_evidence and directional_repair:
             stage = 'ARMED'
         elif raw_score >= 58 and base_quality and compressed and flow_evidence and directional_repair:
             stage = 'WATCH'
@@ -559,13 +561,37 @@ def collect_candidates(used=None):
     return candidates
 
 
+def invalidate_nonconforming_v17(records):
+    """Cancel, but retain, V17 rows invalidated by a quality-rule migration."""
+    changed = []
+    at = now_iso()
+    for rec in records:
+        if rec.get('source') != 'central-v17-pre-move' or rec.get('audit_eligible') is False:
+            continue
+        base = str(rec.get('symbol') or '').removesuffix('USDT')
+        pre = rec.get('pre_move') or {}
+        quality = rec.get('quality') or {}
+        relative_compression = float(pre.get('atr_ratio') or 99) <= .92 or float(pre.get('bb_ratio') or 99) <= .92
+        sufficient_volatility = float(quality.get('atr_pct') or 0) >= .2
+        if base not in EXCLUDED_BASES and relative_compression and sufficient_volatility:
+            continue
+        rec['audit_eligible'] = False
+        rec['status'] = 'CANCELLED'
+        rec['ended_at'] = at
+        rec['end_reason'] = 'V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression'
+        rec.setdefault('status_history', []).append({'event':'QUALITY_MIGRATION_CANCELLED','at':at,'status':'CANCELLED'})
+        changed.append(rec.get('forecast_id'))
+    return changed
+
+
 def publish():
     data = json.loads(LEDGER.read_text(encoding='utf-8'))
     records = data.setdefault('records', [])
+    invalidated = invalidate_nonconforming_v17(records)
     today = day_utc()
     # V17 starts a clean, independently measurable cohort. Older central
     # forecasts stay in history, but do not consume today's V17 publication cap.
-    official_today = [r for r in records if r.get('day') == today and r.get('source') == 'central-v17-pre-move']
+    official_today = [r for r in records if r.get('day') == today and r.get('source') == 'central-v17-pre-move' and r.get('audit_eligible') is not False]
     slots = max(0, MAX_DAILY - len(official_today))
     created = []
     if slots:
@@ -606,9 +632,11 @@ def publish():
             created.append(fid)
     data['generated_at'] = now_iso()
     data['source'] = 'GitHub Actions central V17.0 pre-move publisher + Binance public market data; optional CoinGlass authenticated intelligence; historical verified cohorts retained'
-    data['forecast_creation'] = 'V17 creates official entries only in ARMED/IGNITION pre-move stages. WATCH remains observational and LATE is blocked. Inputs are snapshotted at creation; unavailable providers are never fabricated.'
-    data['quality_gate'] = 'V17.0: 4H compression/base + flow + directional repair + <=1.5 ATR to trigger, score >=72, minimum 6/7 checks, anti-chase pass, Predictive Confluence >=68 with >=70% real-data coverage'
+    data['forecast_creation'] = 'V17 creates official entries only in ARMED/IGNITION pre-move stages after relative 4H volatility compression. WATCH remains observational and LATE is blocked. Stable, commodity-backed and known tokenized-equity bases are excluded.'
+    data['quality_gate'] = 'V17.0.1: relative 4H ATR or Bollinger compression + base + flow + directional repair + <=1.5 ATR to trigger, score >=72, minimum 6/7 checks, anti-chase pass, Predictive Confluence >=68 with >=70% real-data coverage'
     data['predictive_schema'] = 'V17.0: pre-move technical 30%, closed 15m order flow/CVD proxy 25%, 4H swing-liquidity proxy 15%, CoinGlass liquidation map 20% optional, CoinGlass large orders 10% optional'
+    if invalidated:
+        data['v17_quality_migration_last_invalidated'] = invalidated
     LEDGER.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     NEW_IDS.write_text(json.dumps(created), encoding='utf-8')
 

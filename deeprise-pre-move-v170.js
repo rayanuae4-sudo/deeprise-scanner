@@ -7,7 +7,7 @@ const VERSION='17.0';
 const API='https://data-api.binance.vision';
 const SCAN_MS=180000,MAX_COINS=120,MIN_QV=1000000;
 const SEEN_KEY='deeprise_v170_premove_seen',MEMORY_KEY='deeprise_v170_premove_memory';
-const EXCLUDED=new Set(['USDC','FDUSD','TUSD','USDP','DAI','EUR','TRY','BRL','GBP','BIDR','AEUR','EURI']);
+const EXCLUDED=new Set(['USDC','FDUSD','TUSD','USDP','DAI','RLUSD','USDE','USDS','USD1','BFUSD','EUR','TRY','BRL','GBP','BIDR','AEUR','EURI','PAXG','XAUT','NVDAB','SPYB','GOOGLB','SNDKB']);
 const state={signals:new Map(),lastScan:0,running:false,timer:null,errors:0};
 const lang=()=>localStorage.getItem('deeprise_language')||document.documentElement.lang||'en';
 const I={
@@ -64,12 +64,12 @@ function sideScore(side,c){
  if(extended)score-=28;
  const finalScore=clamp(Math.round(score));
  const directionalRepair=emaNear&&(rsiZone||emaTurning);
- const compressed=c.atrRatio<=.92||c.bbRatio<=.92||c.bw<=6;
+ const compressed=c.atrRatio<=.92||c.bbRatio<=.92;
  const smallBreak=distanceAtr<0&&distanceAtr>=-.8;
  let stage='NONE';
  if(extended&&rawScore>=62)stage='LATE';
  else if(smallBreak&&rawScore>=72&&c.volBuild>=1.05&&flowEvidence)stage='IGNITION';
- else if(distanceAtr>=-.35&&distanceAtr<=1.5&&rawScore>=72&&baseQuality&&flowEvidence&&directionalRepair)stage='ARMED';
+ else if(distanceAtr>=-.35&&distanceAtr<=1.5&&rawScore>=72&&baseQuality&&compressed&&flowEvidence&&directionalRepair)stage='ARMED';
  else if(rawScore>=58&&baseQuality&&compressed&&flowEvidence&&directionalRepair)stage='WATCH';
  return{side,stage,score:finalScore,rawScore,reasons,baseQuality,flowEvidence,directionalRepair,distanceAtr,liveDistance,liveChange24,extended};
 }
@@ -77,7 +77,7 @@ function sideScore(side,c){
 function analyse(raw,symbol,qv=0,livePrice=0,now=Date.now()){
  const bars=parse(raw).filter(x=>x.closeTime<now-1200);if(bars.length<85)return null;
  const end=bars.length,closes=bars.map(x=>x.c),volumes=bars.map(x=>x.v),last=bars.at(-1),close=last.c,live=Number(livePrice)||close;
- const atr=atrAt(bars,end,14)||close*.005,atrOld=med([12,18,24,30].map(k=>atrAt(bars,end-k,14))),atrRatio=ratio(atr,atrOld,1);
+ const atr=atrAt(bars,end,14)||close*.005;if(atr/close*100<.2)return null;const atrOld=med([12,18,24,30].map(k=>atrAt(bars,end-k,14))),atrRatio=ratio(atr,atrOld,1);
  const bw=bbWidth(closes,end,20),oldBw=med([12,18,24,30].map(k=>bbWidth(closes,end-k,20))),bbRatio=ratio(bw,oldBw,1);
  const R=rsi(closes)||50,R3=rsi(closes.slice(0,-3))||R,e10=ema(closes,10),e20=ema(closes,20),e50=ema(closes,50),e10Old=ema(closes.slice(0,-3),10);
  if(![e10,e20,e50,e10Old].every(Number.isFinite))return null;
