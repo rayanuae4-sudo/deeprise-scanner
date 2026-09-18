@@ -2,11 +2,191 @@
   "version": 1,
   "ledger": "DeepRise Central Forecast Ledger",
   "started_at": "2026-08-28T13:47:00Z",
-  "generated_at": "2026-09-18T15:00:07.320Z",
+  "generated_at": "2026-09-18T15:08:06.920Z",
   "source": "GitHub Actions central V17.0 pre-move publisher + Binance public market data; optional CoinGlass authenticated intelligence; historical verified cohorts retained",
   "integrity_note_ar": "هذا سجل مركزي موحّد يبدأ من 28 أغسطس 2026. يعرض توصيات DeepRise التي تم تسجيلها فعليًا بعد تفعيل السجل المركزي، ولا تُحذف النتائج بسبب تحديث التطبيق. كل تحديث للسجل يُحفظ في GitHub بتاريخ Commit قابل للمراجعة.",
   "integrity_note_en": "This is a unified central ledger starting August 28, 2026. It shows DeepRise forecasts actually recorded after central tracking was enabled. App updates do not delete results, and every ledger refresh is preserved in GitHub commit history.",
   "records": [
+    {
+      "forecast_id": "2026-09-18-STGUSDT",
+      "source": "central-v17-pre-move",
+      "method": "V17.0 4H Pre-Move Confluence / accumulation + compression + flow + momentum turn + anti-chase",
+      "symbol": "STGUSDT",
+      "side": "SHORT",
+      "created_at": "2026-09-18T15:07:18.731Z",
+      "entry": 0.1414,
+      "tp1": 0.11217571428571425,
+      "tp2": 0.08879628571428566,
+      "sl": 0.16088285714285716,
+      "status": "ACTIVE",
+      "score": 81,
+      "predictive": {
+        "model_version": "V17.0 Pre-Move Confluence",
+        "score": 70.9,
+        "coverage_pct": 70.0,
+        "grade": "B",
+        "order_flow": {
+          "available": true,
+          "provider": "Binance closed 15m klines",
+          "taker_buy_ratio": 0.4157,
+          "cvd_proxy_pct": -16.8596,
+          "taker_ratio_acceleration_pp": -2.0561,
+          "alignment": "ALIGNED",
+          "score": 62.4
+        },
+        "liquidity_proxy": {
+          "available": true,
+          "provider": "Binance swing-liquidity proxy",
+          "target_price": 0.1413,
+          "distance_pct": 0.0707,
+          "atr_distance": 0.012,
+          "alignment": "AHEAD",
+          "score": 65.0,
+          "note": "Swing-liquidity proxy; not a liquidation heatmap."
+        },
+        "liquidation_map": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "large_orders": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "smart_money": {
+          "available": false,
+          "provider": "Nansen",
+          "reason": "NANSEN_API_KEY not configured; no Smart Money wallet value inferred"
+        },
+        "explanation": "4H compression/base/flow/turn detected before expansion, then checked against closed 15m order flow and liquidity. Extended prices are rejected rather than chased.",
+        "liquidity_sweep": {
+          "available": true,
+          "type": "NONE",
+          "severity": "LOW",
+          "trap_score": 24,
+          "score_meaning": "Evidence strength, not reversal probability",
+          "liquidity_level": 0.146,
+          "distance_pct": 3.6932,
+          "momentum_30m_pct": -0.6351,
+          "taker_buy_ratio": 0.25724,
+          "taker_acceleration_pp": 28.7836,
+          "upper_wick_ratio": 0.1111,
+          "volume_ratio": 0.2782,
+          "evidence": [
+            "weak taker-buy participation",
+            "15m structure not strongly bullish"
+          ],
+          "captured_at": "2026-09-18T15:07:19.710Z"
+        },
+        "whale_divergence": {
+          "available": true,
+          "type": "NONE",
+          "strength": 0,
+          "wallet_confirmed": false,
+          "sources": [
+            "Binance order flow"
+          ],
+          "evidence": [],
+          "note": "No multi-source whale/flow divergence confirmed at forecast creation."
+        },
+        "whale_arrival_radar": {
+          "available": false,
+          "reason": "No fresh public on-chain whale snapshot within 45 minutes"
+        }
+      },
+      "rank": 1,
+      "day": "2026-09-18",
+      "current": 0.1417,
+      "stage": "ARMED",
+      "trigger": 0.1413,
+      "entry_zone": [
+        0.14002285714285714,
+        0.14428000000000002
+      ],
+      "pre_move": {
+        "side": "SHORT",
+        "stage": "ARMED",
+        "score": 81,
+        "raw_score": 81,
+        "reasons": [
+          "BB contraction 7.38%",
+          "tight 4H base",
+          "momentum turning down",
+          "negative money flow",
+          "near trigger"
+        ],
+        "distance_atr": 0.5167785234899314,
+        "live_distance_atr": -0.011744966442951726,
+        "live_change_24h": 5.374823196605383,
+        "extended": false,
+        "base_quality": true,
+        "flow_evidence": true,
+        "directional_repair": true,
+        "watch_price": 0.1414,
+        "closed_price": 0.1457,
+        "trigger": 0.1413,
+        "entry_low": 0.14002285714285714,
+        "entry_high": 0.14428000000000002,
+        "invalid": 0.16088285714285716,
+        "tp1": 0.11405428571428575,
+        "tp2": 0.09157657142857147,
+        "atr": 0.008514285714285714,
+        "atr_ratio": 2.7915690866510507,
+        "bb_width": 7.379254007183301,
+        "bb_ratio": 0.8794135243127723,
+        "range_high": 0.1595,
+        "range_low": 0.1413,
+        "range_atr": 2.137583892617449,
+        "rsi_4h": 41.03546749207227,
+        "rsi_delta_3": -12.702638550337852,
+        "cmf_4h": -0.13530670363644307,
+        "taker_buy_ratio": 0.5289960321749615,
+        "volume_build": 63.2927603279618,
+        "momentum_4h_pct": -3.3819628647214772
+      },
+      "high": 0.1417,
+      "low": 0.1414,
+      "best_move": -0.0,
+      "worst_move": -0.21216407355020844,
+      "final_move": null,
+      "end_reason": null,
+      "tp1_hit_at": null,
+      "tp2_hit_at": null,
+      "ended_at": null,
+      "proof_commit": null,
+      "proof_verified_at": null,
+      "quality": {
+        "count": 7,
+        "required": 6,
+        "volume_ratio": 63.2928,
+        "quote_volume_usdt": 4692863.84,
+        "atr_pct": 6.0214,
+        "rsi_15m": 43.72,
+        "candle_confirmed": false,
+        "trend_15m": "PRE_MOVE",
+        "trend_1h": "PRE_MOVE",
+        "rr": 2.6999999999999997,
+        "momentum_15m_pct": -0.7714,
+        "stage": "ARMED",
+        "rsi_4h": 41.03546749207227,
+        "atr_ratio": 2.7915690866510507,
+        "bb_ratio": 0.8794135243127723,
+        "cmf_4h": -0.13530670363644307,
+        "taker_buy_ratio": 0.5289960321749615,
+        "distance_to_trigger_atr": 0.5167785234899314,
+        "anti_chase_extended": false
+      },
+      "opened_at": "2026-09-18T15:07:18.731Z",
+      "status_history": [
+        {
+          "event": "SIGNAL_OPENED",
+          "at": "2026-09-18T15:07:18.731Z",
+          "status": "ACTIVE"
+        }
+      ],
+      "last_checked_at": "2026-09-18T15:08:59.999Z"
+    },
     {
       "forecast_id": "2026-09-18-PAXGUSDT",
       "source": "central-v17-pre-move",
@@ -18,7 +198,7 @@
       "tp1": 4429.573607142858,
       "tp2": 4488.5284928571455,
       "sl": 4306.750928571428,
-      "status": "ACTIVE",
+      "status": "CANCELLED",
       "score": 100.0,
       "predictive": {
         "model_version": "V17.0 Pre-Move Confluence",
@@ -155,10 +335,10 @@
       "best_move": 0.015611082031651263,
       "worst_move": -0.12856185202531667,
       "final_move": null,
-      "end_reason": null,
+      "end_reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression",
       "tp1_hit_at": null,
       "tp2_hit_at": null,
-      "ended_at": null,
+      "ended_at": "2026-09-18T15:07:06.457Z",
       "proof_commit": "07d099b9526d5cc7620a69e60530534cb056a2be",
       "proof_verified_at": "2026-09-18T14:54:05.826Z",
       "quality": {
@@ -188,9 +368,21 @@
           "event": "SIGNAL_OPENED",
           "at": "2026-09-18T14:52:50.323Z",
           "status": "ACTIVE"
+        },
+        {
+          "event": "QUALITY_MIGRATION_CANCELLED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED"
+        },
+        {
+          "event": "SIGNAL_ENDED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED",
+          "reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression"
         }
       ],
-      "last_checked_at": "2026-09-18T15:00:59.999Z"
+      "last_checked_at": "2026-09-18T15:00:59.999Z",
+      "audit_eligible": false
     },
     {
       "forecast_id": "2026-09-18-GRAMUSDT",
@@ -203,7 +395,7 @@
       "tp1": 1.4372892857142863,
       "tp2": 1.487920714285715,
       "sl": 1.3318071428571427,
-      "status": "ACTIVE",
+      "status": "CANCELLED",
       "score": 86,
       "predictive": {
         "model_version": "V17.0 Pre-Move Confluence",
@@ -337,10 +529,10 @@
       "best_move": 0.07278020378456258,
       "worst_move": -0.07278020378457874,
       "final_move": null,
-      "end_reason": null,
+      "end_reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression",
       "tp1_hit_at": null,
       "tp2_hit_at": null,
-      "ended_at": null,
+      "ended_at": "2026-09-18T15:07:06.457Z",
       "proof_commit": "07d099b9526d5cc7620a69e60530534cb056a2be",
       "proof_verified_at": "2026-09-18T14:54:05.826Z",
       "quality": {
@@ -370,9 +562,21 @@
           "event": "SIGNAL_OPENED",
           "at": "2026-09-18T14:52:50.323Z",
           "status": "ACTIVE"
+        },
+        {
+          "event": "QUALITY_MIGRATION_CANCELLED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED"
+        },
+        {
+          "event": "SIGNAL_ENDED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED",
+          "reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression"
         }
       ],
-      "last_checked_at": "2026-09-18T15:00:59.999Z"
+      "last_checked_at": "2026-09-18T15:00:59.999Z",
+      "audit_eligible": false
     },
     {
       "forecast_id": "2026-09-18-XAUTUSDT",
@@ -385,7 +589,7 @@
       "tp1": 4442.799964285716,
       "tp2": 4506.959935714288,
       "sl": 4309.133357142857,
-      "status": "ACTIVE",
+      "status": "CANCELLED",
       "score": 99,
       "predictive": {
         "model_version": "V17.0 Pre-Move Confluence",
@@ -519,10 +723,10 @@
       "best_move": 0.012607160867355988,
       "worst_move": -0.14280474946134122,
       "final_move": null,
-      "end_reason": null,
+      "end_reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression",
       "tp1_hit_at": null,
       "tp2_hit_at": null,
-      "ended_at": null,
+      "ended_at": "2026-09-18T15:07:06.457Z",
       "proof_commit": "07d099b9526d5cc7620a69e60530534cb056a2be",
       "proof_verified_at": "2026-09-18T14:54:05.826Z",
       "quality": {
@@ -552,9 +756,21 @@
           "event": "SIGNAL_OPENED",
           "at": "2026-09-18T14:52:50.323Z",
           "status": "ACTIVE"
+        },
+        {
+          "event": "QUALITY_MIGRATION_CANCELLED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED"
+        },
+        {
+          "event": "SIGNAL_ENDED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED",
+          "reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression"
         }
       ],
-      "last_checked_at": "2026-09-18T15:00:59.999Z"
+      "last_checked_at": "2026-09-18T15:00:59.999Z",
+      "audit_eligible": false
     },
     {
       "forecast_id": "2026-09-18-RLUSDUSDT",
@@ -567,7 +783,7 @@
       "tp1": 1.0008342857142858,
       "tp2": 1.0011017142857144,
       "sl": 1.0002771428571429,
-      "status": "ACTIVE",
+      "status": "CANCELLED",
       "score": 84,
       "predictive": {
         "model_version": "V17.0 Pre-Move Confluence",
@@ -698,10 +914,10 @@
       "best_move": 0.009995002498749524,
       "worst_move": 0.0,
       "final_move": null,
-      "end_reason": null,
+      "end_reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression",
       "tp1_hit_at": null,
       "tp2_hit_at": null,
-      "ended_at": null,
+      "ended_at": "2026-09-18T15:07:06.457Z",
       "proof_commit": "07d099b9526d5cc7620a69e60530534cb056a2be",
       "proof_verified_at": "2026-09-18T14:54:05.826Z",
       "quality": {
@@ -731,9 +947,21 @@
           "event": "SIGNAL_OPENED",
           "at": "2026-09-18T14:52:50.323Z",
           "status": "ACTIVE"
+        },
+        {
+          "event": "QUALITY_MIGRATION_CANCELLED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED"
+        },
+        {
+          "event": "SIGNAL_ENDED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED",
+          "reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression"
         }
       ],
-      "last_checked_at": "2026-09-18T15:00:59.999Z"
+      "last_checked_at": "2026-09-18T15:00:59.999Z",
+      "audit_eligible": false
     },
     {
       "forecast_id": "2026-09-18-SPYBUSDT",
@@ -746,7 +974,7 @@
       "tp1": 763.2885714285715,
       "tp2": 765.9594285714286,
       "sl": 757.7242857142858,
-      "status": "ACTIVE",
+      "status": "CANCELLED",
       "score": 85,
       "predictive": {
         "model_version": "V17.0 Pre-Move Confluence",
@@ -880,10 +1108,10 @@
       "best_move": 0.05526679386801224,
       "worst_move": -0.006579380222392027,
       "final_move": null,
-      "end_reason": null,
+      "end_reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression",
       "tp1_hit_at": null,
       "tp2_hit_at": null,
-      "ended_at": null,
+      "ended_at": "2026-09-18T15:07:06.457Z",
       "proof_commit": "07d099b9526d5cc7620a69e60530534cb056a2be",
       "proof_verified_at": "2026-09-18T14:54:05.826Z",
       "quality": {
@@ -913,9 +1141,21 @@
           "event": "SIGNAL_OPENED",
           "at": "2026-09-18T14:52:50.323Z",
           "status": "ACTIVE"
+        },
+        {
+          "event": "QUALITY_MIGRATION_CANCELLED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED"
+        },
+        {
+          "event": "SIGNAL_ENDED",
+          "at": "2026-09-18T15:07:06.457Z",
+          "status": "CANCELLED",
+          "reason": "V17.0.1 QUALITY MIGRATION — non-crypto/stable asset or no relative 4H compression"
         }
       ],
-      "last_checked_at": "2026-09-18T15:00:59.999Z"
+      "last_checked_at": "2026-09-18T15:00:59.999Z",
+      "audit_eligible": false
     },
     {
       "forecast_id": "2026-09-18-UNIUSDT",
@@ -16607,8 +16847,8 @@
       "cancelled_at": "2026-08-28T19:28:59.999Z"
     }
   ],
-  "forecast_creation": "V17 creates official entries only in ARMED/IGNITION pre-move stages. WATCH remains observational and LATE is blocked. Inputs are snapshotted at creation; unavailable providers are never fabricated.",
-  "quality_gate": "V17.0: 4H compression/base + flow + directional repair + <=1.5 ATR to trigger, score >=72, minimum 6/7 checks, anti-chase pass, Predictive Confluence >=68 with >=70% real-data coverage",
+  "forecast_creation": "V17 creates official entries only in ARMED/IGNITION pre-move stages after relative 4H volatility compression. WATCH remains observational and LATE is blocked. Stable, commodity-backed and known tokenized-equity bases are excluded.",
+  "quality_gate": "V17.0.1: relative 4H ATR or Bollinger compression + base + flow + directional repair + <=1.5 ATR to trigger, score >=72, minimum 6/7 checks, anti-chase pass, Predictive Confluence >=68 with >=70% real-data coverage",
   "lifecycle_source": "Binance public market-data endpoint, Spot 1m candles via GitHub Actions",
   "lifecycle_precision": "1 minute; same-minute target/stop ordering marked AMBIGUOUS and excluded from performance",
   "predictive_schema": "V17.0: pre-move technical 30%, closed 15m order flow/CVD proxy 25%, 4H swing-liquidity proxy 15%, CoinGlass liquidation map 20% optional, CoinGlass large orders 10% optional",
@@ -16618,5 +16858,12 @@
   "whale_arrival_gate": "V14.7 uses fresh public DEX large-wallet flow as a capped confluence factor; only very strong opposing multi-wallet evidence can block a new forecast.",
   "trap_gate_last_removed": [
     "2026-09-11-RAYUSDT"
+  ],
+  "v17_quality_migration_last_invalidated": [
+    "2026-09-18-PAXGUSDT",
+    "2026-09-18-GRAMUSDT",
+    "2026-09-18-XAUTUSDT",
+    "2026-09-18-RLUSDUSDT",
+    "2026-09-18-SPYBUSDT"
   ]
 }
