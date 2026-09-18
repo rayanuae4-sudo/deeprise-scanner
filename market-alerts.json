@@ -1,12 +1,40 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-18T08:53:58.939Z",
+  "generated_at": "2026-09-18T09:12:02.388Z",
   "source": "Binance public market data; closed candles only",
-  "scanned_symbols": 35,
+  "scanned_symbols": 36,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "CRCLBUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789722599999",
+      "symbol": "CRCLBUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 66,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 88.55,
+      "liquidity_level": 88.66,
+      "distance_to_liquidity_pct": 0.1242,
+      "momentum_30m_pct": 1.1653,
+      "taker_buy_ratio": 0.74638,
+      "taker_acceleration_pp": -17.3396,
+      "upper_wick_ratio": 0.5652,
+      "volume_ratio": 0.842,
+      "atr_pct": 0.4041,
+      "quote_volume_usdt": 29707722.65,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -17.3pp",
+        "Upper-wick rejection 57% of candle range"
+      ],
+      "bar_closed_at": "2026-09-18T09:09:59.999Z",
+      "invalidation": "A sustained 5m close above 88.66 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-18T09:11:46.889Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "LSKUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789720499999",
       "symbol": "LSKUSDT",
