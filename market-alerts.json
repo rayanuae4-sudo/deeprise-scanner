@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-18T13:21:16.378Z",
+  "generated_at": "2026-09-18T13:37:02.038Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 40,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "ZECUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789738499999",
+      "symbol": "ZECUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "HIGH",
+      "trap_score": 82,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 1470.14,
+      "liquidity_level": 1475.82,
+      "distance_to_liquidity_pct": 0.3864,
+      "momentum_30m_pct": 0.6663,
+      "taker_buy_ratio": 0.61773,
+      "taker_acceleration_pp": -5.7889,
+      "upper_wick_ratio": 0.7584,
+      "volume_ratio": 1.3084,
+      "atr_pct": 0.4373,
+      "quote_volume_usdt": 526990263.06,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -5.8pp",
+        "Upper-wick rejection 76% of candle range",
+        "Volume expansion 1.31x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-18T13:34:59.999Z",
+      "invalidation": "A sustained 5m close above 1475.82 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-18T13:36:18.626Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ARBUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789737599999",
       "symbol": "ARBUSDT",
