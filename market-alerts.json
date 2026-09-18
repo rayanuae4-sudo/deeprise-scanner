@@ -1,12 +1,40 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-18T13:52:43.697Z",
+  "generated_at": "2026-09-18T14:10:51.336Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 40,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "牛来USDT-BUY_SIDE_SWEEP_CONFIRMED-1789740599999",
+      "symbol": "牛来USDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 66,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.11797,
+      "liquidity_level": 0.11812,
+      "distance_to_liquidity_pct": 0.1272,
+      "momentum_30m_pct": 3.0126,
+      "taker_buy_ratio": 0.49161,
+      "taker_acceleration_pp": 3.3198,
+      "upper_wick_ratio": 0.106,
+      "volume_ratio": 1.3022,
+      "atr_pct": 1.375,
+      "quote_volume_usdt": 20286227.73,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Taker buy ratio weak at 49.2%",
+        "Volume expansion 1.30x"
+      ],
+      "bar_closed_at": "2026-09-18T14:09:59.999Z",
+      "invalidation": "A sustained 5m close above 0.11812 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-18T14:10:51.300Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "牛来USDT-BUY_SIDE_SWEEP_CONFIRMED-1789739399999",
       "symbol": "牛来USDT",
@@ -2069,35 +2097,6 @@
       "bar_closed_at": "2026-09-17T14:29:59.999Z",
       "invalidation": "A sustained 5m close above 1438.18 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
       "created_at": "2026-09-17T14:34:55.138Z",
-      "source": "Binance closed 5m + 15m candles"
-    },
-    {
-      "id": "ZECUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1789652999999",
-      "symbol": "ZECUSDT",
-      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
-      "severity": "MEDIUM",
-      "trap_score": 70,
-      "score_meaning": "Evidence strength, not reversal probability",
-      "price": 1376.4,
-      "liquidity_level": 1377.77,
-      "distance_to_liquidity_pct": 0.0995,
-      "momentum_30m_pct": 1.0743,
-      "taker_buy_ratio": 0.54808,
-      "taker_acceleration_pp": -5.2649,
-      "upper_wick_ratio": 0.1125,
-      "volume_ratio": 1.9259,
-      "atr_pct": 0.8794,
-      "quote_volume_usdt": 751311431.77,
-      "fifteen_min_strong_bull": false,
-      "reasons": [
-        "High swept prior 5m buy-side liquidity and closed back below it",
-        "Aggressive buying decelerating -5.3pp",
-        "Volume expansion 1.93x",
-        "15m structure is not strongly bullish"
-      ],
-      "bar_closed_at": "2026-09-17T13:49:59.999Z",
-      "invalidation": "A sustained 5m close above 1377.77 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
-      "created_at": "2026-09-17T13:54:39.506Z",
       "source": "Binance closed 5m + 15m candles"
     }
   ]
