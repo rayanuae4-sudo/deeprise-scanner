@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-18T10:53:23.437Z",
+  "generated_at": "2026-09-18T11:11:13.246Z",
   "source": "Binance public market data; closed candles only",
-  "scanned_symbols": 37,
+  "scanned_symbols": 38,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "BTCUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789729799999",
+      "symbol": "BTCUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "HIGH",
+      "trap_score": 78,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 78190.01,
+      "liquidity_level": 78394.15,
+      "distance_to_liquidity_pct": 0.2611,
+      "momentum_30m_pct": -0.086,
+      "taker_buy_ratio": 0.47445,
+      "taker_acceleration_pp": -13.3062,
+      "upper_wick_ratio": 0.1684,
+      "volume_ratio": 3.1439,
+      "atr_pct": 0.1321,
+      "quote_volume_usdt": 1172263700.25,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Taker buy ratio weak at 47.4%",
+        "Aggressive buying decelerating -13.3pp",
+        "Volume expansion 3.14x"
+      ],
+      "bar_closed_at": "2026-09-18T11:09:59.999Z",
+      "invalidation": "A sustained 5m close above 78394.15 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-18T11:10:23.303Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "DOGEUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789727699999",
       "symbol": "DOGEUSDT",
