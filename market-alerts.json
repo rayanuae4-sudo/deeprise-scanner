@@ -1,12 +1,40 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-19T16:39:27.474Z",
+  "generated_at": "2026-09-19T16:53:19.302Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 43,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "XLMUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789836599999",
+      "symbol": "XLMUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 66,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.2002,
+      "liquidity_level": 0.2003,
+      "distance_to_liquidity_pct": 0.05,
+      "momentum_30m_pct": 0.9581,
+      "taker_buy_ratio": 0.55238,
+      "taker_acceleration_pp": -1.5285,
+      "upper_wick_ratio": 0.3333,
+      "volume_ratio": 0.9429,
+      "atr_pct": 0.4496,
+      "quote_volume_usdt": 27171991.88,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -1.5pp",
+        "Upper-wick rejection 33% of candle range"
+      ],
+      "bar_closed_at": "2026-09-19T16:49:59.999Z",
+      "invalidation": "A sustained 5m close above 0.2003 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-19T16:53:10.071Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "TRUMPUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789835699999",
       "symbol": "TRUMPUSDT",
@@ -3140,35 +3168,6 @@
       "bar_closed_at": "2026-09-18T17:29:59.999Z",
       "invalidation": "A sustained 5m close above 0.02075 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
       "created_at": "2026-09-18T17:32:13.217Z",
-      "source": "Binance closed 5m + 15m candles"
-    },
-    {
-      "id": "PROVEUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789749899999",
-      "symbol": "PROVEUSDT",
-      "type": "BUY_SIDE_SWEEP_CONFIRMED",
-      "severity": "HIGH",
-      "trap_score": 78,
-      "score_meaning": "Evidence strength, not reversal probability",
-      "price": 0.2082,
-      "liquidity_level": 0.2084,
-      "distance_to_liquidity_pct": 0.0961,
-      "momentum_30m_pct": 1.2154,
-      "taker_buy_ratio": 0.48301,
-      "taker_acceleration_pp": 0.9229,
-      "upper_wick_ratio": 0.7857,
-      "volume_ratio": 1.5825,
-      "atr_pct": 0.5283,
-      "quote_volume_usdt": 48583463.56,
-      "fifteen_min_strong_bull": true,
-      "reasons": [
-        "High swept prior 5m buy-side liquidity and closed back below it",
-        "Taker buy ratio weak at 48.3%",
-        "Upper-wick rejection 79% of candle range",
-        "Volume expansion 1.58x"
-      ],
-      "bar_closed_at": "2026-09-18T16:44:59.999Z",
-      "invalidation": "A sustained 5m close above 0.2084 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
-      "created_at": "2026-09-18T16:45:41.843Z",
       "source": "Binance closed 5m + 15m candles"
     }
   ]
