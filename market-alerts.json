@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-19T15:21:15.170Z",
+  "generated_at": "2026-09-19T15:37:17.126Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 43,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "PROVEUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1789832099999",
+      "symbol": "PROVEUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 71,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.2165,
+      "liquidity_level": 0.2177,
+      "distance_to_liquidity_pct": 0.5543,
+      "momentum_30m_pct": 0.2779,
+      "taker_buy_ratio": 0.08646,
+      "taker_acceleration_pp": -18.8202,
+      "upper_wick_ratio": 0.1111,
+      "volume_ratio": 8.782,
+      "atr_pct": 0.386,
+      "quote_volume_usdt": 55016484.96,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Taker buy ratio weak at 8.6%",
+        "Aggressive buying decelerating -18.8pp",
+        "Volume expansion 8.78x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-19T15:34:59.999Z",
+      "invalidation": "A sustained 5m close above 0.2177 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-19T15:36:39.775Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ONDOUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789831199999",
       "symbol": "ONDOUSDT",
