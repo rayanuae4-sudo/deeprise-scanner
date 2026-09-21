@@ -1,12 +1,40 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-21T14:23:07.706Z",
+  "generated_at": "2026-09-21T14:41:31.833Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 45,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "ETHUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790001599999",
+      "symbol": "ETHUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 66,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 2735.56,
+      "liquidity_level": 2744.88,
+      "distance_to_liquidity_pct": 0.3407,
+      "momentum_30m_pct": 0.6102,
+      "taker_buy_ratio": 0.54619,
+      "taker_acceleration_pp": -11.4386,
+      "upper_wick_ratio": 0.4028,
+      "volume_ratio": 1.2401,
+      "atr_pct": 0.4582,
+      "quote_volume_usdt": 1258054066.17,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -11.4pp",
+        "Upper-wick rejection 40% of candle range"
+      ],
+      "bar_closed_at": "2026-09-21T14:39:59.999Z",
+      "invalidation": "A sustained 5m close above 2744.88 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-21T14:40:47.346Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "CRCLBUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789996199999",
       "symbol": "CRCLBUSDT",
