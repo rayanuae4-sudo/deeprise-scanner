@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-21T17:16:16.706Z",
+  "generated_at": "2026-09-21T17:32:17.709Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 45,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "DOGEUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790011799999",
+      "symbol": "DOGEUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "HIGH",
+      "trap_score": 90,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.09764,
+      "liquidity_level": 0.09809,
+      "distance_to_liquidity_pct": 0.4609,
+      "momentum_30m_pct": 1.0243,
+      "taker_buy_ratio": 0.48699,
+      "taker_acceleration_pp": -9.9292,
+      "upper_wick_ratio": 0.7234,
+      "volume_ratio": 1.3516,
+      "atr_pct": 0.7923,
+      "quote_volume_usdt": 187246762.89,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Taker buy ratio weak at 48.7%",
+        "Aggressive buying decelerating -9.9pp",
+        "Upper-wick rejection 72% of candle range",
+        "Volume expansion 1.35x"
+      ],
+      "bar_closed_at": "2026-09-21T17:29:59.999Z",
+      "invalidation": "A sustained 5m close above 0.09809 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-21T17:31:45.849Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "XRPUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790002499999",
       "symbol": "XRPUSDT",
