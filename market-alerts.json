@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-21T12:16:17.522Z",
+  "generated_at": "2026-09-21T12:37:07.483Z",
   "source": "Binance public market data; closed candles only",
-  "scanned_symbols": 42,
+  "scanned_symbols": 43,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "ZAMAUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789994099999",
+      "symbol": "ZAMAUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 74,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.1035,
+      "liquidity_level": 0.10425,
+      "distance_to_liquidity_pct": 0.7246,
+      "momentum_30m_pct": 3.9574,
+      "taker_buy_ratio": 0.57287,
+      "taker_acceleration_pp": -2.7628,
+      "upper_wick_ratio": 0.3066,
+      "volume_ratio": 2.4567,
+      "atr_pct": 1.7999,
+      "quote_volume_usdt": 33304496.64,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -2.8pp",
+        "Upper-wick rejection 31% of candle range",
+        "Volume expansion 2.46x"
+      ],
+      "bar_closed_at": "2026-09-21T12:34:59.999Z",
+      "invalidation": "A sustained 5m close above 0.10425 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-21T12:36:47.500Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "LTCUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789992899999",
       "symbol": "LTCUSDT",
@@ -2313,35 +2342,6 @@
       "bar_closed_at": "2026-09-20T12:44:59.999Z",
       "invalidation": "A sustained 5m close above 0.09189 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
       "created_at": "2026-09-20T12:47:34.287Z",
-      "source": "Binance closed 5m + 15m candles"
-    },
-    {
-      "id": "AVAXUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789907099999",
-      "symbol": "AVAXUSDT",
-      "type": "BUY_SIDE_SWEEP_CONFIRMED",
-      "severity": "HIGH",
-      "trap_score": 78,
-      "score_meaning": "Evidence strength, not reversal probability",
-      "price": 10.354,
-      "liquidity_level": 10.558,
-      "distance_to_liquidity_pct": 1.9703,
-      "momentum_30m_pct": 0.4755,
-      "taker_buy_ratio": 0.46345,
-      "taker_acceleration_pp": 2.2776,
-      "upper_wick_ratio": 0.4216,
-      "volume_ratio": 3.1055,
-      "atr_pct": 1.2355,
-      "quote_volume_usdt": 111977519.18,
-      "fifteen_min_strong_bull": true,
-      "reasons": [
-        "High swept prior 5m buy-side liquidity and closed back below it",
-        "Taker buy ratio weak at 46.3%",
-        "Upper-wick rejection 42% of candle range",
-        "Volume expansion 3.11x"
-      ],
-      "bar_closed_at": "2026-09-20T12:24:59.999Z",
-      "invalidation": "A sustained 5m close above 10.558 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
-      "created_at": "2026-09-20T12:26:42.877Z",
       "source": "Binance closed 5m + 15m candles"
     }
   ]
