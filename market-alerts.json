@@ -1,12 +1,40 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-21T11:38:54.193Z",
+  "generated_at": "2026-09-21T11:54:21.338Z",
   "source": "Binance public market data; closed candles only",
-  "scanned_symbols": 39,
+  "scanned_symbols": 42,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "FETUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789991399999",
+      "symbol": "FETUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 70,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.1959,
+      "liquidity_level": 0.1963,
+      "distance_to_liquidity_pct": 0.2042,
+      "momentum_30m_pct": -0.102,
+      "taker_buy_ratio": 0.4771,
+      "taker_acceleration_pp": 4.6875,
+      "upper_wick_ratio": 0.3529,
+      "volume_ratio": 0.5693,
+      "atr_pct": 0.835,
+      "quote_volume_usdt": 27669858.69,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Taker buy ratio weak at 47.7%",
+        "Upper-wick rejection 35% of candle range"
+      ],
+      "bar_closed_at": "2026-09-21T11:49:59.999Z",
+      "invalidation": "A sustained 5m close above 0.1963 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-21T11:54:07.829Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "LTCUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789990499999",
       "symbol": "LTCUSDT",
@@ -2313,35 +2341,6 @@
       "bar_closed_at": "2026-09-20T11:59:59.999Z",
       "invalidation": "A sustained 5m close above 0.4236 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
       "created_at": "2026-09-20T12:03:59.847Z",
-      "source": "Binance closed 5m + 15m candles"
-    },
-    {
-      "id": "LINKUSDT-BUY_SIDE_SWEEP_CONFIRMED-1789904699999",
-      "symbol": "LINKUSDT",
-      "type": "BUY_SIDE_SWEEP_CONFIRMED",
-      "severity": "MEDIUM",
-      "trap_score": 74,
-      "score_meaning": "Evidence strength, not reversal probability",
-      "price": 12.044,
-      "liquidity_level": 12.045,
-      "distance_to_liquidity_pct": 0.0083,
-      "momentum_30m_pct": 0.3416,
-      "taker_buy_ratio": 0.57139,
-      "taker_acceleration_pp": -2.3174,
-      "upper_wick_ratio": 0.44,
-      "volume_ratio": 0.3716,
-      "atr_pct": 0.2159,
-      "quote_volume_usdt": 30619502.23,
-      "fifteen_min_strong_bull": false,
-      "reasons": [
-        "High swept prior 5m buy-side liquidity and closed back below it",
-        "Aggressive buying decelerating -2.3pp",
-        "Upper-wick rejection 44% of candle range",
-        "15m structure is not strongly bullish"
-      ],
-      "bar_closed_at": "2026-09-20T11:44:59.999Z",
-      "invalidation": "A sustained 5m close above 12.045 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
-      "created_at": "2026-09-20T11:49:42.813Z",
       "source": "Binance closed 5m + 15m candles"
     }
   ]
