@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-22T17:35:04.281Z",
+  "generated_at": "2026-09-22T17:48:40.290Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 45,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "PENGUUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790099099999",
+      "symbol": "PENGUUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 74,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.009492,
+      "liquidity_level": 0.009547,
+      "distance_to_liquidity_pct": 0.5794,
+      "momentum_30m_pct": 2.2845,
+      "taker_buy_ratio": 0.60503,
+      "taker_acceleration_pp": -9.7224,
+      "upper_wick_ratio": 0.5185,
+      "volume_ratio": 1.4048,
+      "atr_pct": 0.8797,
+      "quote_volume_usdt": 30429005.0,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -9.7pp",
+        "Upper-wick rejection 52% of candle range",
+        "Volume expansion 1.40x"
+      ],
+      "bar_closed_at": "2026-09-22T17:44:59.999Z",
+      "invalidation": "A sustained 5m close above 0.009547 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-22T17:48:31.236Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ZAMAUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790098199999",
       "symbol": "ZAMAUSDT",
