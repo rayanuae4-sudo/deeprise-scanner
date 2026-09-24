@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-24T00:58:38.188Z",
+  "generated_at": "2026-09-24T01:18:47.286Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 45,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "LTCUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790212499999",
+      "symbol": "LTCUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 74,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 62.15,
+      "liquidity_level": 62.48,
+      "distance_to_liquidity_pct": 0.531,
+      "momentum_30m_pct": -0.4006,
+      "taker_buy_ratio": 0.5075,
+      "taker_acceleration_pp": -8.1913,
+      "upper_wick_ratio": 0.3333,
+      "volume_ratio": 1.9253,
+      "atr_pct": 0.5195,
+      "quote_volume_usdt": 53459341.34,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Aggressive buying decelerating -8.2pp",
+        "Upper-wick rejection 33% of candle range",
+        "Volume expansion 1.93x"
+      ],
+      "bar_closed_at": "2026-09-24T01:14:59.999Z",
+      "invalidation": "A sustained 5m close above 62.48 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-24T01:18:22.810Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "MUBARAKUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1790211299999",
       "symbol": "MUBARAKUSDT",
