@@ -1,12 +1,41 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-25T07:02:58.606Z",
+  "generated_at": "2026-09-25T07:24:22.461Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 45,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "BROCCOLI714USDT-BUY_SIDE_SWEEP_CONFIRMED-1790320799999",
+      "symbol": "BROCCOLI714USDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 70,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.03001,
+      "liquidity_level": 0.03019,
+      "distance_to_liquidity_pct": 0.5998,
+      "momentum_30m_pct": 3.0563,
+      "taker_buy_ratio": 0.56233,
+      "taker_acceleration_pp": 9.9905,
+      "upper_wick_ratio": 0.5918,
+      "volume_ratio": 1.5432,
+      "atr_pct": 1.2258,
+      "quote_volume_usdt": 21007028.68,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Upper-wick rejection 59% of candle range",
+        "Volume expansion 1.54x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-25T07:19:59.999Z",
+      "invalidation": "A sustained 5m close above 0.03019 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-25T07:24:22.426Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "BROCCOLI714USDT-UPWARD_LIQUIDITY_SWEEP_RISK-1790319599999",
       "symbol": "BROCCOLI714USDT",
