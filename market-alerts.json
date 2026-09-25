@@ -1,12 +1,40 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-25T15:22:12.717Z",
+  "generated_at": "2026-09-25T15:41:52.013Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 44,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "WLDUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790350799999",
+      "symbol": "WLDUSDT",
+      "type": "BUY_SIDE_SWEEP_CONFIRMED",
+      "severity": "MEDIUM",
+      "trap_score": 70,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 0.4525,
+      "liquidity_level": 0.455,
+      "distance_to_liquidity_pct": 0.5525,
+      "momentum_30m_pct": 0.2437,
+      "taker_buy_ratio": 0.44579,
+      "taker_acceleration_pp": 3.5433,
+      "upper_wick_ratio": 0.48,
+      "volume_ratio": 1.0755,
+      "atr_pct": 0.7577,
+      "quote_volume_usdt": 40056413.32,
+      "fifteen_min_strong_bull": true,
+      "reasons": [
+        "High swept prior 5m buy-side liquidity and closed back below it",
+        "Taker buy ratio weak at 44.6%",
+        "Upper-wick rejection 48% of candle range"
+      ],
+      "bar_closed_at": "2026-09-25T15:39:59.999Z",
+      "invalidation": "A sustained 5m close above 0.455 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-25T15:41:34.951Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "ENAUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790345999999",
       "symbol": "ENAUSDT",
