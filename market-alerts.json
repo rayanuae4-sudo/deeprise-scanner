@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-26T15:47:06.641Z",
+  "generated_at": "2026-09-26T16:00:28.707Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 32,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "XRPUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1790438099999",
+      "symbol": "XRPUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 71,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 1.5528,
+      "liquidity_level": 1.5541,
+      "distance_to_liquidity_pct": 0.0837,
+      "momentum_30m_pct": 0.2194,
+      "taker_buy_ratio": 0.43325,
+      "taker_acceleration_pp": -11.0493,
+      "upper_wick_ratio": 0.0,
+      "volume_ratio": 2.5922,
+      "atr_pct": 0.1458,
+      "quote_volume_usdt": 208223933.78,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Taker buy ratio weak at 43.3%",
+        "Aggressive buying decelerating -11.0pp",
+        "Volume expansion 2.59x",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-26T15:54:59.999Z",
+      "invalidation": "A sustained 5m close above 1.5541 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-26T16:00:00.059Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "WLDUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790437499999",
       "symbol": "WLDUSDT",
@@ -2915,36 +2945,6 @@
       "bar_closed_at": "2026-09-25T16:14:59.999Z",
       "invalidation": "A sustained 5m close above 84092.01 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
       "created_at": "2026-09-25T16:15:11.835Z",
-      "source": "Binance closed 5m + 15m candles"
-    },
-    {
-      "id": "LTCUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1790351399999",
-      "symbol": "LTCUSDT",
-      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
-      "severity": "MEDIUM",
-      "trap_score": 75,
-      "score_meaning": "Evidence strength, not reversal probability",
-      "price": 69.93,
-      "liquidity_level": 70.48,
-      "distance_to_liquidity_pct": 0.7865,
-      "momentum_30m_pct": 0.4741,
-      "taker_buy_ratio": 0.43194,
-      "taker_acceleration_pp": -3.0003,
-      "upper_wick_ratio": 0.6111,
-      "volume_ratio": 1.0857,
-      "atr_pct": 0.6435,
-      "quote_volume_usdt": 81113916.91,
-      "fifteen_min_strong_bull": false,
-      "reasons": [
-        "Price is rising into nearby prior-high liquidity",
-        "Taker buy ratio weak at 43.2%",
-        "Aggressive buying decelerating -3.0pp",
-        "Upper-wick rejection 61% of candle range",
-        "15m structure is not strongly bullish"
-      ],
-      "bar_closed_at": "2026-09-25T15:49:59.999Z",
-      "invalidation": "A sustained 5m close above 70.48 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
-      "created_at": "2026-09-25T15:54:33.510Z",
       "source": "Binance closed 5m + 15m candles"
     }
   ]
