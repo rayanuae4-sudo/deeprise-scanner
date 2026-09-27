@@ -1,12 +1,42 @@
 {
   "version": 1,
   "model": "DeepRise V13.3 Liquidity Sweep Trap",
-  "generated_at": "2026-09-27T20:14:33.220Z",
+  "generated_at": "2026-09-27T23:08:25.852Z",
   "source": "Binance public market data; closed candles only",
   "scanned_symbols": 31,
   "scan_errors": 0,
   "method_note": "Alerts require rising price into prior-high liquidity plus weakening order flow, or a confirmed high sweep and rejection. trap_score is evidence strength, never a guaranteed reversal probability.",
   "alerts": [
+    {
+      "id": "GRAMUSDT-UPWARD_LIQUIDITY_SWEEP_RISK-1790550299999",
+      "symbol": "GRAMUSDT",
+      "type": "UPWARD_LIQUIDITY_SWEEP_RISK",
+      "severity": "MEDIUM",
+      "trap_score": 75,
+      "score_meaning": "Evidence strength, not reversal probability",
+      "price": 1.633,
+      "liquidity_level": 1.642,
+      "distance_to_liquidity_pct": 0.5511,
+      "momentum_30m_pct": 0.8025,
+      "taker_buy_ratio": 0.4526,
+      "taker_acceleration_pp": -8.9685,
+      "upper_wick_ratio": 0.375,
+      "volume_ratio": 1.2422,
+      "atr_pct": 0.4418,
+      "quote_volume_usdt": 37094900.07,
+      "fifteen_min_strong_bull": false,
+      "reasons": [
+        "Price is rising into nearby prior-high liquidity",
+        "Taker buy ratio weak at 45.3%",
+        "Aggressive buying decelerating -9.0pp",
+        "Upper-wick rejection 37% of candle range",
+        "15m structure is not strongly bullish"
+      ],
+      "bar_closed_at": "2026-09-27T23:04:59.999Z",
+      "invalidation": "A sustained 5m close above 1.642 with taker-buy recovery above 52% weakens/cancels the trap thesis.",
+      "created_at": "2026-09-27T23:08:15.028Z",
+      "source": "Binance closed 5m + 15m candles"
+    },
     {
       "id": "SAGAUSDT-BUY_SIDE_SWEEP_CONFIRMED-1790529299999",
       "symbol": "SAGAUSDT",
