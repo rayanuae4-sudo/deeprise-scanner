@@ -29,7 +29,7 @@ function entryRankingLayer(){load('dr-entry-ranking-v158-loader','./deeprise-ent
 function integrityLayer(){load('dr-integrity-v158-loader','./deeprise-integrity-v158.js?v=1580')}
 function signalCardUiLayer(){load('dr-signal-card-ui-v153-loader','./deeprise-signal-card-ui-v153.js?v=1531')}
 function whaleInlineLayer(){load('dr-whale-inline-v156-loader','./deeprise-whale-inline-v156.js?v=1560')}
-function preMoveLayer(){load('dr-pre-move-v170-loader','./deeprise-pre-move-v170.js?v=1700')}
+function preMoveLayer(){load('dr-pre-move-v170-loader','./deeprise-pre-move-v170.js?v=1710')}
 function idle(fn,delay=0){setTimeout(()=>{if(document.hidden)return;if('requestIdleCallback'in window)requestIdleCallback(fn,{timeout:MOBILE?3000:1800});else setTimeout(fn,0)},delay)}
 function progressiveLayers(){const primary=[nextCandleLayer,signalEngineLayer,uiLayer,preMoveLayer,forecastSafetyLayer,tradeMonitorLayer];const secondary=[tradeZonesLayer,moveTimingLayer,entryRankingLayer,integrityLayer,signalCardUiLayer,publicLiquidityLayer,whaleLayer,whaleFlowLayer,whaleInlineLayer];if(MOBILE){primary.forEach((fn,i)=>idle(fn,2600+i*1200));secondary.forEach((fn,i)=>idle(fn,14000+i*1700))}else{[...primary,...secondary].forEach((fn,i)=>idle(fn,900+i*420))}}
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;button()});
