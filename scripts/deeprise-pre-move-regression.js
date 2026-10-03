@@ -11,7 +11,7 @@ vm.createContext(context);
 vm.runInContext(fs.readFileSync('deeprise-pre-move-v170.js','utf8'),context,{filename:'deeprise-pre-move-v170.js'});
 
 const api=window.DeepRisePreMove;
-assert(api&&api.version==='17.0','V17 pre-move API unavailable');
+assert(api&&api.version==='17.1','V17.1 pre-move API unavailable');
 const fixture=JSON.parse(fs.readFileSync('scripts/fixtures/arb-usdt-4h-pre-move-2026.json','utf8'));
 
 function analyseAt(openTime){
@@ -30,6 +30,7 @@ assert(armed.price<=0.0755,`expected pre-move price near 0.075, got ${armed.pric
 assert(armed.score>=72,'ARMED score below gate');
 assert(armed.extended===false,'pre-move ARB setup incorrectly marked extended');
 assert(armed.atrRatio<=.92||armed.bbRatio<=.92,'ARMED must have relative volatility compression');
+assert(armed.timing&&armed.timing.activationWindow&&armed.timing.holdingWindow,'ARMED must include a model time window');
 
 const stable=[];
 for(let i=0;i<100;i++){
@@ -42,5 +43,6 @@ const expanded=fixture.bars.slice(),p=Number(expanded.at(-1)[4]),end=Number(expa
 const late=api.analyse(expanded,fixture.symbol,20_000_000,p*1.17,end+5000);
 assert(late&&late.stage==='LATE',`extended move must be LATE, got ${late?.stage}`);
 assert(late.extended===true,'late move missing anti-chase flag');
+assert(late.timing.horizon==='NO ENTRY','late move must not propose a holding horizon');
 
 console.log(`DeepRise V17 pre-move regression: PASS — ARB WATCH ${watch.price.toFixed(4)}, ARMED ${armed.price.toFixed(4)}, extended entry blocked.`);

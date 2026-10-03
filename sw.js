@@ -1,10 +1,11 @@
-const CACHE='deeprise-pwa-network-v17-0-0';
+const CACHE='deeprise-pwa-network-v17-1-0';
 const STATIC_CORE=[
   './manifest.json',
   './icon.svg',
   './mobile-app-v11.css?v=1310',
   './deeprise-analytics-config.js?v=1700',
-  './deeprise-pre-move-v170.js?v=1700',
+  './deeprise-pre-move-v170.js?v=1710',
+  './deeprise-signal-stability-v171.js?v=1710',
   './deeprise-fast-search-v160.js?v=1601',
   './deeprise-v13-gate-hotfix.js?v=1700',
   './mobile-app-v11.js?v=1310',
