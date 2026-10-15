@@ -1,37 +1,173 @@
 {
   "version": "14.8",
-  "generated_at": "2026-10-15T04:26:58.449Z",
+  "generated_at": "2026-10-15T09:20:50.024Z",
   "status": "OK",
   "method": "public fallback; no paid/private data",
   "symbols": {
-    "RAYUSDT": {
-      "symbol": "RAYUSDT",
-      "captured_at": "2026-10-15T04:26:59.789Z",
+    "AUSDT": {
+      "symbol": "AUSDT",
+      "captured_at": "2026-10-15T09:20:51.412Z",
       "provider": "Binance public spot market data",
       "large_orders_public": {
-        "mid_price": 1.8042,
-        "bias": "BALANCED",
-        "buy_wall_ratio": 0.48279575408489067,
+        "mid_price": 0.09665,
+        "bias": "BUY_WALLS",
+        "buy_wall_ratio": 0.6669948609975183,
         "top_bid_walls": [],
         "top_ask_walls": [],
-        "visible_bid_wall_usd": 69521.19046,
-        "visible_ask_wall_usd": 74475.91364,
+        "visible_bid_wall_usd": 40534.6404,
+        "visible_ask_wall_usd": 20237.40264,
         "dynamic_large_threshold_usd": 50000.0,
+        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
+      },
+      "liquidity_proxy": {
+        "bias": "UPPER_LIQUIDITY_MAGNET",
+        "upper_zone": {
+          "price": 0.09755,
+          "quote_volume_usd": 248280.22606,
+          "distance_pct": 0.9311950336264853
+        },
+        "lower_zone": {
+          "price": 0.09575,
+          "quote_volume_usd": 0.0,
+          "distance_pct": -0.9311950336264853
+        },
+        "upper_share": 1.0,
+        "window": "24h closed 15m candles",
+        "method": "volume-at-price concentration proxy",
+        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
+      },
+      "combined_bias": "UP",
+      "evidence_strength": 100,
+      "exact_coinglass": false,
+      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
+    },
+    "WLFIUSDT": {
+      "symbol": "WLFIUSDT",
+      "captured_at": "2026-10-15T09:20:52.913Z",
+      "provider": "Binance public spot market data",
+      "large_orders_public": {
+        "mid_price": 0.057050000000000003,
+        "bias": "BALANCED",
+        "buy_wall_ratio": 0.5048597103214365,
+        "top_bid_walls": [],
+        "top_ask_walls": [],
+        "visible_bid_wall_usd": 289851.11812,
+        "visible_ask_wall_usd": 284270.98391,
+        "dynamic_large_threshold_usd": 50000.0,
+        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
+      },
+      "liquidity_proxy": {
+        "bias": "LOWER_LIQUIDITY_MAGNET",
+        "upper_zone": {
+          "price": 0.057056249999999996,
+          "quote_volume_usd": 165162.84825,
+          "distance_pct": 0.01095530236633194
+        },
+        "lower_zone": {
+          "price": 0.05698125,
+          "quote_volume_usd": 1595778.9970900002,
+          "distance_pct": -0.12050832602980947
+        },
+        "upper_share": 0.09379233544087345,
+        "window": "24h closed 15m candles",
+        "method": "volume-at-price concentration proxy",
+        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
+      },
+      "combined_bias": "DOWN",
+      "evidence_strength": 84.2,
+      "exact_coinglass": false,
+      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
+    },
+    "BTCUSDT": {
+      "symbol": "BTCUSDT",
+      "captured_at": "2026-10-15T09:20:54.539Z",
+      "provider": "Binance public spot market data",
+      "large_orders_public": {
+        "mid_price": 81310.42499999999,
+        "bias": "BALANCED",
+        "buy_wall_ratio": 0.5133476788994513,
+        "top_bid_walls": [
+          {
+            "price": 81310.42,
+            "quantity": 6.86568,
+            "usd": 558251.3243856,
+            "distance_pct": 6.149272974658167e-06
+          },
+          {
+            "price": 81207.55,
+            "quantity": 3.87895,
+            "usd": 315000.02607250004,
+            "distance_pct": 0.12652129170396717
+          },
+          {
+            "price": 81214.69,
+            "quantity": 2.84029,
+            "usd": 230673.2718601,
+            "distance_pct": 0.1177401298787776
+          },
+          {
+            "price": 81308.0,
+            "quantity": 2.83308,
+            "usd": 230352.06863999998,
+            "distance_pct": 0.0029823973985972385
+          },
+          {
+            "price": 81218.53,
+            "quantity": 2.4685,
+            "usd": 200487.94130500001,
+            "distance_pct": 0.11301748822489802
+          }
+        ],
+        "top_ask_walls": [
+          {
+            "price": 81348.97,
+            "quantity": 3.87221,
+            "usd": 315000.2951237,
+            "distance_pct": 0.04740474545547242
+          },
+          {
+            "price": 81399.95,
+            "quantity": 3.69048,
+            "usd": 300404.887476,
+            "distance_pct": 0.1101027328291652
+          },
+          {
+            "price": 81367.42,
+            "quantity": 3.68698,
+            "usd": 300000.0501916,
+            "distance_pct": 0.07009556277686398
+          },
+          {
+            "price": 81326.94,
+            "quantity": 2.6,
+            "usd": 211450.04400000002,
+            "distance_pct": 0.0203110486755099
+          },
+          {
+            "price": 81353.85,
+            "quantity": 2.56456,
+            "usd": 208636.82955600004,
+            "distance_pct": 0.053406435890622224
+          }
+        ],
+        "visible_bid_wall_usd": 3260632.0914604003,
+        "visible_ask_wall_usd": 3091071.1020765,
+        "dynamic_large_threshold_usd": 90561.654109692,
         "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
       },
       "liquidity_proxy": {
         "bias": "BALANCED",
         "upper_zone": {
-          "price": 1.8652499999999999,
-          "quote_volume_usd": 1811505.8925700001,
-          "distance_pct": 3.383771200532082
+          "price": 81654.95468750001,
+          "quote_volume_usd": 187533190.9435587,
+          "distance_pct": 0.42372142010083014
         },
         "lower_zone": {
-          "price": 1.78965,
-          "quote_volume_usd": 1541043.4907799999,
-          "distance_pct": -0.8064516129032293
+          "price": 80959.95781250001,
+          "quote_volume_usd": 185178480.75365427,
+          "distance_pct": -0.4310236817726346
         },
-        "upper_share": 0.5403368259291298,
+        "upper_share": 0.5031588897916476,
         "window": "24h closed 15m candles",
         "method": "volume-at-price concentration proxy",
         "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
@@ -41,753 +177,666 @@
       "exact_coinglass": false,
       "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
     },
-    "CRVUSDT": {
-      "symbol": "CRVUSDT",
-      "captured_at": "2026-10-15T04:27:01.071Z",
+    "RAYUSDT": {
+      "symbol": "RAYUSDT",
+      "captured_at": "2026-10-15T09:20:55.907Z",
       "provider": "Binance public spot market data",
       "large_orders_public": {
-        "mid_price": 0.3338,
+        "mid_price": 1.79645,
         "bias": "BUY_WALLS",
-        "buy_wall_ratio": 0.6410587222972876,
+        "buy_wall_ratio": 0.7045387631879779,
         "top_bid_walls": [],
         "top_ask_walls": [],
-        "visible_bid_wall_usd": 118057.99417,
-        "visible_ask_wall_usd": 66102.97278,
-        "dynamic_large_threshold_usd": 50000.0,
-        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
-      },
-      "liquidity_proxy": {
-        "bias": "BALANCED",
-        "upper_zone": {
-          "price": 0.33564375,
-          "quote_volume_usd": 377797.74055,
-          "distance_pct": 0.5523517076093567
-        },
-        "lower_zone": {
-          "price": 0.31775625,
-          "quote_volume_usd": 336097.97487,
-          "distance_pct": -4.80639604553624
-        },
-        "upper_share": 0.5292057822867497,
-        "window": "24h closed 15m candles",
-        "method": "volume-at-price concentration proxy",
-        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
-      },
-      "combined_bias": "UP",
-      "evidence_strength": 67.2,
-      "exact_coinglass": false,
-      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
-    },
-    "JUPUSDT": {
-      "symbol": "JUPUSDT",
-      "captured_at": "2026-10-15T04:27:02.356Z",
-      "provider": "Binance public spot market data",
-      "large_orders_public": {
-        "mid_price": 0.30565,
-        "bias": "BUY_WALLS",
-        "buy_wall_ratio": 0.5770521407968154,
-        "top_bid_walls": [],
-        "top_ask_walls": [],
-        "visible_bid_wall_usd": 142054.18105,
-        "visible_ask_wall_usd": 104117.99475,
+        "visible_bid_wall_usd": 132661.52636000002,
+        "visible_ask_wall_usd": 55634.04131,
         "dynamic_large_threshold_usd": 50000.0,
         "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
       },
       "liquidity_proxy": {
         "bias": "UPPER_LIQUIDITY_MAGNET",
         "upper_zone": {
-          "price": 0.3057020833333333,
-          "quote_volume_usd": 543173.07342,
-          "distance_pct": 0.017040187578387527
+          "price": 1.867065625,
+          "quote_volume_usd": 1670786.9401800002,
+          "distance_pct": 3.930842773247229
         },
         "lower_zone": {
-          "price": 0.30492291666666665,
-          "quote_volume_usd": 158970.9524,
-          "distance_pct": -0.2378810185942492
+          "price": 1.788009375,
+          "quote_volume_usd": 1123898.29179,
+          "distance_pct": -0.46985026023547555
         },
-        "upper_share": 0.7735921028248506,
+        "upper_share": 0.5978444087609275,
         "window": "24h closed 15m candles",
         "method": "volume-at-price concentration proxy",
         "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
       },
       "combined_bias": "UP",
-      "evidence_strength": 81.4,
+      "evidence_strength": 79.7,
       "exact_coinglass": false,
       "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
     },
-    "BNCBUSDT": {
-      "symbol": "BNCBUSDT",
-      "captured_at": "2026-10-15T04:27:03.393Z",
+    "CRVUSDT": {
+      "symbol": "CRVUSDT",
+      "captured_at": "2026-10-15T09:20:57.331Z",
       "provider": "Binance public spot market data",
       "large_orders_public": {
-        "mid_price": 4.725,
-        "bias": "BUY_WALLS",
-        "buy_wall_ratio": 0.5847808585649902,
+        "mid_price": 0.34305,
+        "bias": "BALANCED",
+        "buy_wall_ratio": 0.5580715417050156,
         "top_bid_walls": [],
         "top_ask_walls": [],
-        "visible_bid_wall_usd": 272917.553,
-        "visible_ask_wall_usd": 193783.005,
+        "visible_bid_wall_usd": 141415.34512,
+        "visible_ask_wall_usd": 111984.68436,
+        "dynamic_large_threshold_usd": 50000.0,
+        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
+      },
+      "liquidity_proxy": {
+        "bias": "BALANCED",
+        "upper_zone": {
+          "price": 0.34904999999999997,
+          "quote_volume_usd": 597744.9274,
+          "distance_pct": 1.7490161783996354
+        },
+        "lower_zone": {
+          "price": 0.33105,
+          "quote_volume_usd": 659707.90432,
+          "distance_pct": -3.4980323567993037
+        },
+        "upper_share": 0.4753617092598041,
+        "window": "24h closed 15m candles",
+        "method": "volume-at-price concentration proxy",
+        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
+      },
+      "combined_bias": "NEUTRAL",
+      "evidence_strength": 54.0,
+      "exact_coinglass": false,
+      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
+    },
+    "USD1USDT": {
+      "symbol": "USD1USDT",
+      "captured_at": "2026-10-15T09:20:58.549Z",
+      "provider": "Binance public spot market data",
+      "large_orders_public": {
+        "mid_price": 1.0003250000000001,
+        "bias": "BALANCED",
+        "buy_wall_ratio": 0.5447113461174455,
+        "top_bid_walls": [
+          {
+            "price": 0.9979,
+            "quantity": 1929383.0,
+            "usd": 1925331.2957000001,
+            "distance_pct": 0.24242121310575274
+          },
+          {
+            "price": 0.9978,
+            "quantity": 1430256.0,
+            "usd": 1427109.4368,
+            "distance_pct": 0.25241796416165846
+          },
+          {
+            "price": 0.99911,
+            "quantity": 956559.0,
+            "usd": 955707.66249,
+            "distance_pct": 0.12146052532927569
+          },
+          {
+            "price": 0.99895,
+            "quantity": 909371.0,
+            "usd": 908416.16045,
+            "distance_pct": 0.1374553270187315
+          },
+          {
+            "price": 1.00022,
+            "quantity": 595648.0,
+            "usd": 595779.0425600001,
+            "distance_pct": 0.010496588608704345
+          }
+        ],
+        "top_ask_walls": [
+          {
+            "price": 1.0013,
+            "quantity": 1459026.0,
+            "usd": 1460922.7338,
+            "distance_pct": 0.0974683227950864
+          },
+          {
+            "price": 1.00121,
+            "quantity": 1378218.0,
+            "usd": 1379885.6437799998,
+            "distance_pct": 0.08847124684475571
+          },
+          {
+            "price": 1.00099,
+            "quantity": 1093809.0,
+            "usd": 1094891.87091,
+            "distance_pct": 0.06647839452177198
+          },
+          {
+            "price": 1.00235,
+            "quantity": 934134.0,
+            "usd": 936329.2149,
+            "distance_pct": 0.20243420888210764
+          },
+          {
+            "price": 1.00236,
+            "quantity": 909660.0,
+            "usd": 911806.7975999999,
+            "distance_pct": 0.20343388398768267
+          }
+        ],
+        "visible_bid_wall_usd": 11174779.3827,
+        "visible_ask_wall_usd": 9340268.56398,
+        "dynamic_large_threshold_usd": 429334.6923,
+        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
+      },
+      "liquidity_proxy": {
+        "bias": "LOWER_LIQUIDITY_MAGNET",
+        "upper_zone": {
+          "price": 1.000345,
+          "quote_volume_usd": 2696184.88784,
+          "distance_pct": 0.0019993502111722667
+        },
+        "lower_zone": {
+          "price": 1.000285,
+          "quote_volume_usd": 19190284.272910003,
+          "distance_pct": -0.003998700422366731
+        },
+        "upper_share": 0.1231895774525016,
+        "window": "24h closed 15m candles",
+        "method": "volume-at-price concentration proxy",
+        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
+      },
+      "combined_bias": "DOWN",
+      "evidence_strength": 77.5,
+      "exact_coinglass": false,
+      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
+    },
+    "SPCXBUSDT": {
+      "symbol": "SPCXBUSDT",
+      "captured_at": "2026-10-15T09:20:59.926Z",
+      "provider": "Binance public spot market data",
+      "large_orders_public": {
+        "mid_price": 148.745,
+        "bias": "BALANCED",
+        "buy_wall_ratio": 0.5655859449881,
+        "top_bid_walls": [
+          {
+            "price": 145.0,
+            "quantity": 583.567,
+            "usd": 84617.215,
+            "distance_pct": 2.517731688460119
+          }
+        ],
+        "top_ask_walls": [],
+        "visible_bid_wall_usd": 384544.81841,
+        "visible_ask_wall_usd": 295360.36986,
+        "dynamic_large_threshold_usd": 50000.0,
+        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
+      },
+      "liquidity_proxy": {
+        "bias": "UPPER_LIQUIDITY_MAGNET",
+        "upper_zone": {
+          "price": 149.263125,
+          "quote_volume_usd": 5711174.1043,
+          "distance_pct": 0.34833103633735435
+        },
+        "lower_zone": {
+          "price": 148.66687499999998,
+          "quote_volume_usd": 2196663.49166,
+          "distance_pct": -0.052522773874771195
+        },
+        "upper_share": 0.7222169189738743,
+        "window": "24h closed 15m candles",
+        "method": "volume-at-price concentration proxy",
+        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
+      },
+      "combined_bias": "UP",
+      "evidence_strength": 75.9,
+      "exact_coinglass": false,
+      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
+    },
+    "BNBUSDT": {
+      "symbol": "BNBUSDT",
+      "captured_at": "2026-10-15T09:21:01.302Z",
+      "provider": "Binance public spot market data",
+      "large_orders_public": {
+        "mid_price": 722.695,
+        "bias": "BALANCED",
+        "buy_wall_ratio": 0.5489271682795794,
+        "top_bid_walls": [
+          {
+            "price": 716.32,
+            "quantity": 360.322,
+            "usd": 258105.85504000002,
+            "distance_pct": 0.8821148617328195
+          },
+          {
+            "price": 717.74,
+            "quantity": 359.026,
+            "usd": 257687.32124000002,
+            "distance_pct": 0.6856281003742991
+          },
+          {
+            "price": 719.98,
+            "quantity": 249.434,
+            "usd": 179587.49132,
+            "distance_pct": 0.3756771528791581
+          },
+          {
+            "price": 718.3,
+            "quantity": 250.008,
+            "usd": 179580.7464,
+            "distance_pct": 0.6081403635005217
+          },
+          {
+            "price": 718.23,
+            "quantity": 235.62,
+            "usd": 169229.3526,
+            "distance_pct": 0.617826330609736
+          }
+        ],
+        "top_ask_walls": [
+          {
+            "price": 727.58,
+            "quantity": 357.047,
+            "usd": 259780.25626000002,
+            "distance_pct": 0.675942133265069
+          },
+          {
+            "price": 724.97,
+            "quantity": 249.441,
+            "usd": 180837.24177000002,
+            "distance_pct": 0.3147939310497481
+          },
+          {
+            "price": 726.84,
+            "quantity": 235.667,
+            "usd": 171292.20228,
+            "distance_pct": 0.5735476238247091
+          },
+          {
+            "price": 728.56,
+            "quantity": 219.94,
+            "usd": 160239.4864,
+            "distance_pct": 0.8115456727941793
+          },
+          {
+            "price": 725.36,
+            "quantity": 111.994,
+            "usd": 81235.96784,
+            "distance_pct": 0.36875860494398927
+          }
+        ],
+        "visible_bid_wall_usd": 1936610.4525900001,
+        "visible_ask_wall_usd": 1591381.17271,
         "dynamic_large_threshold_usd": 50000.0,
         "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
       },
       "liquidity_proxy": {
         "bias": "LOWER_LIQUIDITY_MAGNET",
         "upper_zone": {
-          "price": 5.0240625,
-          "quote_volume_usd": 350120.768,
-          "distance_pct": 6.329365079365094
+          "price": 729.6603125,
+          "quote_volume_usd": 10035739.611510001,
+          "distance_pct": 0.9637969682922922
         },
         "lower_zone": {
-          "price": 4.716770833333333,
-          "quote_volume_usd": 661340.2239999999,
-          "distance_pct": -0.1741622574955828
+          "price": 717.4303125,
+          "quote_volume_usd": 17621277.23278,
+          "distance_pct": -0.7284798566476918
         },
-        "upper_share": 0.34615350544334195,
+        "upper_share": 0.36286413925303573,
+        "window": "24h closed 15m candles",
+        "method": "volume-at-price concentration proxy",
+        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
+      },
+      "combined_bias": "NEUTRAL",
+      "evidence_strength": 56.6,
+      "exact_coinglass": false,
+      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
+    },
+    "XAUTUSDT": {
+      "symbol": "XAUTUSDT",
+      "captured_at": "2026-10-15T09:21:02.756Z",
+      "provider": "Binance public spot market data",
+      "large_orders_public": {
+        "mid_price": 4156.075,
+        "bias": "BALANCED",
+        "buy_wall_ratio": 0.48578423764627887,
+        "top_bid_walls": [
+          {
+            "price": 4116.58,
+            "quantity": 121.4601,
+            "usd": 500000.218458,
+            "distance_pct": 0.9502956515462279
+          },
+          {
+            "price": 4128.27,
+            "quantity": 51.6057,
+            "usd": 213042.26313900002,
+            "distance_pct": 0.6690206504935398
+          },
+          {
+            "price": 4138.68,
+            "quantity": 36.1234,
+            "usd": 149503.193112,
+            "distance_pct": 0.4185439386921441
+          },
+          {
+            "price": 4144.81,
+            "quantity": 20.6425,
+            "usd": 85559.240425,
+            "distance_pct": 0.27104900657469894
+          },
+          {
+            "price": 4148.48,
+            "quantity": 15.0345,
+            "usd": 62370.32255999999,
+            "distance_pct": 0.18274453661207402
+          }
+        ],
+        "top_ask_walls": [
+          {
+            "price": 4191.35,
+            "quantity": 119.5563,
+            "usd": 501102.298005,
+            "distance_pct": 0.8487575416709408
+          },
+          {
+            "price": 4182.3,
+            "quantity": 51.6057,
+            "usd": 215830.51911,
+            "distance_pct": 0.6310040121990187
+          },
+          {
+            "price": 4171.94,
+            "quantity": 36.1234,
+            "usd": 150704.65739599997,
+            "distance_pct": 0.38173035857148346
+          },
+          {
+            "price": 4200.0,
+            "quantity": 22.5415,
+            "usd": 94674.3,
+            "distance_pct": 1.0568866057518256
+          },
+          {
+            "price": 4165.59,
+            "quantity": 20.6425,
+            "usd": 85988.19157499999,
+            "distance_pct": 0.2289419704889909
+          }
+        ],
+        "visible_bid_wall_usd": 1467941.197314,
+        "visible_ask_wall_usd": 1553855.4843289999,
+        "dynamic_large_threshold_usd": 50000.0,
+        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
+      },
+      "liquidity_proxy": {
+        "bias": "LOWER_LIQUIDITY_MAGNET",
+        "upper_zone": {
+          "price": 4156.7303125,
+          "quote_volume_usd": 0.0,
+          "distance_pct": 0.015767581191389386
+        },
+        "lower_zone": {
+          "price": 4104.0496875,
+          "quote_volume_usd": 12789070.967906002,
+          "distance_pct": -1.251789549033642
+        },
+        "upper_share": 0.0,
+        "window": "24h closed 15m candles",
+        "method": "volume-at-price concentration proxy",
+        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
+      },
+      "combined_bias": "DOWN",
+      "evidence_strength": 94.2,
+      "exact_coinglass": false,
+      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
+    },
+    "SUIUSDT": {
+      "symbol": "SUIUSDT",
+      "captured_at": "2026-10-15T09:21:04.146Z",
+      "provider": "Binance public spot market data",
+      "large_orders_public": {
+        "mid_price": 0.99385,
+        "bias": "BUY_WALLS",
+        "buy_wall_ratio": 0.6089692899377375,
+        "top_bid_walls": [
+          {
+            "price": 0.955,
+            "quantity": 70363.2,
+            "usd": 67196.856,
+            "distance_pct": 3.9090405996880873
+          },
+          {
+            "price": 0.96,
+            "quantity": 64419.8,
+            "usd": 61843.008,
+            "distance_pct": 3.405946571414202
+          }
+        ],
+        "top_ask_walls": [],
+        "visible_bid_wall_usd": 578018.13908,
+        "visible_ask_wall_usd": 371156.39013,
+        "dynamic_large_threshold_usd": 50000.0,
+        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
+      },
+      "liquidity_proxy": {
+        "bias": "BALANCED",
+        "upper_zone": {
+          "price": 1.0385333333333333,
+          "quote_volume_usd": 6060270.45843,
+          "distance_pct": 4.495983632674276
+        },
+        "lower_zone": {
+          "price": 0.9852,
+          "quote_volume_usd": 8230266.30844,
+          "distance_pct": -0.8703526689138246
+        },
+        "upper_share": 0.42407577526966167,
+        "window": "24h closed 15m candles",
+        "method": "volume-at-price concentration proxy",
+        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
+      },
+      "combined_bias": "NEUTRAL",
+      "evidence_strength": 54.9,
+      "exact_coinglass": false,
+      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
+    },
+    "DOGEUSDT": {
+      "symbol": "DOGEUSDT",
+      "captured_at": "2026-10-15T09:21:05.521Z",
+      "provider": "Binance public spot market data",
+      "large_orders_public": {
+        "mid_price": 0.080055,
+        "bias": "BALANCED",
+        "buy_wall_ratio": 0.56456572408035,
+        "top_bid_walls": [
+          {
+            "price": 0.0779,
+            "quantity": 1750662.0,
+            "usd": 136376.5698,
+            "distance_pct": 2.6918993192180425
+          },
+          {
+            "price": 0.07981,
+            "quantity": 1693517.0,
+            "usd": 135159.59177,
+            "distance_pct": 0.3060395977765226
+          },
+          {
+            "price": 0.07993,
+            "quantity": 1686845.0,
+            "usd": 134829.52085,
+            "distance_pct": 0.15614265192680046
+          },
+          {
+            "price": 0.07945,
+            "quantity": 1650277.0,
+            "usd": 131114.50765,
+            "distance_pct": 0.7557304353257066
+          },
+          {
+            "price": 0.078,
+            "quantity": 1570885.0,
+            "usd": 122529.03,
+            "distance_pct": 2.566985197676599
+          }
+        ],
+        "top_ask_walls": [
+          {
+            "price": 0.08025,
+            "quantity": 2023553.0,
+            "usd": 162390.12825,
+            "distance_pct": 0.2435825370058094
+          },
+          {
+            "price": 0.08059,
+            "quantity": 1641658.0,
+            "usd": 132301.21821999998,
+            "distance_pct": 0.6682905502466976
+          },
+          {
+            "price": 0.0803,
+            "quantity": 1318884.0,
+            "usd": 105906.38519999999,
+            "distance_pct": 0.3060395977765226
+          },
+          {
+            "price": 0.08065,
+            "quantity": 1251057.0,
+            "usd": 100897.74705,
+            "distance_pct": 0.7432390231715674
+          },
+          {
+            "price": 0.08037,
+            "quantity": 961302.0,
+            "usd": 77259.84174,
+            "distance_pct": 0.39347948285553164
+          }
+        ],
+        "visible_bid_wall_usd": 1524161.16019,
+        "visible_ask_wall_usd": 1175544.28628,
+        "dynamic_large_threshold_usd": 50000.0,
+        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
+      },
+      "liquidity_proxy": {
+        "bias": "LOWER_LIQUIDITY_MAGNET",
+        "upper_zone": {
+          "price": 0.0818765625,
+          "quote_volume_usd": 8543772.23237,
+          "distance_pct": 2.275388795203296
+        },
+        "lower_zone": {
+          "price": 0.0792946875,
+          "quote_volume_usd": 15367210.78855,
+          "distance_pct": -0.9497376803447616
+        },
+        "upper_share": 0.3573158085928526,
+        "window": "24h closed 15m candles",
+        "method": "volume-at-price concentration proxy",
+        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
+      },
+      "combined_bias": "NEUTRAL",
+      "evidence_strength": 55.5,
+      "exact_coinglass": false,
+      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
+    },
+    "XRPUSDT": {
+      "symbol": "XRPUSDT",
+      "captured_at": "2026-10-15T09:21:06.905Z",
+      "provider": "Binance public spot market data",
+      "large_orders_public": {
+        "mid_price": 1.31725,
+        "bias": "BALANCED",
+        "buy_wall_ratio": 0.514274870374847,
+        "top_bid_walls": [
+          {
+            "price": 1.28,
+            "quantity": 402978.1,
+            "usd": 515811.968,
+            "distance_pct": 2.8278610742076298
+          },
+          {
+            "price": 1.27,
+            "quantity": 136703.6,
+            "usd": 173613.57200000001,
+            "distance_pct": 3.587018409565383
+          },
+          {
+            "price": 1.3139,
+            "quantity": 119361.4,
+            "usd": 156828.94346,
+            "distance_pct": 0.2543177073448445
+          },
+          {
+            "price": 1.3104,
+            "quantity": 108835.8,
+            "usd": 142618.43232,
+            "distance_pct": 0.5200227747200624
+          },
+          {
+            "price": 1.31,
+            "quantity": 93767.0,
+            "usd": 122834.77,
+            "distance_pct": 0.5503890681343693
+          }
+        ],
+        "top_ask_walls": [
+          {
+            "price": 1.3243,
+            "quantity": 183483.9,
+            "usd": 242987.72877,
+            "distance_pct": 0.5352059214272158
+          },
+          {
+            "price": 1.3475,
+            "quantity": 171108.7,
+            "usd": 230568.97325,
+            "distance_pct": 2.296450939457194
+          },
+          {
+            "price": 1.35,
+            "quantity": 102671.6,
+            "usd": 138606.66,
+            "distance_pct": 2.486240273296645
+          },
+          {
+            "price": 1.3191,
+            "quantity": 96728.3,
+            "usd": 127594.30053,
+            "distance_pct": 0.14044410704117724
+          },
+          {
+            "price": 1.323,
+            "quantity": 94853.6,
+            "usd": 125491.3128,
+            "distance_pct": 0.43651546783070194
+          }
+        ],
+        "visible_bid_wall_usd": 2117114.55216,
+        "visible_ask_wall_usd": 1999583.8792,
+        "dynamic_large_threshold_usd": 50000.0,
+        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
+      },
+      "liquidity_proxy": {
+        "bias": "BALANCED",
+        "upper_zone": {
+          "price": 1.332915625,
+          "quote_volume_usd": 15705675.81417,
+          "distance_pct": 1.189267413171381
+        },
+        "lower_zone": {
+          "price": 1.301884375,
+          "quote_volume_usd": 20676408.60366,
+          "distance_pct": -1.166492693110651
+        },
+        "upper_share": 0.4316870807565116,
         "window": "24h closed 15m candles",
         "method": "volume-at-price concentration proxy",
         "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
       },
       "combined_bias": "NEUTRAL",
       "evidence_strength": 54.3,
-      "exact_coinglass": false,
-      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
-    },
-    "WLFIUSDT": {
-      "symbol": "WLFIUSDT",
-      "captured_at": "2026-10-15T04:27:04.566Z",
-      "provider": "Binance public spot market data",
-      "large_orders_public": {
-        "mid_price": 0.05685,
-        "bias": "BALANCED",
-        "buy_wall_ratio": 0.537482370836945,
-        "top_bid_walls": [],
-        "top_ask_walls": [],
-        "visible_bid_wall_usd": 326109.27873,
-        "visible_ask_wall_usd": 280625.5584,
-        "dynamic_large_threshold_usd": 50000.0,
-        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
-      },
-      "liquidity_proxy": {
-        "bias": "UPPER_LIQUIDITY_MAGNET",
-        "upper_zone": {
-          "price": 0.056990625,
-          "quote_volume_usd": 1170460.0654199996,
-          "distance_pct": 0.24736147757256877
-        },
-        "lower_zone": {
-          "price": 0.056090625,
-          "quote_volume_usd": 759694.4908500001,
-          "distance_pct": -1.33575197889182
-        },
-        "upper_share": 0.6064074307509859,
-        "window": "24h closed 15m candles",
-        "method": "volume-at-price concentration proxy",
-        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
-      },
-      "combined_bias": "NEUTRAL",
-      "evidence_strength": 63.0,
-      "exact_coinglass": false,
-      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
-    },
-    "ETHUSDT": {
-      "symbol": "ETHUSDT",
-      "captured_at": "2026-10-15T04:27:05.872Z",
-      "provider": "Binance public spot market data",
-      "large_orders_public": {
-        "mid_price": 2374.855,
-        "bias": "BALANCED",
-        "buy_wall_ratio": 0.5302963431974295,
-        "top_bid_walls": [
-          {
-            "price": 2365.37,
-            "quantity": 152.3115,
-            "usd": 360273.05275499995,
-            "distance_pct": 0.399392805034418
-          },
-          {
-            "price": 2371.13,
-            "quantity": 106.0889,
-            "usd": 251550.573457,
-            "distance_pct": 0.15685168147107548
-          },
-          {
-            "price": 2369.06,
-            "quantity": 105.762,
-            "usd": 250556.52372,
-            "distance_pct": 0.24401489775165525
-          },
-          {
-            "price": 2364.13,
-            "quantity": 102.0982,
-            "usd": 241373.41756600002,
-            "distance_pct": 0.4516065191348486
-          },
-          {
-            "price": 2370.51,
-            "quantity": 98.2251,
-            "usd": 232843.58180100002,
-            "distance_pct": 0.18295853852129076
-          }
-        ],
-        "top_ask_walls": [
-          {
-            "price": 2377.81,
-            "quantity": 147.9412,
-            "usd": 351776.064772,
-            "distance_pct": 0.12442864932806118
-          },
-          {
-            "price": 2377.8,
-            "quantity": 91.8299,
-            "usd": 218353.13622000001,
-            "distance_pct": 0.12400757098855145
-          },
-          {
-            "price": 2380.31,
-            "quantity": 90.0364,
-            "usd": 214314.54328399998,
-            "distance_pct": 0.22969823420798013
-          },
-          {
-            "price": 2378.98,
-            "quantity": 89.057,
-            "usd": 211864.82186,
-            "distance_pct": 0.17369481505186632
-          },
-          {
-            "price": 2378.97,
-            "quantity": 88.4599,
-            "usd": 210443.44830299998,
-            "distance_pct": 0.17327373671233745
-          }
-        ],
-        "visible_bid_wall_usd": 3645285.637596,
-        "visible_ask_wall_usd": 3228768.246345,
-        "dynamic_large_threshold_usd": 57616.450001280034,
-        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
-      },
-      "liquidity_proxy": {
-        "bias": "BALANCED",
-        "upper_zone": {
-          "price": 2422.0070833333334,
-          "quote_volume_usd": 141697592.745615,
-          "distance_pct": 1.985472095489341
-        },
-        "lower_zone": {
-          "price": 2360.045416666667,
-          "quote_volume_usd": 124187524.37449901,
-          "distance_pct": -0.6235994758978208
-        },
-        "upper_share": 0.532927883592683,
-        "window": "24h closed 15m candles",
-        "method": "volume-at-price concentration proxy",
-        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
-      },
-      "combined_bias": "NEUTRAL",
-      "evidence_strength": 56.0,
-      "exact_coinglass": false,
-      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
-    },
-    "USD1USDT": {
-      "symbol": "USD1USDT",
-      "captured_at": "2026-10-15T04:27:07.035Z",
-      "provider": "Binance public spot market data",
-      "large_orders_public": {
-        "mid_price": 1.000135,
-        "bias": "BALANCED",
-        "buy_wall_ratio": 0.470875967911177,
-        "top_bid_walls": [
-          {
-            "price": 0.9979,
-            "quantity": 1929383.0,
-            "usd": 1925331.2957000001,
-            "distance_pct": 0.22346983157273637
-          },
-          {
-            "price": 0.9978,
-            "quantity": 1430256.0,
-            "usd": 1427109.4368,
-            "distance_pct": 0.23346848175496066
-          },
-          {
-            "price": 0.99901,
-            "quantity": 998412.0,
-            "usd": 997423.5721199999,
-            "distance_pct": 0.11248481455004
-          },
-          {
-            "price": 0.99895,
-            "quantity": 908511.0,
-            "usd": 907557.06345,
-            "distance_pct": 0.11848400465937015
-          },
-          {
-            "price": 0.9984,
-            "quantity": 514480.0,
-            "usd": 513656.832,
-            "distance_pct": 0.1734765806616149
-          }
-        ],
-        "top_ask_walls": [
-          {
-            "price": 1.0002,
-            "quantity": 1463216.0,
-            "usd": 1463508.6432,
-            "distance_pct": 0.006499122618444684
-          },
-          {
-            "price": 1.0013,
-            "quantity": 1459026.0,
-            "usd": 1460922.7338,
-            "distance_pct": 0.11648427462293418
-          },
-          {
-            "price": 1.0005,
-            "quantity": 1454183.0,
-            "usd": 1454910.0914999999,
-            "distance_pct": 0.03649507316511758
-          },
-          {
-            "price": 1.00121,
-            "quantity": 1378218.0,
-            "usd": 1379885.6437799998,
-            "distance_pct": 0.10748548945891676
-          },
-          {
-            "price": 1.00099,
-            "quantity": 1093809.0,
-            "usd": 1094891.87091,
-            "distance_pct": 0.08548845905803218
-          }
-        ],
-        "visible_bid_wall_usd": 10791636.29407,
-        "visible_ask_wall_usd": 12126577.905609999,
-        "dynamic_large_threshold_usd": 435260.4525000001,
-        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
-      },
-      "liquidity_proxy": {
-        "bias": "UPPER_LIQUIDITY_MAGNET",
-        "upper_zone": {
-          "price": 1.0002489583333334,
-          "quote_volume_usd": 20485407.924580004,
-          "distance_pct": 0.011394295103499628
-        },
-        "lower_zone": {
-          "price": 1.0001214583333333,
-          "quote_volume_usd": 11312740.88381,
-          "distance_pct": -0.0013539838788435674
-        },
-        "upper_share": 0.6442327208423808,
-        "window": "24h closed 15m candles",
-        "method": "volume-at-price concentration proxy",
-        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
-      },
-      "combined_bias": "NEUTRAL",
-      "evidence_strength": 59.3,
-      "exact_coinglass": false,
-      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
-    },
-    "BTCUSDT": {
-      "symbol": "BTCUSDT",
-      "captured_at": "2026-10-15T04:27:08.328Z",
-      "provider": "Binance public spot market data",
-      "large_orders_public": {
-        "mid_price": 81272.405,
-        "bias": "BUY_WALLS",
-        "buy_wall_ratio": 0.5827565138327668,
-        "top_bid_walls": [
-          {
-            "price": 81272.4,
-            "quantity": 5.70974,
-            "usd": 464044.273176,
-            "distance_pct": 6.152149680640818e-06
-          },
-          {
-            "price": 81149.32,
-            "quantity": 3.70156,
-            "usd": 300379.07693920005,
-            "distance_pct": 0.15144746854727859
-          },
-          {
-            "price": 81264.67,
-            "quantity": 3.23874,
-            "usd": 263195.1373158,
-            "distance_pct": 0.009517375547088317
-          },
-          {
-            "price": 81183.0,
-            "quantity": 2.94031,
-            "usd": 238703.18673000002,
-            "distance_pct": 0.11000658833708542
-          },
-          {
-            "price": 81266.0,
-            "quantity": 2.8107,
-            "usd": 228414.34620000003,
-            "distance_pct": 0.007880903733559794
-          }
-        ],
-        "top_ask_walls": [
-          {
-            "price": 81272.41,
-            "quantity": 3.78566,
-            "usd": 307669.7116406,
-            "distance_pct": 6.152149680640818e-06
-          },
-          {
-            "price": 81305.74,
-            "quantity": 1.99013,
-            "usd": 161808.99234620002,
-            "distance_pct": 0.041016381882640736
-          },
-          {
-            "price": 81303.14,
-            "quantity": 1.47244,
-            "usd": 119713.9954616,
-            "distance_pct": 0.037817264051679754
-          },
-          {
-            "price": 81301.63,
-            "quantity": 1.2587,
-            "usd": 102334.361681,
-            "distance_pct": 0.035959314849863026
-          },
-          {
-            "price": 81313.88,
-            "quantity": 1.21905,
-            "usd": 99125.685414,
-            "distance_pct": 0.05103208155339543
-          }
-        ],
-        "visible_bid_wall_usd": 3026026.5626392,
-        "visible_ask_wall_usd": 2166582.1698435,
-        "dynamic_large_threshold_usd": 83641.26455862752,
-        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
-      },
-      "liquidity_proxy": {
-        "bias": "BALANCED",
-        "upper_zone": {
-          "price": 81737.3259375,
-          "quote_volume_usd": 174343995.7097624,
-          "distance_pct": 0.5720526389000133
-        },
-        "lower_zone": {
-          "price": 81002.2565625,
-          "quote_volume_usd": 148590409.1807595,
-          "distance_pct": -0.3323987243886778
-        },
-        "upper_share": 0.539874330729384,
-        "window": "24h closed 15m candles",
-        "method": "volume-at-price concentration proxy",
-        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
-      },
-      "combined_bias": "NEUTRAL",
-      "evidence_strength": 62.1,
-      "exact_coinglass": false,
-      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
-    },
-    "RLUSDUSDT": {
-      "symbol": "RLUSDUSDT",
-      "captured_at": "2026-10-15T04:27:09.509Z",
-      "provider": "Binance public spot market data",
-      "large_orders_public": {
-        "mid_price": 1.0012500000000002,
-        "bias": "BUY_WALLS",
-        "buy_wall_ratio": 0.573299748065793,
-        "top_bid_walls": [
-          {
-            "price": 1.0012,
-            "quantity": 5716047.0,
-            "usd": 5722906.2564,
-            "distance_pct": 0.004993757802757104
-          },
-          {
-            "price": 1.0,
-            "quantity": 3758712.0,
-            "usd": 3758712.0,
-            "distance_pct": 0.12484394506868367
-          },
-          {
-            "price": 1.0011,
-            "quantity": 1915060.0,
-            "usd": 1917166.566,
-            "distance_pct": 0.014981273408249136
-          }
-        ],
-        "top_ask_walls": [
-          {
-            "price": 1.0013,
-            "quantity": 6265355.0,
-            "usd": 6273499.9615,
-            "distance_pct": 0.004993757802734927
-          }
-        ],
-        "visible_bid_wall_usd": 14345816.2411,
-        "visible_ask_wall_usd": 10677422.1076,
-        "dynamic_large_threshold_usd": 3468584.610333002,
-        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
-      },
-      "liquidity_proxy": {
-        "bias": "LOWER_LIQUIDITY_MAGNET",
-        "upper_zone": {
-          "price": 1.00126875,
-          "quote_volume_usd": 2740969.6549,
-          "distance_pct": 0.001872659176003421
-        },
-        "lower_zone": {
-          "price": 1.00096875,
-          "quote_volume_usd": 6709332.601199999,
-          "distance_pct": -0.028089887640472676
-        },
-        "upper_share": 0.2900404220543056,
-        "window": "24h closed 15m candles",
-        "method": "volume-at-price concentration proxy",
-        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
-      },
-      "combined_bias": "NEUTRAL",
-      "evidence_strength": 60.3,
-      "exact_coinglass": false,
-      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
-    },
-    "SPCXBUSDT": {
-      "symbol": "SPCXBUSDT",
-      "captured_at": "2026-10-15T04:27:10.794Z",
-      "provider": "Binance public spot market data",
-      "large_orders_public": {
-        "mid_price": 149.305,
-        "bias": "BALANCED",
-        "buy_wall_ratio": 0.5653834928877783,
-        "top_bid_walls": [
-          {
-            "price": 147.5,
-            "quantity": 500.08,
-            "usd": 73761.8,
-            "distance_pct": 1.2089347309199334
-          },
-          {
-            "price": 145.0,
-            "quantity": 451.593,
-            "usd": 65480.985,
-            "distance_pct": 2.883359565989087
-          }
-        ],
-        "top_ask_walls": [],
-        "visible_bid_wall_usd": 358125.31648,
-        "visible_ask_wall_usd": 275294.8682,
-        "dynamic_large_threshold_usd": 50000.0,
-        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
-      },
-      "liquidity_proxy": {
-        "bias": "UPPER_LIQUIDITY_MAGNET",
-        "upper_zone": {
-          "price": 153.54354166666667,
-          "quote_volume_usd": 4676324.59751,
-          "distance_pct": 2.838847772456825
-        },
-        "lower_zone": {
-          "price": 148.57354166666667,
-          "quote_volume_usd": 802826.58898,
-          "distance_pct": -0.4899087996606517
-        },
-        "upper_share": 0.8534761021087468,
-        "window": "24h closed 15m candles",
-        "method": "volume-at-price concentration proxy",
-        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
-      },
-      "combined_bias": "UP",
-      "evidence_strength": 87.1,
-      "exact_coinglass": false,
-      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
-    },
-    "BNBUSDT": {
-      "symbol": "BNBUSDT",
-      "captured_at": "2026-10-15T04:27:16.206Z",
-      "provider": "Binance public spot market data",
-      "large_orders_public": {
-        "mid_price": 720.405,
-        "bias": "BALANCED",
-        "buy_wall_ratio": 0.5420925941522545,
-        "top_bid_walls": [
-          {
-            "price": 714.98,
-            "quantity": 361.0,
-            "usd": 258107.78,
-            "distance_pct": 0.7530486323665098
-          },
-          {
-            "price": 713.58,
-            "quantity": 361.008,
-            "usd": 257608.08864,
-            "distance_pct": 0.947383763299801
-          },
-          {
-            "price": 717.95,
-            "quantity": 250.295,
-            "usd": 179699.29525,
-            "distance_pct": 0.34078053317230267
-          },
-          {
-            "price": 716.1,
-            "quantity": 250.0,
-            "usd": 179025.0,
-            "distance_pct": 0.5975805276198736
-          },
-          {
-            "price": 713.36,
-            "quantity": 250.05,
-            "usd": 178375.668,
-            "distance_pct": 0.9779221410178941
-          }
-        ],
-        "top_ask_walls": [
-          {
-            "price": 726.2,
-            "quantity": 358.031,
-            "usd": 260002.11220000003,
-            "distance_pct": 0.8044086312560397
-          },
-          {
-            "price": 724.8,
-            "quantity": 358.117,
-            "usd": 259563.2016,
-            "distance_pct": 0.6100735003227326
-          },
-          {
-            "price": 722.93,
-            "quantity": 250.322,
-            "usd": 180965.28345999998,
-            "distance_pct": 0.35049728971897437
-          },
-          {
-            "price": 724.45,
-            "quantity": 236.437,
-            "usd": 171286.78465000002,
-            "distance_pct": 0.5614897175894217
-          },
-          {
-            "price": 726.5,
-            "quantity": 220.045,
-            "usd": 159862.6925,
-            "distance_pct": 0.8460518735988822
-          }
-        ],
-        "visible_bid_wall_usd": 2271035.72955,
-        "visible_ask_wall_usd": 1918351.38632,
-        "dynamic_large_threshold_usd": 50000.0,
-        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
-      },
-      "liquidity_proxy": {
-        "bias": "LOWER_LIQUIDITY_MAGNET",
-        "upper_zone": {
-          "price": 729.8179166666666,
-          "quote_volume_usd": 10601738.00664,
-          "distance_pct": 1.306614566343468
-        },
-        "lower_zone": {
-          "price": 717.03125,
-          "quote_volume_usd": 18169482.71709,
-          "distance_pct": -0.46831296284728346
-        },
-        "upper_share": 0.36848412197873387,
-        "window": "24h closed 15m candles",
-        "method": "volume-at-price concentration proxy",
-        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
-      },
-      "combined_bias": "NEUTRAL",
-      "evidence_strength": 56.8,
-      "exact_coinglass": false,
-      "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
-    },
-    "ZECUSDT": {
-      "symbol": "ZECUSDT",
-      "captured_at": "2026-10-15T04:27:17.504Z",
-      "provider": "Binance public spot market data",
-      "large_orders_public": {
-        "mid_price": 1106.245,
-        "bias": "BALANCED",
-        "buy_wall_ratio": 0.5231386840334428,
-        "top_bid_walls": [
-          {
-            "price": 1096.03,
-            "quantity": 442.352,
-            "usd": 484831.06255999993,
-            "distance_pct": 0.9233940040406889
-          },
-          {
-            "price": 1097.32,
-            "quantity": 374.601,
-            "usd": 411057.16932,
-            "distance_pct": 0.8067833074951711
-          },
-          {
-            "price": 1081.0,
-            "quantity": 98.112,
-            "usd": 106059.072,
-            "distance_pct": 2.2820442126292
-          },
-          {
-            "price": 1092.63,
-            "quantity": 90.87,
-            "usd": 99287.28810000002,
-            "distance_pct": 1.2307400259436005
-          },
-          {
-            "price": 1082.0,
-            "quantity": 66.398,
-            "usd": 71842.636,
-            "distance_pct": 2.1916483238342224
-          }
-        ],
-        "top_ask_walls": [
-          {
-            "price": 1113.45,
-            "quantity": 449.513,
-            "usd": 500510.24985,
-            "distance_pct": 0.6513023787678276
-          },
-          {
-            "price": 1114.95,
-            "quantity": 433.872,
-            "usd": 483745.58640000003,
-            "distance_pct": 0.786896211960294
-          },
-          {
-            "price": 1110.61,
-            "quantity": 106.715,
-            "usd": 118518.74614999999,
-            "distance_pct": 0.39457805459007816
-          },
-          {
-            "price": 1116.91,
-            "quantity": 92.207,
-            "usd": 102986.92037,
-            "distance_pct": 0.9640721539984536
-          }
-        ],
-        "visible_bid_wall_usd": 1736604.01061,
-        "visible_ask_wall_usd": 1582982.29339,
-        "dynamic_large_threshold_usd": 50000.0,
-        "note": "Real public Binance spot order book. Visible limit orders can be changed or cancelled and are not proof of intent."
-      },
-      "liquidity_proxy": {
-        "bias": "UPPER_LIQUIDITY_MAGNET",
-        "upper_zone": {
-          "price": 1107.1495833333333,
-          "quote_volume_usd": 34618652.694299996,
-          "distance_pct": 0.08177061440580058
-        },
-        "lower_zone": {
-          "price": 1103.2204166666666,
-          "quote_volume_usd": 2982877.28088,
-          "distance_pct": -0.27340989865114323
-        },
-        "upper_share": 0.9206713853705173,
-        "window": "24h closed 15m candles",
-        "method": "volume-at-price concentration proxy",
-        "note": "Public liquidity/stop-cluster proxy only. This is not a liquidation heatmap and does not estimate private leverage positions."
-      },
-      "combined_bias": "UP",
-      "evidence_strength": 88.4,
       "exact_coinglass": false,
       "disclaimer": "Fallback is public market microstructure, not CoinGlass liquidation heatmap/large-order proprietary data."
     }
