@@ -26,7 +26,7 @@ w.DeepRiseStructure={
 w.eval(fs.readFileSync('deeprise-structure-chart-v174.js','utf8'));
 const engine=w.DeepRiseStructureChart;
 assert.ok(engine,'Structure chart module should boot');
-assert.equal(engine.version,'17.8');
+assert.equal(engine.version,'17.9');
 function button(selector){const b=w.document.querySelector(selector);assert.ok(b,'Missing '+selector);return b}
 (async()=>{
  w.openChart('BTCUSDT');
@@ -62,8 +62,8 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
   assert.equal(button('#drStructurePanel').parentElement,w.document.getElementById('chartPanel'),'Fullscreen must restore original container');
  const standalone=fs.readFileSync('chart.html','utf8');
  assert.match(standalone,/DOMContentLoaded/);
- assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1780/);
+ assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1790/);
  assert.match(standalone,/symbolForm/);
- console.log('DeepRise v17.8 chart-click DOM regression: PASS');
+ console.log('DeepRise v17.9 chart-click DOM regression: PASS');
  dom.window.close();
 })().catch(e=>{console.error(e);process.exitCode=1;dom.window.close()});
