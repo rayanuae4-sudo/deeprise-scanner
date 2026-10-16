@@ -16,11 +16,13 @@ const {webkit,devices}=require('playwright');
  await page.route('**/external-embedding/embed-widget-advanced-chart.js',route=>route.fulfill({status:200,contentType:'application/javascript',body:'/* test TradingView host stub */'}));
  const url=process.env.CHART_URL||'https://rayanuae4-sudo.github.io/deeprise-scanner/chart.html?symbol=BTCUSDT&tf=4h&lang=ar';
  let response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
- for(let i=0;i<15;i++){
-  await page.waitForTimeout(7000);
+ const local=url.includes('127.0.0.1:4173')||url.includes('localhost:4173');
+ const attempts=local?3:15;
+ for(let i=0;i<attempts;i++){
+  await page.waitForTimeout(local?1100:7000);
   const version=await page.evaluate(()=>window.DeepRiseStructureChart?.version||null);
   if(version==='18.0')break;
-  if(i===14)throw Error('Deployment did not serve chart version 18.0; got '+version);
+  if(i===attempts-1)throw Error('Chart v18.0 boot failed; got '+version+' errors: '+JSON.stringify(errors.slice(0,6)));
   response=await page.reload({waitUntil:'domcontentloaded',timeout:60000});
  }
  const detail=await page.evaluate(()=>{
