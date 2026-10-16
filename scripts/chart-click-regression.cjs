@@ -26,7 +26,7 @@ w.DeepRiseStructure={
 w.eval(fs.readFileSync('deeprise-structure-chart-v174.js','utf8'));
 const engine=w.DeepRiseStructureChart;
 assert.ok(engine,'Structure chart module should boot');
-assert.equal(engine.version,'17.6');
+assert.equal(engine.version,'17.7');
 function button(selector){const b=w.document.querySelector(selector);assert.ok(b,'Missing '+selector);return b}
 (async()=>{
  w.openChart('BTCUSDT');
@@ -34,6 +34,12 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
  assert.ok(engine.state.result,'Opening a coin must fetch and render candles');
  const plot=button('#drStructurePanel svg[data-dr-interactive]');
  assert.match(plot.outerHTML,/BTCUSDT/);
+ assert.ok(button('[data-toggle-indicator="orderBlocks"]'),'Order Block toggle must be visible');
+ assert.equal(engine.state.layers.orderBlocks,true);
+ button('[data-toggle-indicator="orderBlocks"]').click();
+ assert.equal(engine.state.layers.orderBlocks,false,'Order Block button must toggle off');
+ button('[data-toggle-indicator="orderBlocks"]').click();
+ assert.equal(engine.state.layers.orderBlocks,true,'Order Block button must toggle on');
  assert.equal(engine.state.layers.rsi,false);
  button('[data-toggle-indicator="rsi"]').click();
  assert.equal(engine.state.layers.rsi,true,'RSI button must activate study');
@@ -54,8 +60,8 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
  assert.ok(!button('#drStructurePanel').classList.contains('dr-structure-fullscreen'),'Fullscreen must close');
  const standalone=fs.readFileSync('chart.html','utf8');
  assert.match(standalone,/DOMContentLoaded/);
- assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1760/);
+ assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1770/);
  assert.match(standalone,/symbolForm/);
- console.log('DeepRise v17.6 chart-click DOM regression: PASS');
+ console.log('DeepRise v17.7 chart-click DOM regression: PASS');
  dom.window.close();
 })().catch(e=>{console.error(e);process.exitCode=1;dom.window.close()});
