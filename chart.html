@@ -28,7 +28,7 @@ main{padding:0 8px 14px}.help{padding:8px 12px;color:#95acbd;font-size:12px}.cha
  window.DeepRiseWorkspace={t:k=>(tr[lang]||tr.en)[k]||tr.en[k]||k};
  const start=(s,f)=>{document.getElementById('chartTitle').textContent=s+' · '+f;status.textContent=s+' · '+f+' · loaded by DeepRise';window.DeepRiseStructureChart?.load(s,f)};
  document.getElementById('symbolForm').addEventListener('submit',e=>{e.preventDefault();const s=input.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();if(!s)return;history.replaceState(null,'','./chart.html?symbol='+encodeURIComponent(s)+'&tf='+encodeURIComponent(window.DeepRiseStructureChart?.state.tf||tf));start(s,window.DeepRiseStructureChart?.state.tf||tf)});
- if(window.DeepRiseStructureChart&&window.DeepRiseStructure)start(sym,tf);else status.textContent='Chart scripts did not load. Refresh or return to scanner.';
+ const boot=()=>{if(window.DeepRiseStructureChart&&window.DeepRiseStructure)start(sym,tf);else status.textContent='Chart scripts did not load. Refresh or return to scanner.'};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
 </script>
 </body></html>
