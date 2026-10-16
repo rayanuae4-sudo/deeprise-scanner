@@ -12,7 +12,7 @@ const STATIC_CORE=[
   './deeprise-fast-search-v160.js?v=1601',
   './deeprise-v13-gate-hotfix.js?v=1730',
   './mobile-app-v11.js?v=1310',
-  './pwa.js?v=1730'
+  './pwa.js?v=1740'
 ];
 
 function offlinePage(){
