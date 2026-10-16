@@ -51,6 +51,12 @@ jobs:
       - name: Run V17.4 order-block and chart regression
         run: node scripts/deeprise-order-block-regression.js
 
+      - name: Install chart interaction test dependency
+        run: npm install --no-save --no-package-lock jsdom@26
+
+      - name: Test real indicator button clicks and fullscreen DOM behavior
+        run: node scripts/chart-click-regression.cjs
+
       - name: Verify runtime and cacheless PWA wiring
         run: |
           python3 - <<'PY'
