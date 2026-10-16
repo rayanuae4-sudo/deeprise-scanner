@@ -12,6 +12,17 @@ on:
       - 'scripts/chart-click-regression.cjs'
       - 'scripts/chart-mobile-home-e2e.cjs'
       - '.github/workflows/deeprise-chart-e2e.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'chart.html'
+      - 'deeprise-market-structure-v174.js'
+      - 'deeprise-workspace-v173.js'
+      - 'deeprise-structure-chart-v174.js'
+      - 'scripts/chart-click-regression.cjs'
+      - 'scripts/deeprise-order-block-regression.js'
+      - 'scripts/deeprise-protected-structure-regression.cjs'
+      - '.github/workflows/deeprise-chart-e2e.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -27,10 +38,13 @@ jobs:
           npx playwright install --with-deps chromium webkit
       - name: Check JavaScript and chart DOM controls
         run: |
+          node --check deeprise-market-structure-v174.js
           node --check deeprise-structure-chart-v174.js
           node --check deeprise-workspace-v173.js
           node --check scripts/chart-mobile-home-e2e.cjs
           node scripts/chart-click-regression.cjs
+          node scripts/deeprise-order-block-regression.js
+          node scripts/deeprise-protected-structure-regression.cjs
       - name: Serve tested revision locally
         run: |
           python3 -m http.server 4173 >/tmp/deeprise-chart-http.log 2>&1 &
