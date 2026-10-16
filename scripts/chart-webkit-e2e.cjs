@@ -57,6 +57,7 @@ const {webkit,devices}=require('playwright');
   await page.locator('#fullTop').click({timeout:10000});
   console.log('FULL',await page.evaluate(()=>{const p=document.getElementById('drStructurePanel'),r=p.getBoundingClientRect();return{expanded:window.DeepRiseStructureChart?.state.expanded,class:p?.className,window:[innerWidth,innerHeight],rectangle:[r.x,r.y,r.width,r.height],computed:getComputedStyle(p).position}}));
  }
+ await page.keyboard.press('Escape');
  await page.locator('#tvTop').click();
  const tv=await page.evaluate(()=>({visible:!document.getElementById('tvStandalone').hidden,
   script:!!document.querySelector('#tvWidget script[src*="embed-widget-advanced-chart.js"]'),
