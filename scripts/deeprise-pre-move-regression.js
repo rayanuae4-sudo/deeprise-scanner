@@ -11,7 +11,7 @@ vm.createContext(context);
 vm.runInContext(fs.readFileSync('deeprise-pre-move-v170.js','utf8'),context,{filename:'deeprise-pre-move-v170.js'});
 
 const api=window.DeepRisePreMove;
-assert(api&&api.version==='17.1','V17.1 pre-move API unavailable');
+assert(api&&api.version==='17.2','V17.2 pre-move API unavailable');
 const fixture=JSON.parse(fs.readFileSync('scripts/fixtures/arb-usdt-4h-pre-move-2026.json','utf8'));
 
 function analyseAt(openTime){

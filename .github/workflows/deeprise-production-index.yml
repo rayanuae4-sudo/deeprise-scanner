@@ -29,10 +29,10 @@ jobs:
           from pathlib import Path
           p=Path('core-v85.html')
           s=p.read_text(encoding='utf-8')
-          s=s.replace('<title>DeepRise V8.5 PRO</title>','<title>DeepRise V17.0 PRO</title>')
-          s=s.replace('⚡ DeepRise V8.5 PRO','⚡ DeepRise V17.0 PRO')
-          s=s.replace('Engine: <b>V8.5 PRO</b>','Engine: <b>V17.0 PRE-MOVE</b>')
-          s=s.replace('DeepRise V8.5 PRO analyses public market data.','DeepRise V17.0 PRE-MOVE analyses public market data before expansion and blocks late entries.')
+          s=s.replace('<title>DeepRise V8.5 PRO</title>','<title>DeepRise V17.2 PRO</title>')
+          s=s.replace('⚡ DeepRise V8.5 PRO','⚡ DeepRise V17.2 PRO')
+          s=s.replace('Engine: <b>V8.5 PRO</b>','Engine: <b>V17.2 STRUCTURE</b>')
+          s=s.replace('DeepRise V8.5 PRO analyses public market data.','DeepRise V17.2 STRUCTURE analyses public market data before expansion and blocks late entries.')
           s=s.replace('const API="https://api.binance.com",FAPI="https://fapi.binance.com";','const API="https://data-api.binance.vision",FAPI="https://fapi.binance.com";')
 
           # Mobile startup: TradingView downloads in parallel instead of blocking the scanner bootstrap.
@@ -57,7 +57,7 @@ jobs:
           s=s.replace(startup,ready)
 
           head='''<meta name="theme-color" content="#050d18"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="DeepRise"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon.svg"><link rel="stylesheet" href="mobile-app-v11.css?v=1310">'''
-          scripts='''<script src="deeprise-fast-search-v160.js?v=1651"></script><script defer src="deeprise-notification-center-v167.js?v=1671"></script><script defer src="deeprise-pre-move-v170.js?v=1710"></script><script defer src="deeprise-signal-stability-v171.js?v=1710"></script><script defer src="deeprise-v86-upgrade.js?v=1310"></script><script defer src="deeprise-intelligence-v11.js?v=1310"></script><script defer src="deeprise-v12-experience.js?v=1310"></script><script defer src="deeprise-analytics-config.js?v=1700"></script><script defer src="deeprise-analytics.js?v=1310"></script><script defer src="deeprise-central-ledger.js?v=1700"></script><script defer src="deeprise-v13-product.js?v=1651"></script><script defer src="deeprise-central-forecast-bridge.js?v=1700"></script><script defer src="deeprise-predictive-intelligence.js?v=1310"></script><script defer src="deeprise-performance.js?v=1700"></script><script defer src="deeprise-v13-gate-hotfix.js?v=1700"></script><script defer src="deeprise-trade-monitor-v14.js?v=1653"></script><script defer src="deeprise-card-chart-v166.js?v=1660"></script><script defer src="mobile-app-v11.js?v=1310"></script><script defer src="pwa.js?v=1700"></script>'''
+          scripts='''<script src="deeprise-fast-search-v160.js?v=1651"></script><script defer src="deeprise-notification-center-v167.js?v=1671"></script><script defer src="deeprise-market-structure-v172.js?v=1720"></script><script defer src="deeprise-pre-move-v170.js?v=1720"></script><script defer src="deeprise-signal-stability-v171.js?v=1710"></script><script defer src="deeprise-v86-upgrade.js?v=1310"></script><script defer src="deeprise-intelligence-v11.js?v=1310"></script><script defer src="deeprise-v12-experience.js?v=1310"></script><script defer src="deeprise-analytics-config.js?v=1700"></script><script defer src="deeprise-analytics.js?v=1310"></script><script defer src="deeprise-central-ledger.js?v=1700"></script><script defer src="deeprise-v13-product.js?v=1651"></script><script defer src="deeprise-central-forecast-bridge.js?v=1700"></script><script defer src="deeprise-predictive-intelligence.js?v=1310"></script><script defer src="deeprise-performance.js?v=1700"></script><script defer src="deeprise-v13-gate-hotfix.js?v=1720"></script><script defer src="deeprise-trade-monitor-v14.js?v=1653"></script><script defer src="deeprise-card-chart-v166.js?v=1660"></script><script defer src="mobile-app-v11.js?v=1310"></script><script defer src="pwa.js?v=1720"></script><script defer src="deeprise-structure-chart-v172.js?v=1720"></script>'''
           if 'mobile-app-v11.css?v=1310' not in s:
               s=s.replace('</head>',head+'</head>')
           if 'deeprise-predictive-intelligence.js?v=1310' not in s:
@@ -77,9 +77,9 @@ jobs:
           assert len(s)>45000, 'production index is still a loader/wrapper'
           assert 'document.write' not in s, 'document.write loader must not ship'
           assert 'https://data-api.binance.vision' in s, 'stable Binance spot endpoint missing'
-          assert 'DeepRise V17.0 PRO' in s, 'V17 title missing'
+          assert 'DeepRise V17.2 PRO' in s, 'V17 title missing'
           assert 'deeprise-fast-search-v160.js?v=1651' in s, 'instant search layer missing'
-          assert 'deeprise-pre-move-v170.js?v=1710' in s, 'pre-move layer missing'
+          assert 'deeprise-pre-move-v170.js?v=1720' in s, 'pre-move layer missing'
           assert 'deeprise-signal-stability-v171.js?v=1710' in s, 'stability layer missing'
           assert '<script defer src="https://s3.tradingview.com/tv.js"></script>' in s, 'TradingView must not block startup'
           assert 'universe.length;i+=8' in s, 'progressive scan batching missing'
