@@ -9,6 +9,8 @@ on:
       - 'deeprise-structure-chart-v174.js'
       - 'scripts/chart-browser-e2e.cjs'
       - 'scripts/chart-webkit-e2e.cjs'
+      - 'scripts/chart-click-regression.cjs'
+      - 'scripts/chart-mobile-home-e2e.cjs'
       - '.github/workflows/deeprise-chart-e2e.yml'
   workflow_dispatch:
 permissions:
@@ -21,9 +23,27 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install browser test dependencies
         run: |
-          npm install --no-save --no-package-lock playwright@1.56.1
+          npm install --no-save --no-package-lock playwright@1.56.1 jsdom@26.1.0
           npx playwright install --with-deps chromium webkit
-      - name: Inspect public chart in mobile Chromium
+      - name: Check JavaScript and chart DOM controls
+        run: |
+          node --check deeprise-structure-chart-v174.js
+          node --check deeprise-workspace-v173.js
+          node --check scripts/chart-mobile-home-e2e.cjs
+          node scripts/chart-click-regression.cjs
+      - name: Serve tested revision locally
+        run: |
+          python3 -m http.server 4173 >/tmp/deeprise-chart-http.log 2>&1 &
+          sleep 2
+      - name: Test local chart in mobile Chromium
+        env:
+          CHART_URL: http://127.0.0.1:4173/chart.html?symbol=BTCUSDT&tf=4h
         run: node scripts/chart-browser-e2e.cjs
-      - name: Inspect public chart in iPhone Safari WebKit
+      - name: Test local chart in iPhone Safari WebKit
+        env:
+          CHART_URL: http://127.0.0.1:4173/chart.html?symbol=BTCUSDT&tf=4h&lang=ar
         run: node scripts/chart-webkit-e2e.cjs
+      - name: Test scanner touch controls in iPhone Safari
+        env:
+          HOME_URL: http://127.0.0.1:4173/index.html
+        run: node scripts/chart-mobile-home-e2e.cjs
