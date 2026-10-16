@@ -1,0 +1,42 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {webkit,devices}=require('playwright');
+(async()=>{
+ const browser=await webkit.launch({headless:true});
+ const page=await browser.newPage({...devices['iPhone 13'],locale:'en-US'});
+ const step=4*60*60*1000,start=Date.now()-190*step;
+ const candles=Array.from({length:180},(_,i)=>{
+  const t=start+i*step,open=.04+i*.00006,close=open+(i%3===0?-.00002:.00004);
+  return [t,String(open),String(Math.max(open,close)+.00009),String(Math.min(open,close)-.00009),String(close),'125000',t+step-1];
+ });
+ await page.route('**/api/v3/klines?**',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(candles)}));
+ const errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(process.env.HOME_URL||'http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded',timeout:60000});
+ await page.waitForFunction(()=>!!window.DeepRiseStructureChart&&!!window.DeepRiseStructure,{timeout:25000});
+ await page.evaluate(()=>{
+  const p=document.getElementById('chartPanel');
+  p.classList.add('active','dr-view-structure');
+  return window.DeepRiseStructureChart.load('TESTUSDT','4h');
+ });
+ await page.waitForFunction(()=>!!window.DeepRiseStructureChart.state.result,{timeout:25000});
+ const layer=k=>page.evaluate(k=>window.DeepRiseStructureChart.state.layers[k],k);
+ assert.equal(await layer('rsi'),false);
+ await page.locator('#drStructurePanel [data-toggle-indicator="rsi"]').tap();
+ assert.equal(await layer('rsi'),true,'Touch must enable RSI');
+ assert.match(await page.locator('[data-indicator-feedback]').textContent(),/ON.*RSI/i);
+ await page.locator('#drStructurePanel [data-toggle-indicator="orderBlocks"]').tap();
+ assert.equal(await layer('orderBlocks'),false,'Touch must disable order blocks');
+ await page.locator('#drStructurePanel [data-structure-fullscreen]').tap();
+ assert.equal(await page.evaluate(()=>window.DeepRiseStructureChart.state.expanded),true);
+ assert.equal(await page.evaluate(()=>document.getElementById('drStructurePanel').parentElement===document.body),true,'Fullscreen must portal to body');
+ await page.locator('#drStructurePanel [data-toggle-indicator="bollinger"]').tap();
+ assert.equal(await layer('bollinger'),true,'Indicators must remain tappable in fullscreen');
+ await page.locator('#drStructurePanel [data-structure-fullscreen]').tap();
+ assert.equal(await page.evaluate(()=>document.getElementById('drStructurePanel').parentElement.id),'chartPanel');
+ await page.locator('#drStructurePanel [data-chart-zoom=".75"]').tap();
+ assert.ok((await page.evaluate(()=>window.DeepRiseStructureChart.state.view.count))<40,'Touch zoom works');
+ console.log('iPhone HOME touch controls: RSI, OB, fullscreen, Bollinger and zoom PASS');
+ if(errors.some(e=>/structure-chart|DeepRiseStructureChart/i.test(e)))throw Error(errors.join('\n'));
+ await browser.close();
+})().catch(e=>{console.error(e);process.exitCode=1});
