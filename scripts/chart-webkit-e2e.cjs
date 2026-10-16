@@ -6,13 +6,21 @@ const {webkit,devices}=require('playwright');
  page.on('pageerror',e=>errors.push('JS: '+e.message));
  page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text())});
  page.on('requestfailed',r=>requests.push(r.url()+' '+(r.failure()?.errorText||'')));
+ const step=4*60*60*1000,start=Date.now()-190*step;
+ const candles=Array.from({length:180},(_,i)=>{
+  const t=start+i*step,open=.04+i*.00006,close=open+(i%3===0?-.00002:.00004);
+  return [t,String(open),String(Math.max(open,close)+.00009),String(Math.min(open,close)-.00009),String(close),'125000',t+step-1];
+ });
+ await page.route('**/api/v3/klines?**',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(candles)}));
+ // The isolated embed test verifies our controls and configuration, not TradingView's hosted UI.
+ await page.route('**/external-embedding/embed-widget-advanced-chart.js',route=>route.fulfill({status:200,contentType:'application/javascript',body:'/* test TradingView host stub */'}));
  const url=process.env.CHART_URL||'https://rayanuae4-sudo.github.io/deeprise-scanner/chart.html?symbol=BTCUSDT&tf=4h&lang=ar';
  let response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
  for(let i=0;i<15;i++){
   await page.waitForTimeout(7000);
   const version=await page.evaluate(()=>window.DeepRiseStructureChart?.version||null);
-  if(version==='17.8')break;
-  if(i===14)throw Error('Deployment did not serve chart version 17.8; got '+version);
+  if(version==='17.9')break;
+  if(i===14)throw Error('Deployment did not serve chart version 17.9; got '+version);
   response=await page.reload({waitUntil:'domcontentloaded',timeout:60000});
  }
  const detail=await page.evaluate(()=>{
@@ -49,6 +57,14 @@ const {webkit,devices}=require('playwright');
   await page.locator('#fullTop').click({timeout:10000});
   console.log('FULL',await page.evaluate(()=>{const p=document.getElementById('drStructurePanel'),r=p.getBoundingClientRect();return{expanded:window.DeepRiseStructureChart?.state.expanded,class:p?.className,window:[innerWidth,innerHeight],rectangle:[r.x,r.y,r.width,r.height],computed:getComputedStyle(p).position}}));
  }
- await browser.close();
- if(errors.length||!detail.svg||detail.error||detail.version!=='17.8')process.exitCode=1;
+ await page.locator('#tvTop').click();
+ const tv=await page.evaluate(()=>({visible:!document.getElementById('tvStandalone').hidden,
+  script:!!document.querySelector('#tvWidget script[src*="embed-widget-advanced-chart.js"]'),
+  nativeHidden:document.getElementById('chartPanel').hidden,
+  external:document.getElementById('tvExternal').href}));
+ if(!tv.visible||!tv.script||!tv.nativeHidden||!tv.external.includes('BINANCE'))throw Error('TradingView mode missing: '+JSON.stringify(tv));
+ await page.locator('#nativeTop').click();
+ if(await page.locator('#chartPanel').evaluate(el=>el.hidden))throw Error('Native chart did not return');
+  await browser.close();
+ if(errors.length||!detail.svg||detail.error||detail.version!=='17.9')process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1});
