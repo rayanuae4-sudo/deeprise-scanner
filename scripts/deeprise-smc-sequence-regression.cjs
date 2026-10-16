@@ -21,7 +21,7 @@ assert(seq().retestIndex>bos.index);
 assert.equal(seq().zone.type,'FVG','prefer latest eligible active zone');
 assert.equal(seq({...frame,sweeps:[]}).phase,'WAIT_SWEEP');
 assert.equal(seq({...frame,events:[]}).phase,'WAIT_CHOCH');
-assert.equal(seq({...frame,events:[bos,choch]}).phase,'WAIT_BOS');
+assert.equal(seq({...frame,events:[{...bos,index:2},choch]}).phase,'WAIT_BOS');
 assert.equal(seq({...frame,gaps:[],blocks:[]}).phase,'WAIT_ZONE');
 assert.equal(seq(frame,110).phase,'WAIT_RETEST');
 assert.equal(seq({...frame,blocks:[{...ob,status:'INVALID'}],gaps:[{...gap,status:'FILLED'}]}).phase,'WAIT_ZONE');
