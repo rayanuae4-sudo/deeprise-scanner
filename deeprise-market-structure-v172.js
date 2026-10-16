@@ -1,6 +1,6 @@
 /* DeepRise V17.2: causal, closed-candle market structure. No trading side is created here. */
 (()=>{'use strict';
-const VERSION='17.2',TF_MS={'15m':900000,'1h':3600000,'4h':14400000,'1d':86400000};
+const VERSION='17.2',TF_MS={'5m':300000,'15m':900000,'1h':3600000,'4h':14400000,'1d':86400000};
 function parse(raw,now){
  return (raw||[]).map(x=>Array.isArray(x)?{time:+x[0],open:+x[1],high:+x[2],low:+x[3],close:+x[4],volume:+x[5],closeTime:+x[6]}:{...x})
  .filter(x=>[x.time,x.open,x.high,x.low,x.close,x.closeTime].every(Number.isFinite)&&x.low>0&&x.high>=Math.max(x.open,x.close)&&x.low<=Math.min(x.open,x.close)&&x.closeTime<now-1200)
