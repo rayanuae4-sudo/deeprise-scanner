@@ -92,7 +92,7 @@ jobs:
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
           premove=Path('deeprise-pre-move-v170.js').read_text(encoding='utf-8')
           index=Path('index.html').read_text(encoding='utf-8')
-          for marker in ['deeprise-workspace-v173.js?v=1790','deeprise-market-structure-v174.js?v=1790','deeprise-structure-chart-v174.js?v=1790']:
+          for marker in ['deeprise-workspace-v173.js?v=1790','deeprise-market-structure-v174.js?v=1810','deeprise-structure-chart-v174.js?v=1790']:
               assert marker in index and marker in sw, f'structure asset missing: {marker}'
           assert index.index('deeprise-market-structure-v174.js') < index.index('deeprise-pre-move-v170.js')
           assert index.index('deeprise-structure-chart-v174.js') > index.index('deeprise-v13-gate-hotfix.js')
