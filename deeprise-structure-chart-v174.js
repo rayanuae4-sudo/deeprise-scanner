@@ -108,7 +108,7 @@ function toggleFullscreen(force){
 }
 const CHART_PRESETS={
  clean:{smc:false,structure:false,pivots:false,protection:false,internalProtection:false,orderBlocks:false,fvg:false,fib:false,ema20:true,ema50:false,bollinger:false,volume:false,rsi:false},
- structure:{smc:true,structure:true,pivots:true,protection:true,internalProtection:false,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:false,bollinger:false,volume:false,rsi:false},
+ structure:{smc:true,structure:true,pivots:true,protection:true,internalProtection:false,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,bollinger:false,volume:false,rsi:false},
  advanced:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,bollinger:true,volume:true,rsi:true}
 };
 state.preset=localStorage.getItem('deeprise_chart_preset_v180')||'structure';
