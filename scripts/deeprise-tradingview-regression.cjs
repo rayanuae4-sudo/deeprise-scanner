@@ -40,5 +40,6 @@ const previous=tv();doc.querySelector('#tvRetry').click();assert.notEqual(tv(),p
 doc.querySelector('#nativeTop').click();assert.equal(doc.querySelector('#tvStandalone').hidden,true);
 assert.equal(doc.querySelector('#chartPanel').hidden,false,'native chart restores correctly');
 doc.querySelector('#tvTop').click();assert.equal(doc.querySelector('#tvStandalone').hidden,false);
-dom.window.close();
+// Drain async native-load continuations before the isolated JSDOM window is closed.
+setImmediate(()=>dom.window.close());
 console.log('DeepRise V18.2 TradingView integration PASS: full widget config, symbol, timeframe, retry, external fallback, fullscreen, native switch');
