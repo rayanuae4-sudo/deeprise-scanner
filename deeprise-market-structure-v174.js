@@ -95,8 +95,55 @@ function analyse(raw,options={}){
   events:inner.events,protectedHigh:inner.protectedHigh,protectedLow:inner.protectedLow,
   lastEvent:inner.lastEvent}:null;
  const external={bias,pivotSpan:span,protectedHigh,protectedLow,lastEvent:events.at(-1)||null};
- return{internal,external,version:VERSION,tf,pivotSpan:span,intervalMs:TF_MS[tf]||TF_MS['4h'],bars,pivots,events,gaps,sweeps,blocks,bias,protectedHigh,protectedLow,lastEvent:events.at(-1)||null,lastHigh:high,lastLow:low,fib,atr,price:last.close,barClose:last.closeTime,updated:now};
+ const result={internal,external,version:VERSION,tf,pivotSpan:span,intervalMs:TF_MS[tf]||TF_MS['4h'],bars,pivots,events,gaps,sweeps,blocks,bias,protectedHigh,protectedLow,lastEvent:events.at(-1)||null,lastHigh:high,lastLow:low,fib,atr,price:last.close,barClose:last.closeTime,updated:now};
+ result.smc={LONG:smartMoneySequence(result,'LONG'),SHORT:smartMoneySequence(result,'SHORT')};return result;
 }
+
+/* Closed-candle, direction-specific SMC workflow. No backfilled pivot or same-candle retest. */
+function smartMoneySequence(structure,side,price){
+ const empty=phase=>({side,phase,sweep:null,choch:null,bos:null,orderBlock:null,fvg:null,zone:null,retestIndex:null,
+  checks:{sweep:false,choch:false,bos:false,zone:false,retest:false}});
+ if(!structure||!['LONG','SHORT'].includes(side)||!Array.isArray(structure.bars))return empty('NO_DATA');
+ const {bars,events=[],sweeps=[],blocks=[],gaps=[]}=structure,last=bars.length-1;
+ const current=Number.isFinite(Number(price))&&Number(price)>0?Number(price):bars[last]?.close;
+ const sweep=[...sweeps].reverse().find(x=>x.side===side&&x.index<=last&&last-x.index<=48);
+ if(!sweep)return empty('WAIT_SWEEP');
+ const result=empty('WAIT_CHOCH');result.sweep=sweep;result.checks.sweep=true;
+ const extreme=side==='LONG'?bars[sweep.index]?.low:bars[sweep.index]?.high;
+ // Once the swept extreme closes through, this particular setup is invalid.
+ if(!Number.isFinite(extreme)||bars.slice(sweep.index+1).some(b=>side==='LONG'?b.close<extreme:b.close>extreme)){
+  result.phase='INVALIDATED';return result;
+ }
+ const choch=events.find(e=>e.side===side&&e.type==='CHOCH'&&e.index>sweep.index&&e.index-sweep.index<=24);
+ if(!choch)return result;
+ result.choch=choch;result.checks.choch=true;result.phase='WAIT_BOS';
+ const bos=events.find(e=>e.side===side&&e.type==='BOS'&&e.index>choch.index&&e.index-choch.index<=24);
+ if(!bos)return result;
+ result.bos=bos;result.checks.bos=true;result.phase='WAIT_ZONE';
+ if(last-bos.index>24){result.phase='EXPIRED';return result;}
+ const obs=blocks.filter(b=>b.side===side&&b.status!=='INVALID'&&b.breakIndex>=choch.index&&b.breakIndex<=bos.index&&b.lower>0&&b.upper>b.lower);
+ const fvgs=gaps.filter(g=>g.side===side&&g.status!=='FILLED'&&g.index>=choch.index-2&&g.index<=bos.index+3&&g.remainingLower>0&&g.remainingUpper>g.remainingLower);
+ const ob=obs.at(-1)||null,fvg=fvgs.at(-1)||null;
+ result.orderBlock=ob;result.fvg=fvg;
+ const zones=[
+  ...obs.map(z=>({type:'OB',lower:z.lower,upper:z.upper,confirmedIndex:z.breakIndex,source:z})),
+  ...fvgs.map(z=>({type:'FVG',lower:z.remainingLower,upper:z.remainingUpper,confirmedIndex:z.index,source:z}))
+ ];
+ if(!zones.length)return result;
+ result.checks.zone=true;result.phase='WAIT_RETEST';
+ // An entry must be near an observed zone and have a retest on a later CLOSED bar.
+ const atr=Math.max(Number(structure.atr)||0,0),buffer=atr*.10;
+ const sorted=zones.sort((a,b)=>Number(current>=a.lower-buffer&&current<=a.upper+buffer)-Number(current>=b.lower-buffer&&current<=b.upper+buffer)||b.confirmedIndex-a.confirmedIndex);
+ const zone=sorted.at(-1);result.zone=zone;
+ for(let i=Math.max(bos.index+1,zone.confirmedIndex+1);i<=last;i++){
+  const b=bars[i];if(b.low<=zone.upper&&b.high>=zone.lower){result.retestIndex=i;break;}
+ }
+ if(result.retestIndex!==null&&current>=zone.lower-buffer&&current<=zone.upper+buffer){
+  result.checks.retest=true;result.phase='READY';
+ }
+ return result;
+}
+
 function classify(z,structure,now=Date.now()){
  if(!z)return{group:'EARLY',reason:'NO_SETUP'};
  const long=z.side==='LONG',p=Number(z.price),atr=Number(z.atr),trigger=Number(z.trigger),closed=Number(z.closedPrice);
@@ -116,10 +163,16 @@ function classify(z,structure,now=Date.now()){
  const fvg=structure.gaps.find(g=>g.side===z.side&&g.status!=='FILLED'&&p>=g.remainingLower-atr*.15&&p<=g.remainingUpper+atr*.15);
  const fib=structure.fib,atFib=!!fib&&fib.side===z.side&&p>=fib.golden[0]-atr*.15&&p<=fib.golden[1]+atr*.15;
  const confluence=Number(aligned)+Number(intact)+Number(!!fvg)+Number(atFib);
- const context={distanceAtr,aligned,protected:intact,protectionQuality:protection?.protection?.quality||'NONE',closedTrigger,inZone,event:event?.type||null,fvg:!!fvg,fib:atFib,confluence};
+ const smc=Array.isArray(structure.sweeps)&&Array.isArray(structure.events)&&Array.isArray(structure.blocks)?smartMoneySequence(structure,z.side,p):null;
+ const context={distanceAtr,aligned,protected:intact,protectionQuality:protection?.protection?.quality||'NONE',closedTrigger,inZone,event:event?.type||null,fvg:!!fvg,fib:atFib,confluence,smc};
+ if(smc?.phase==='INVALIDATED')return{group:'BLOCKED',reason:'SMC_INVALIDATED',...context};
+ if(smc&&smc.phase!=='READY'){
+  const near=['IGNITION','ARMED'].includes(z.stage)&&distanceAtr<=.75;
+  return{group:near?'NEAR':'EARLY',reason:'SMC_'+smc.phase,...context};
+ }
  if(['IGNITION','ARMED'].includes(z.stage)&&closedTrigger&&inZone&&aligned&&intact&&context.protectionQuality==='CONFIRMED'&&recent)return{group:'READY',reason:'CONFIRMED_ENTRY',...context};
  if(['IGNITION','ARMED'].includes(z.stage)&&distanceAtr<=.75)return{group:'NEAR',reason:!closedTrigger?'WAIT_CLOSE':!inZone?'WAIT_RETEST':'WAIT_STRUCTURE',...context};
  return{group:'EARLY',reason:'FORMING',...context};
 }
-window.DeepRiseStructure={version:VERSION,analyse,fibonacci,classify,parse,protectionPivot};
+window.DeepRiseStructure={version:VERSION,analyse,fibonacci,classify,parse,protectionPivot,smartMoneySequence};
 })();
