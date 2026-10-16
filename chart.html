@@ -25,7 +25,9 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
 <section id="tvStandalone" aria-label="TradingView advanced chart" hidden><div id="tvActions"><strong>TradingView</strong><label for="tvTF">Timeframe</label><select id="tvTF"><option value="5m">5m</option><option value="15m">15m</option><option value="1h">1h</option><option value="4h">4h</option><option value="1d">1D</option></select><button type="button" id="tvExpand">⛶ Full screen</button><button type="button" id="tvRetry">↻ Retry</button><a id="tvExternal" target="_blank" rel="noopener noreferrer">↗ TradingView.com</a></div><div id="tvLoadStatus" role="status" aria-live="polite"></div><div id="tvWidget" role="region" aria-label="Interactive TradingView price chart"></div><p class="tv-info">TradingView is a separate market-data widget. DeepRise protected levels and order blocks appear on the DeepRise chart, not automatically inside TradingView.</p></section>
 </main>
 <script defer src="./deeprise-market-structure-v174.js?v=1810"></script>
+<script defer src="./deeprise-structure-explain-v182.js?v=1820"></script>
 <script defer src="./deeprise-structure-chart-v174.js?v=1810"></script>
+<script defer src="./deeprise-structure-reasons-v182.js?v=1820"></script>
 <script defer>
 (function(){
  const p=new URLSearchParams(location.search), input=document.getElementById('coinSymbol'), status=document.getElementById('standaloneStatus');
@@ -115,6 +117,8 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
  const start=async(s,f)=>{
   document.getElementById('chartTitle').textContent=s+' · '+f;status.textContent=lang==='ar'?'جارٍ تحميل بيانات الشموع...':'Loading market candles...';
   const c=window.DeepRiseStructureChart;
+  // TradingView is independent of Binance/native fetch: refresh its symbol immediately.
+  if(mode==='tv')mountTV(s,tvTF.value||f);
   if(!c){status.textContent=lang==='ar'?'خطأ: محرك الشارت غير متاح':'Error: chart module unavailable';return}
   try{await c.load(s,f)}catch(e){status.textContent='Chart error: '+(e?.message||String(e));return}
   if(mode==='tv')mountTV(s,tvTF.value||f);
