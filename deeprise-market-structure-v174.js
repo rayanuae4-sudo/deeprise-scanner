@@ -133,7 +133,7 @@ function smartMoneySequence(structure,side,price){
  result.checks.zone=true;result.phase='WAIT_RETEST';
  // An entry must be near an observed zone and have a retest on a later CLOSED bar.
  const atr=Math.max(Number(structure.atr)||0,0),buffer=atr*.10;
- const sorted=zones.sort((a,b)=>Number(current>=a.lower-buffer&&current<=a.upper+buffer)-Number(current>=b.lower-buffer&&current<=b.upper+buffer)||b.confirmedIndex-a.confirmedIndex);
+ const sorted=zones.sort((a,b)=>Number(current>=a.lower-buffer&&current<=a.upper+buffer)-Number(current>=b.lower-buffer&&current<=b.upper+buffer)||a.confirmedIndex-b.confirmedIndex);
  const zone=sorted.at(-1);result.zone=zone;
  for(let i=Math.max(bos.index+1,zone.confirmedIndex+1);i<=last;i++){
   const b=bars[i];if(b.low<=zone.upper&&b.high>=zone.lower){result.retestIndex=i;break;}
