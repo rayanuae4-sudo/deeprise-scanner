@@ -170,7 +170,7 @@ function classify(z,structure,now=Date.now()){
   const near=['IGNITION','ARMED'].includes(z.stage)&&distanceAtr<=.75;
   return{group:near?'NEAR':'EARLY',reason:'SMC_'+smc.phase,...context};
  }
- if(['IGNITION','ARMED'].includes(z.stage)&&closedTrigger&&inZone&&aligned&&intact&&context.protectionQuality==='CONFIRMED'&&recent)return{group:'READY',reason:'CONFIRMED_ENTRY',...context};
+ if(['IGNITION','ARMED'].includes(z.stage)&&closedTrigger&&inZone&&aligned&&intact&&context.protectionQuality==='CONFIRMED'&&(recent||(smc?.phase==='READY'&&structure.bars.length-1-smc.retestIndex<=3)))return{group:'READY',reason:'CONFIRMED_ENTRY',...context};
  if(['IGNITION','ARMED'].includes(z.stage)&&distanceAtr<=.75)return{group:'NEAR',reason:!closedTrigger?'WAIT_CLOSE':!inZone?'WAIT_RETEST':'WAIT_STRUCTURE',...context};
  return{group:'EARLY',reason:'FORMING',...context};
 }
