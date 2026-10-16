@@ -45,7 +45,7 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
   let mode=p.get('view')==='tv'?'tv':'native',tvKey='',tvExpanded=false,previousOverflow='',tvCheckTimer=null;
   tvTF.value=tf;
   function mountTV(s,f){
-   const key=s+':'+f;if(tvKey===key&&tvWidget.querySelector('iframe'))return;
+   const key=s+':'+f;if(tvKey===key)return; // One widget per symbol/timeframe; Retry explicitly resets tvKey.
    tvKey=key;tvTF.value=f;
    clearTimeout(tvCheckTimer);
    const tvMessage=document.getElementById('tvLoadStatus');tvMessage.textContent=lang==='ar'?'جارٍ فتح TradingView…':'Loading TradingView…';
@@ -121,7 +121,6 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
   if(mode==='tv')mountTV(s,tvTF.value||f);
   if(!c){status.textContent=lang==='ar'?'خطأ: محرك الشارت غير متاح':'Error: chart module unavailable';return}
   try{await c.load(s,f)}catch(e){status.textContent='Chart error: '+(e?.message||String(e));return}
-  if(mode==='tv')mountTV(s,tvTF.value||f);
    const v=c.state.result;
   status.textContent=c.state.error
    ?(lang==='ar'?'تعذر تحميل الشموع: ':'Could not load market candles: ')+(c.state.errorMessage||'data unavailable')
