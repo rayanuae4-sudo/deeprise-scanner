@@ -11,8 +11,8 @@ const {webkit,devices}=require('playwright');
  for(let i=0;i<15;i++){
   await page.waitForTimeout(7000);
   const version=await page.evaluate(()=>window.DeepRiseStructureChart?.version||null);
-  if(version==='17.7')break;
-  if(i===14)throw Error('Deployment did not serve chart version 17.7; got '+version);
+  if(version==='17.8')break;
+  if(i===14)throw Error('Deployment did not serve chart version 17.8; got '+version);
   response=await page.reload({waitUntil:'domcontentloaded',timeout:60000});
  }
  const detail=await page.evaluate(()=>{
@@ -50,5 +50,5 @@ const {webkit,devices}=require('playwright');
   console.log('FULL',await page.evaluate(()=>{const p=document.getElementById('drStructurePanel'),r=p.getBoundingClientRect();return{expanded:window.DeepRiseStructureChart?.state.expanded,class:p?.className,window:[innerWidth,innerHeight],rectangle:[r.x,r.y,r.width,r.height],computed:getComputedStyle(p).position}}));
  }
  await browser.close();
- if(errors.length||!detail.svg||detail.error||detail.version!=='17.7')process.exitCode=1;
+ if(errors.length||!detail.svg||detail.error||detail.version!=='17.8')process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1});
