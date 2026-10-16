@@ -6,7 +6,7 @@ const {webkit,devices}=require('playwright');
  page.on('pageerror',e=>errors.push('JS: '+e.message));
  page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text())});
  page.on('requestfailed',r=>requests.push(r.url()+' '+(r.failure()?.errorText||'')));
- const url=process.env.CHART_URL||'https://rayanuae4-sudo.github.io/deeprise-scanner/chart.html?symbol=BTCUSDT&tf=4h';
+ const url=process.env.CHART_URL||'https://rayanuae4-sudo.github.io/deeprise-scanner/chart.html?symbol=BTCUSDT&tf=4h&lang=ar';
  let response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
  for(let i=0;i<15;i++){
   await page.waitForTimeout(7000);
