@@ -1,6 +1,6 @@
 /* DeepRise V17.4: causal, closed-candle market structure and confirmed order blocks. */
 (()=>{'use strict';
-const VERSION='17.4',TF_MS={'5m':300000,'15m':900000,'1h':3600000,'4h':14400000,'1d':86400000};
+const VERSION='17.9',TF_MS={'5m':300000,'15m':900000,'1h':3600000,'4h':14400000,'1d':86400000};
 function parse(raw,now){
  return (raw||[]).map(x=>Array.isArray(x)?{time:+x[0],open:+x[1],high:+x[2],low:+x[3],close:+x[4],volume:+x[5],closeTime:+x[6]}:{...x})
  .filter(x=>[x.time,x.open,x.high,x.low,x.close,x.closeTime].every(Number.isFinite)&&x.low>0&&x.high>=Math.max(x.open,x.close)&&x.low<=Math.min(x.open,x.close)&&x.closeTime<now-1200)
@@ -21,6 +21,15 @@ function fibonacci(pivots,bias){
  const trendExtensions=third?[.618,1,1.272,1.618,2,2.618].map(r=>({ratio:r,price:third.price+delta*r})).filter(x=>x.price>0):[];
  const golden=[end.price-delta*.618,end.price-delta*.786].sort((a,b)=>a-b);
  return{side:long?'LONG':'SHORT',start,end,third:third||null,levels,extensions,trendExtensions,golden,equilibrium:(start.price+end.price)/2};
+}
+function protectionPivot(pivots,kind,target,index,bar,eventType,previous){
+ const eligible=pivots.filter(p=>p.type===kind&&p.confirmedIndex<=index&&p.index<index);
+ const after=[...eligible].reverse().find(p=>p.index>target.index);
+ const chosen=after||(!previous?eligible.at(-1):null);
+ if(!chosen)return previous&&(kind==='HIGH'?bar.close<previous.price:bar.close>previous.price)?previous:null;
+ if(kind==='HIGH'?bar.close>=chosen.price:bar.close<=chosen.price)return null;
+ return {...chosen,protection:{quality:after?'CONFIRMED':'INITIAL',eventType,breakIndex:index,breakTime:bar.closeTime,
+  brokenLevel:target.price,brokenPivotIndex:target.index,pivotConfirmedAt:chosen.confirmedAt}};
 }
 function analyse(raw,options={}){
  const now=options.now??Date.now(),tf=options.tf||'4h',span=Math.max(1,Math.min(10,Math.floor(options.pivotSpan||3))),bars=parse(raw,now);
@@ -53,7 +62,7 @@ function analyse(raw,options={}){
    if(left.every(x=>bars[p].high>x.high)&&right.every(x=>bars[p].high>=x.high))pivot('HIGH',p,i);
    if(left.every(x=>bars[p].low<x.low)&&right.every(x=>bars[p].low<=x.low))pivot('LOW',p,i);
   }
-  const upTarget=bias==='SHORT'?protectedHigh:high,downTarget=bias==='LONG'?protectedLow:low;
+  const upTarget=bias==='SHORT'?(protectedHigh||high):high,downTarget=bias==='LONG'?(protectedLow||low):low;
   const up=upTarget&&!broken.has('HIGH:'+upTarget.index)&&b.close>upTarget.price,down=downTarget&&!broken.has('LOW:'+downTarget.index)&&b.close<downTarget.price;
   const fire=(side,target)=>{
    const oldBias=bias,type=oldBias==='RANGE'||oldBias===side?'BOS':'CHOCH';
@@ -69,8 +78,8 @@ function analyse(raw,options={}){
     }
    }
    broken.add(target.type+':'+target.index);bias=side;
-   if(side==='LONG'){protectedHigh=null;protectedLow=[...pivots].reverse().find(x=>x.type==='LOW'&&x.index<i)||null}
-   else{protectedLow=null;protectedHigh=[...pivots].reverse().find(x=>x.type==='HIGH'&&x.index<i)||null}
+   if(side==='LONG'){protectedLow=protectionPivot(pivots,'LOW',target,i,b,type,protectedLow);protectedHigh=null}
+   else{protectedHigh=protectionPivot(pivots,'HIGH',target,i,b,type,protectedHigh);protectedLow=null}
   };
   if(up)fire('LONG',upTarget);else if(down)fire('SHORT',downTarget);
   for(const target of [high,low]){if(!target||broken.has(target.type+':'+target.index))continue;
@@ -78,7 +87,15 @@ function analyse(raw,options={}){
   }
  }
  const last=bars.at(-1),atr=atrAt(bars,bars.length-1),fib=fibonacci(pivots,bias);
- return{version:VERSION,tf,pivotSpan:span,intervalMs:TF_MS[tf]||TF_MS['4h'],bars,pivots,events,gaps,sweeps,blocks,bias,protectedHigh,protectedLow,lastEvent:events.at(-1)||null,lastHigh:high,lastLow:low,fib,atr,price:last.close,barClose:last.closeTime,updated:now};
+ // A separate shorter swing span detects internal structure without rewriting the external map.
+ const internalSpan=Math.max(1,Math.floor(span/2));
+ const inner=options.includeInternal===false||internalSpan===span?null:
+  analyse(raw,{...options,now,tf,pivotSpan:internalSpan,includeInternal:false});
+ const internal=inner?{bias:inner.bias,pivotSpan:inner.pivotSpan,pivots:inner.pivots,
+  events:inner.events,protectedHigh:inner.protectedHigh,protectedLow:inner.protectedLow,
+  lastEvent:inner.lastEvent}:null;
+ const external={bias,pivotSpan:span,protectedHigh,protectedLow,lastEvent:events.at(-1)||null};
+ return{internal,external,version:VERSION,tf,pivotSpan:span,intervalMs:TF_MS[tf]||TF_MS['4h'],bars,pivots,events,gaps,sweeps,blocks,bias,protectedHigh,protectedLow,lastEvent:events.at(-1)||null,lastHigh:high,lastLow:low,fib,atr,price:last.close,barClose:last.closeTime,updated:now};
 }
 function classify(z,structure,now=Date.now()){
  if(!z)return{group:'EARLY',reason:'NO_SETUP'};
@@ -99,10 +116,10 @@ function classify(z,structure,now=Date.now()){
  const fvg=structure.gaps.find(g=>g.side===z.side&&g.status!=='FILLED'&&p>=g.remainingLower-atr*.15&&p<=g.remainingUpper+atr*.15);
  const fib=structure.fib,atFib=!!fib&&fib.side===z.side&&p>=fib.golden[0]-atr*.15&&p<=fib.golden[1]+atr*.15;
  const confluence=Number(aligned)+Number(intact)+Number(!!fvg)+Number(atFib);
- const context={distanceAtr,aligned,protected:intact,closedTrigger,inZone,event:event?.type||null,fvg:!!fvg,fib:atFib,confluence};
- if(['IGNITION','ARMED'].includes(z.stage)&&closedTrigger&&inZone&&aligned&&intact&&recent)return{group:'READY',reason:'CONFIRMED_ENTRY',...context};
+ const context={distanceAtr,aligned,protected:intact,protectionQuality:protection?.protection?.quality||'NONE',closedTrigger,inZone,event:event?.type||null,fvg:!!fvg,fib:atFib,confluence};
+ if(['IGNITION','ARMED'].includes(z.stage)&&closedTrigger&&inZone&&aligned&&intact&&context.protectionQuality==='CONFIRMED'&&recent)return{group:'READY',reason:'CONFIRMED_ENTRY',...context};
  if(['IGNITION','ARMED'].includes(z.stage)&&distanceAtr<=.75)return{group:'NEAR',reason:!closedTrigger?'WAIT_CLOSE':!inZone?'WAIT_RETEST':'WAIT_STRUCTURE',...context};
  return{group:'EARLY',reason:'FORMING',...context};
 }
-window.DeepRiseStructure={version:VERSION,analyse,fibonacci,classify,parse};
+window.DeepRiseStructure={version:VERSION,analyse,fibonacci,classify,parse,protectionPivot};
 })();
