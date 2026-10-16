@@ -137,6 +137,7 @@ function outlook(s,side,lang='en'){
    'Последний '+recent.type+' по направлению на $'+fmt(recent.price)+'.','Most recent aligned '+recent.type+' closed through $'+fmt(recent.price)+'.'));
  if(p){reasons.push(select(lang,'المستوى المحمي '+(bullish?'قاع':'قمة')+' $'+fmt(p.price)+'.',
    'Защищённый уровень $'+fmt(p.price)+'.','Protected '+(bullish?'low':'high')+' at $'+fmt(p.price)+'.'));
+ }
  risks.push(select(lang,'الإبطال الهيكلي: إغلاق '+(bullish?'دون ':'فوق ')+(p?'$'+fmt(p.price):'مستوى محمي مؤكد لم يتشكل بعد')+'.',
   'Отмена: закрытие '+(bullish?'ниже ':'выше ')+(p?'$'+fmt(p.price):'защищённого уровня — ещё не сформирован')+'.',
   'Structural invalidation: a candle closes '+(bullish?'below ':'above ')+(p?'$'+fmt(p.price):'a not-yet-established protected level')+'.'));
