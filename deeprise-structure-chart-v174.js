@@ -71,9 +71,9 @@ const copy={
  ar:{internalProtection:'القمم والقيعان الداخلية المحمية',reason:'سبب الحماية',initial:'مبدئي / ينتظر BOS جديد',confirmedStructure:'حماية مؤكدة بكسر البنية',externalScope:'الهيكل الخارجي',internalScope:'الهيكل الداخلي',title:'هيكل السوق وفيبوناتشي',loading:'تحميل الشموع المغلقة…',error:'تعذر تحديث الشموع. أعد المحاولة.',retry:'تحديث',structure:'BOS / CHoCH',pivots:'القمم والقيعان HH / HL / LH / LL',protection:'القمم والقيعان المحمية',fvg:'فجوات FVG النشطة',fib:'تصحيح فيبوناتشي',extensions:'امتدادات نقطتين',trendExtensions:'امتدادات ثلاث نقاط',sweeps:'سحب السيولة',timeZones:'مناطق فيبوناتشي الزمنية',fan:'مروحة فيبوناتشي',orderBlocks:'مناطق الأوردر بلوك',ema20:'متوسط EMA 20',ema50:'متوسط EMA 50',bollinger:'بولينجر',volume:'حجم التداول',rsi:'مؤشر RSI 14',indicators:'المؤشرات',structureTools:'الهيكل والأوردر بلوك',indicatorTools:'المؤشرات الفنية',noOrderBlocks:'لا توجد مناطق أوردر بلوك نشطة مؤكدة على هذا الفريم',full:'ملء الشاشة',exitFull:'إغلاق ملء الشاشة',note:'شموع مغلقة فقط. تأكيد القمة أو القاع بعد 3 شموع لاحقة؛ مرّر فوق العلامة لمعرفة وقت التأكيد. تصنيف الجاهزية يستخدم 4 ساعات مستقلًا عن فريم هذه الخريطة.',bias:'الهيكل',range:'نطاق عرضي',long:'صاعد',short:'هابط',high:'قمة محمية',low:'قاع محمي',gap:'FVG',partial:'ممتلئة جزئيًا',unfilled:'غير ممتلئة',none:'لا يوجد مستوى مؤكد',anchors:'نقطتا فيبوناتشي المؤكدتان A ← B',third:'C',waitingC:'امتدادات الثلاث نقاط تنتظر تأكيد نقطة التصحيح C.',equilibrium:'التوازن 0.5',golden:'فيبوناتشي 0.618–0.786',premium:'النصف العلوي',discount:'النصف السفلي',confirmed:'وقت التأكيد',asof:'آخر إغلاق',timeNote:'المناطق الزمنية علامات نسبية وليست توقعًا لموعد التفعيل.'},
  ru:{internalProtection:'Внутренние защищённые экстремумы',reason:'Причина защиты',initial:'Предварительно / ожидание BOS',confirmedStructure:'Подтверждено BOS',externalScope:'Внешняя',internalScope:'Внутренняя',title:'Структура рынка и Фибоначчи',loading:'Загрузка закрытых свечей…',error:'Не удалось обновить свечи.',retry:'Обновить',structure:'BOS / CHoCH',pivots:'HH / HL / LH / LL',protection:'Защищённые экстремумы',fvg:'Активные FVG',fib:'Коррекция Fib',extensions:'Расширения 2 точки',trendExtensions:'Расширения 3 точки',sweeps:'Снятие ликвидности',timeZones:'Временные зоны Fib',fan:'Веер Fib',orderBlocks:'Ордер-блоки',ema20:'EMA 20',ema50:'EMA 50',bollinger:'Полосы Боллинджера',volume:'Объём',rsi:'RSI 14',indicators:'Индикаторы',structureTools:'Структура и ордер-блоки',indicatorTools:'Технические индикаторы',noOrderBlocks:'Нет подтверждённых активных ордер-блоков',full:'Во весь экран',exitFull:'Закрыть полный экран',note:'Только закрытые свечи. Пивот подтверждается через 3 свечи; время подтверждения в подсказке. Готовность использует 4H независимо от графика.',bias:'Структура',range:'Диапазон',long:'Бычья',short:'Медвежья',high:'Защищённый максимум',low:'Защищённый минимум',gap:'FVG',partial:'Частично заполнен',unfilled:'Не заполнен',none:'Нет подтверждённого уровня',anchors:'Подтверждённые точки Fib A → B',third:'C',waitingC:'Для расширения 3 точек нужна подтверждённая точка C.',equilibrium:'Равновесие 0.5',golden:'Fib 0.618–0.786',premium:'Премия',discount:'Дисконт',confirmed:'Подтверждено',asof:'Закрыто',timeNote:'Временные зоны — отношения, не прогноз времени.'}
 };
-Object.assign(copy.en,{smc:'SMC workflow',smcStages:'Ordered confirmations',smcInfo:'Sweep → CHoCH → BOS → active OB/FVG → retest. No entry without closed-candle confirmation.',smcWaiting:'Setup forming'});
-Object.assign(copy.ar,{smc:'تسلسل السيولة والهيكل SMC',smcStages:'التأكيدات بالترتيب',smcInfo:'سحب السيولة ← CHoCH ← BOS ← منطقة OB/FVG ← إعادة الاختبار. لا دخول دون تأكيد شموع مغلقة.',smcWaiting:'الإعداد قيد التكوين'});
-Object.assign(copy.ru,{smc:'Последовательность SMC',smcStages:'Подтверждения по порядку',smcInfo:'Снятие ликвидности → CHoCH → BOS → зона OB/FVG → повторный тест. Только закрытые свечи.',smcWaiting:'Сетап формируется'});
+Object.assign(copy.en,{smc:'SMC workflow',smcStages:'Ordered confirmations',smcInfo:'Sweep → CHoCH → BOS → active OB/FVG → retest. Closed candles only.'});
+Object.assign(copy.ar,{smc:'تسلسل السيولة والهيكل SMC',smcStages:'التأكيدات بالترتيب',smcInfo:'سحب السيولة ← CHoCH ← BOS ← منطقة OB/FVG ← إعادة الاختبار. شموع مغلقة فقط.'});
+Object.assign(copy.ru,{smc:'Последовательность SMC',smcStages:'Подтверждения по порядку',smcInfo:'Снятие ликвидности → CHoCH → BOS → зона OB/FVG → повторный тест. Закрытые свечи.'});
 const lang=()=>localStorage.getItem('deeprise_language')||'en',t=k=>(copy[lang()]||copy.en)[k]||k;
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const pf=v=>Number(v).toLocaleString('en-US',{maximumFractionDigits:8});
@@ -273,215 +273,7 @@ function smcCard(r){
  const rows=done.map((key,i)=>'<span style="white-space:nowrap;color:'+(q.checks?.[key]?'#35e0a1':'#8ca5b7')+'">'+(q.checks?.[key]?'✓ ':'○ ')+esc(names[i])+'</span>').join(' <span aria-hidden="true" style="opacity:.5">→</span> ');
  const phase=(phases[lang()]||phases.en)[q.phase]||q.phase;
  return '<div class="dr-structure-note dr-smc-path" role="status"><b>'+esc(t('smcStages'))+' · '+side+' · '+esc(phase)+'</b><div style="display:flex;gap:7px;flex-wrap:wrap;margin:7px 0">'+rows+'</div>'+
-  (q.zone?'<small>'+esc(q.zone.type)+' 
- if(!p)return '';
- const d=p.protection||{},quality=d.quality==='CONFIRMED'?t('confirmedStructure'):t('initial');
- const broken=Number.isFinite(d.brokenLevel)?'$'+pf(d.brokenLevel):'—';
- return '<div class="dr-protection-record"><b>'+esc(scope)+' · '+esc(label)+' · $'+pf(p.price)+'</b>'+
- '<span>'+esc(quality)+' · '+esc(d.eventType||'BOS')+' '+esc(t('reason'))+
- ' '+esc(broken)+(d.breakTime?' · '+esc(stamp(d.breakTime)):'')+'</span></div>';
-}
-function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?'rtl':'ltr';const r=state.result,fib=r?.fib;
- const header=`<div class="dr-structure-head"><b>${t('title')} • ${esc(state.symbol)}</b><div>${['5m','15m','1h','4h','1d'].map(tf=>`<button data-structure-tf="${tf}" class="${state.tf===tf?'active':''}" aria-pressed="${state.tf===tf}">${tf}</button>`).join('')}<button data-structure-refresh>${t('retry')}</button><button type="button" data-structure-fullscreen title="${t(state.expanded?'exitFull':'full')}" aria-pressed="${state.expanded}" class="dr-structure-expand">${t(state.expanded?'exitFull':'full')}</button></div></div>`;
- const selector=keys=>`<div class="dr-structure-controls">${keys.map(k=>`<label class="${state.layers[k]?'is-on':''}"><input type="checkbox" data-structure-layer="${k}" ${state.layers[k]?'checked':''}>${t(k)}</label>`).join('')}</div>`;
- const layersOpen=panel.querySelector('.dr-layer-picker')?.open??false,indicatorsOpen=panel.querySelector('.dr-indicator-picker')?.open??false,extraOpen=panel.querySelector('.dr-extra-indicators')?.open??false;
- const controls=selector(Object.keys(state.layers).filter(k=>!INDICATORS.has(k))),indicatorControls=selector([...INDICATORS]);
- const status=state.loading?t('loading'):state.error?t('error')+(state.errorMessage?' · '+esc(state.errorMessage):''):'';
- let body=status?`<div class="dr-structure-status" role="status">${status}</div>`:'';
- // Never leave the preceding symbol or timeframe's chart under a new heading.
- if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div>${smcCard(r)}${toolBar()}<div class="dr-structure-scroll" dir="ltr">${svg(r)}</div>`;
-  if(fib)body+=`<div class="dr-structure-note">${t('anchors')}: $${pf(fib.start.price)} → $${pf(fib.end.price)} • ${fib.side}${fib.third?' • C $'+pf(fib.third.price):''}<br>${t('golden')}: $${pf(fib.golden[0])} – $${pf(fib.golden[1])} • ${t('equilibrium')}: $${pf(fib.equilibrium)}${state.layers.trendExtensions&&!fib.third?'<br>'+t('waitingC'):''}</div>`;
- }
- if(r&&!state.error)body+='<div class="dr-protection-records">'+
-  protectionInfo(r.protectedHigh,t('externalScope'),t('high'))+
-  protectionInfo(r.protectedLow,t('externalScope'),t('low'))+
-  protectionInfo(r.internal?.protectedHigh,t('internalScope'),t('high'))+
-  protectionInfo(r.internal?.protectedLow,t('internalScope'),t('low'))+'</div>';
-  const noOb=r&&!state.loading&&state.layers.orderBlocks&&!(r.blocks||[]).some(b=>b.status!=='INVALID')?'<div class="dr-structure-note dr-no-ob">'+esc(t('noOrderBlocks'))+'</div>':'';
- panel.innerHTML=header+indicatorQuick()+`<div class="dr-indicator-feedback" data-indicator-feedback role="status" aria-live="polite"></div>`+body+noOb+extraIndicators(extraOpen)+`<div class="dr-plot-options"><details class="dr-layer-picker" ${layersOpen?'open':''}><summary>${wt('layers')}</summary>${controls}</details><details class="dr-indicator-picker" ${indicatorsOpen?'open':''}><summary>${t('indicators')}</summary>${indicatorControls}</details></div><div class="dr-structure-note">${t('note')}${state.layers.timeZones?'<br>'+t('timeNote'):''}</div>`;
-}
-async function load(symbol,tf='4h',force=false){
- if(!symbol)return;symbol=String(symbol).replace(/[^A-Z0-9]/gi,'').toUpperCase();const token=++state.token;state.controller?.abort();if(state.symbol!==symbol||state.tf!==tf){state.view={count:defaultCount(),offset:0};state.pending=null;state.pointers.clear();state.gesture=null}state.symbol=symbol;state.tf=tf;state.result=null;state.error=false;state.errorMessage='';state.loading=true;render();
- const key=symbol+':'+tf,radar=tf==='4h'?window.DeepRisePreMove?.state.structures.get(symbol):null,cached=radar||state.cache.get(key);
- if(!force&&cached&&Date.now()-cached.updated<180000){state.result=cached;state.loading=false;render();return}
- const sources=['https://data-api.binance.vision','https://api.binance.com','https://api1.binance.com','https://api.binance.us'];let lastError=null;
- try{
-  for(const origin of sources){
-   if(token!==state.token)return;
-   const controller=new AbortController();state.controller=controller;const timer=setTimeout(()=>controller.abort(),5200);
-   try{
-    const response=await fetch(origin+'/api/v3/klines?symbol='+encodeURIComponent(symbol)+'&interval='+encodeURIComponent(tf)+'&limit=180',{cache:'no-store',signal:controller.signal});
-    if(!response.ok)throw Error('HTTP '+response.status);
-    const raw=await response.json(),result=window.DeepRiseStructure?.analyse(raw,{tf});
-    if(!result)throw Error('No valid closed candles');
-    if(token!==state.token)return;
-    state.cache.set(key,result);if(state.cache.size>24)state.cache.delete(state.cache.keys().next().value);
-    state.result=result;state.error=false;lastError=null;break;
-   }catch(e){lastError=e}finally{clearTimeout(timer)}
-  }
-  if(!state.result){state.error=true;state.errorMessage=lastError?.message||'Market data unavailable'}
- }finally{if(token===state.token){state.loading=false;render()}}
-}
-function hook(){if(typeof openChart!=='function'||openChart.__drStructure)return;const base=openChart;openChart=function(symbol){const out=base.apply(this,arguments);load(symbol,state.tf);return out};openChart.__drStructure=true;if(typeof closeChart==='function'&&!closeChart.__drStructure){const previous=closeChart;closeChart=function(){if(state.expanded)toggleFullscreen(false);return previous.apply(this,arguments)};closeChart.__drStructure=true}}
-document.getElementById('languageSelect')?.addEventListener('change',()=>{if(state.symbol)render()});
-const hostPanel=document.getElementById('chartPanel');
-function ensureOpenedChart(){
- if(!hostPanel?.classList.contains('active'))return;
- let sym='';
- try{if(typeof chartSymbol==='string')sym=chartSymbol}catch(_){}
- if(!sym){const base=(document.getElementById('chartTitle')?.textContent||'').split('/')[0].trim().replace(/[^A-Z0-9]/gi,'');if(base)sym=base+'USDT'}
- if(!sym)sym='BTCUSDT';
- if(sym!==state.symbol&&!state.loading)load(sym,state.tf);
-}
-if(hostPanel){new MutationObserver(ensureOpenedChart).observe(hostPanel,{attributes:true,attributeFilter:['class']});setTimeout(ensureOpenedChart,100)}
-
-document.addEventListener('deeprise-premove-updated',()=>{const r=window.DeepRisePreMove?.state.structures.get(state.symbol);if(state.tf==='4h'&&r&&!state.loading&&r!==state.result){state.result=r;queuePaint()}});
-window.DeepRiseStructureChart={version:'18.0',state,load,render,zoom,pan,fit,setPreset,viewport,drawings,saveDrawings,addPoint,svg,paintChart,studies,updateLayer,toggleFullscreen};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.expanded){e.preventDefault();e.stopImmediatePropagation();toggleFullscreen(false)}},true);
-const css=document.createElement('style');css.textContent=`.dr-draw-toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:12px 0}.dr-draw-toolbar>div{display:flex;flex-wrap:wrap;align-items:center;gap:5px}.dr-draw-toolbar button{padding:9px 11px;border:1px solid #29465e;background:#102236;color:#cae4f7;font-size:11px;min-height:38px}.dr-draw-toolbar button.active{border-color:#ffd166;color:#ffd166}.dr-draw-toolbar button:disabled{opacity:.35;cursor:default}.dr-draw-toolbar small{font-size:10px;color:#9bb8ca}.dr-layer-picker>summary{cursor:pointer;padding:10px;color:#65b8ff;font-size:12px}.dr-structure-scroll svg[data-dr-interactive]{touch-action:none;user-select:none;min-width:0;width:100%;display:block;outline-offset:-3px}.dr-structure-scroll{overflow:hidden!important}.dr-structure-panel:has([data-chart-tool].active:not([data-chart-tool=pan])) svg{cursor:crosshair}.dr-readiness-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.dr-readiness-tabs button,.dr-structure-head button{border:1px solid #29465e;border-radius:8px;padding:8px 10px;background:#0b2130;color:#a9c1d1;font-size:11px;cursor:pointer}.dr-readiness-tabs button.active,.dr-structure-head button.active{border-color:#35e0a1;color:#72e8bf;background:#10382e}.dr-readiness-tabs b{margin-inline-start:6px}.dr-readiness-group{border-top:1px solid #264056;padding-top:5px;margin-top:12px;min-width:0}.dr-readiness-group h3{color:#9abbd0;font-size:14px;display:flex;gap:9px;align-items:center}.dr-readiness-group h3 span{font-size:11px;border-radius:20px;background:#163145;padding:3px 8px}.dr-readiness-group.ready h3{color:#35e0a1}.dr-readiness-group.near h3{color:#65b8ff}.dr-readiness-group.early h3{color:#ffd166}.dr-readiness-group.blocked h3{color:#ff9f62}.dr-premove-card.ready{border-color:#35e0a1}.dr-premove-card.near{border-color:#396d9b}.dr-premove-card.early{border-color:#6b5b32}.dr-premove-card.blocked{border-color:#8e533a}.dr-readiness-action{margin-top:8px;font-size:11px;color:#c5dce8;line-height:1.6}.dr-structure-panel{padding:16px;background:#071421;border-top:1px solid #26485d;min-width:0}.dr-structure-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;color:#d9edfa}.dr-structure-head>div{display:flex;gap:5px;flex-wrap:wrap}.dr-structure-controls{display:flex;flex-wrap:wrap;gap:8px 15px;margin:13px 0;font-size:11px;color:#a1bed0}.dr-structure-controls label{display:flex;gap:5px;align-items:center;cursor:pointer}.dr-structure-summary{display:flex;gap:10px 18px;flex-wrap:wrap;font-size:11px;color:#9bb8cd;margin:10px 0}.dr-structure-summary b{color:#dceef9}.dr-structure-scroll{overflow-x:auto;max-width:100%;border:1px solid #18344c;border-radius:10px;background:#050e19}.dr-structure-scroll svg{display:block;width:100%;min-width:900px;height:auto;font-family:Arial,sans-serif}.dr-structure-note{font-size:10px;color:#8da7b9;line-height:1.7;margin-top:9px;overflow-wrap:anywhere}.dr-structure-status{padding:18px;color:#ffd166}@media(min-width:1200px){.dr-readiness-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.dr-readiness-groups>.dr-readiness-group:only-child{grid-column:1/-1}}@media(max-width:700px){.dr-structure-panel{padding:11px}.dr-readiness-tabs button{padding:9px 7px;font-size:10px}.dr-premove-card{overflow-wrap:anywhere}.dr-premove-metrics b,.dr-premove-levels b{unicode-bidi:isolate;direction:ltr;display:inline-block}}`;
-css.textContent+=".dr-structure-scroll svg[data-dr-interactive]{width:100%!important;min-width:0!important;height:auto;touch-action:none}.dr-draw-toolbar>div{max-width:100%;overflow-x:auto;flex-wrap:nowrap!important}.dr-draw-toolbar button{white-space:nowrap;flex-shrink:0;border-radius:7px}.dr-structure-scroll{overflow:hidden!important;contain:layout paint}.dr-chart-expanded .dr-structure-scroll svg[data-dr-interactive]{height:auto;min-height:min(50dvh,540px)}@media(max-width:650px){.dr-draw-toolbar>div{width:100%}.dr-structure-head button{min-height:38px}}";css.textContent+=".dr-plot-options{display:flex;gap:9px 18px;flex-wrap:wrap}.dr-plot-options details{flex:1 1 200px;min-width:0}.dr-indicator-picker>summary{padding:10px;color:#65b8ff;font-size:12px;cursor:pointer}.dr-plot-options .dr-structure-controls{max-height:210px;overflow-y:auto}.dr-structure-panel svg text{pointer-events:none}";css.textContent+=`.dr-no-ob{color:#ffc97b;border:1px dashed #906638;padding:8px 12px;border-radius:8px}.dr-quick-layer-group>b{font-size:12px;color:#b5d1e1;display:block;margin:7px 0}.dr-quick-layer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.dr-indicator-shortcuts{display:block!important;margin:8px 0}.dr-indicator-shortcuts button{min-height:40px!important;text-align:center!important;white-space:normal!important;overflow-wrap:anywhere}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(6,minmax(0,1fr))}@media(max-width:650px){.dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-group>b{font-size:10px}}.dr-indicator-feedback{min-height:17px;color:#9edfc5;font-size:12px;padding:1px 4px}.dr-indicator-shortcuts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:10px 0}.dr-indicator-shortcuts button{position:relative;z-index:1;-webkit-user-select:none;user-select:none;border:1px solid #31506b;background:#0e2435;color:#c1d8e8;padding:10px 12px;border-radius:10px;font-size:12px;cursor:pointer;min-height:42px;touch-action:manipulation}.dr-indicator-shortcuts button.active{background:#10382e;border-color:#35e0a1;color:#85f0cb}.dr-indicator-shortcuts [data-indicator-status]{font-size:15px;margin-inline-start:5px}.dr-structure-controls label.is-on{color:#81e9c2}.dr-structure-expand{border-color:#35e0a1!important;color:#a3f8d8!important;font-weight:700}.dr-structure-fullscreen{position:fixed!important;inset:0!important;z-index:9999999!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;overflow:auto!important;border:0!important;border-radius:0!important;margin:0!important;padding:calc(9px + env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))!important;box-sizing:border-box;background:#050e19!important;display:flex!important;flex-direction:column!important;overscroll-behavior:contain}.dr-structure-fullscreen .dr-structure-head{position:sticky;top:0;z-index:3;background:#050e19;padding:8px 0}.dr-structure-fullscreen .dr-draw-toolbar{margin:6px 0}.dr-structure-fullscreen .dr-plot-options{flex-shrink:0}.dr-structure-fullscreen .dr-plot-options details:not([open]){flex:0 1 auto}.dr-structure-fullscreen .dr-structure-scroll{flex:1 1 auto!important;min-height:44dvh;overflow:hidden!important;contain:none!important}.dr-structure-fullscreen .dr-structure-scroll svg[data-dr-interactive]{height:100%!important;max-height:none!important;width:100%!important;min-width:0!important}.dr-structure-immersive .dr-bottom-nav,.dr-structure-immersive #deepriseInstall{visibility:hidden!important}@media(max-width:700px){.dr-structure-fullscreen .dr-structure-head{gap:5px}.dr-structure-fullscreen .dr-structure-note{font-size:9px}.dr-structure-fullscreen .dr-indicator-shortcuts{flex-wrap:nowrap;overflow-x:auto;padding:6px 0}.dr-indicator-shortcuts button{white-space:nowrap}.dr-structure-fullscreen .dr-draw-toolbar>div{overflow-x:auto!important}}`;
-css.textContent+=`.dr-structure-scroll svg[data-dr-interactive],.dr-structure-scroll svg[data-dr-interactive] *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}.dr-protection-records{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:7px;margin:10px 0}.dr-protection-record{border:1px solid #29485f;background:#0a2130;padding:9px 11px;border-radius:9px;display:grid;gap:5px;font-size:11px;line-height:1.5}.dr-protection-record>b{color:#dbedf7}.dr-protection-record>span{color:#9ac2d5}.dr-structure-scroll{overscroll-behavior:contain}.dr-structure-head button,.dr-indicator-shortcuts button,.dr-draw-toolbar button{touch-action:manipulation}`;
-css.textContent+=`
-/* V18: Chart-first, compact touch controls, self-contained chart interaction */
-.dr-quick-chart-controls{display:grid;gap:7px;margin:9px 0 4px}
-.dr-chart-presets{display:flex;align-items:stretch;gap:6px}
-.dr-chart-presets button{min-height:38px;flex:1 1 0;padding:7px 5px;border:1px solid #31506b;border-radius:9px;background:#102236;color:#aecde1;font-size:12px;touch-action:manipulation}
-.dr-chart-presets button.active{background:#13503c;border-color:#35e0a1;color:#a6ffe0}
-.dr-fast-toggles{display:flex;overflow-x:auto;gap:6px;overscroll-behavior-x:contain;padding:2px 1px 6px;scrollbar-width:thin}
-.dr-fast-toggles button{flex:1 0 auto;min-height:39px;white-space:nowrap;padding:7px 11px;border:1px solid #31506b;border-radius:9px;background:#102236;color:#bdd4e4;font-size:12px}
-.dr-fast-toggles button.active{background:#10382e;border-color:#35e0a1;color:#8ff4d3}
-.dr-extra-indicators{border:1px solid #24445c;border-radius:10px;padding:5px 10px;margin:10px 0;background:#091d2c}
-.dr-extra-indicators>summary{padding:9px 0;cursor:pointer;color:#9fddf6;font-size:13px;font-weight:700;touch-action:manipulation}
-.dr-extra-indicators .dr-indicator-shortcuts{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;margin:0}
-.dr-extra-indicators .dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-.dr-structure-panel .dr-draw-toolbar{background:#0a2030;border:1px solid #25445c;border-radius:10px;padding:7px;margin:8px 0 5px;gap:7px}
-.dr-structure-panel .dr-draw-toolbar>div:first-child{display:flex;flex:1;justify-content:center}
-.dr-structure-panel .dr-draw-toolbar>div:nth-child(2){display:flex;justify-content:flex-start;max-width:100%;overflow:auto}
-.dr-draw-toolbar button{min-width:38px;min-height:42px!important;font-size:12px!important}
-.dr-structure-head{align-items:flex-start}
-.dr-structure-head>div{flex-wrap:nowrap!important;overflow-x:auto;max-width:100%;scrollbar-width:thin}
-.dr-structure-scroll{min-height:380px;user-select:none}
-.dr-structure-summary{padding:7px 9px;border:1px solid #1c364c;border-radius:8px;background:#081d2b;font-size:11px}
-.dr-structure-panel .dr-structure-note{margin-top:5px}
-@media(max-width:650px){
- .dr-structure-panel{padding:9px!important}
- .dr-structure-scroll{min-height:370px!important}
- .dr-structure-head>div{width:100%;gap:3px!important}
- .dr-structure-head button{padding:8px 7px!important;min-width:42px!important}
- .dr-chart-presets button{font-size:12px}
- .dr-extra-indicators .dr-indicator-shortcuts{grid-template-columns:1fr}
- .dr-extra-indicators .dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .dr-draw-toolbar>div{width:100%}
- .dr-structure-scroll svg{width:100%!important;height:auto!important}
-}
-.dr-structure-fullscreen .dr-quick-chart-controls{position:sticky;top:0;z-index:4;background:#050e19;padding:3px 0}
-.dr-structure-fullscreen .dr-structure-scroll{min-height:50dvh!important;flex:1 1 auto!important}
-`;document.head.appendChild(css);hook();let resizeQueued=false;addEventListener('resize',()=>{if(resizeQueued||!state.result||state.pointers.size)return;resizeQueued=true;requestAnimationFrame(()=>{resizeQueued=false;paintChart()})});
-})();
-+pf(q.zone.lower)+' – 
- if(!p)return '';
- const d=p.protection||{},quality=d.quality==='CONFIRMED'?t('confirmedStructure'):t('initial');
- const broken=Number.isFinite(d.brokenLevel)?'$'+pf(d.brokenLevel):'—';
- return '<div class="dr-protection-record"><b>'+esc(scope)+' · '+esc(label)+' · $'+pf(p.price)+'</b>'+
- '<span>'+esc(quality)+' · '+esc(d.eventType||'BOS')+' '+esc(t('reason'))+
- ' '+esc(broken)+(d.breakTime?' · '+esc(stamp(d.breakTime)):'')+'</span></div>';
-}
-function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?'rtl':'ltr';const r=state.result,fib=r?.fib;
- const header=`<div class="dr-structure-head"><b>${t('title')} • ${esc(state.symbol)}</b><div>${['5m','15m','1h','4h','1d'].map(tf=>`<button data-structure-tf="${tf}" class="${state.tf===tf?'active':''}" aria-pressed="${state.tf===tf}">${tf}</button>`).join('')}<button data-structure-refresh>${t('retry')}</button><button type="button" data-structure-fullscreen title="${t(state.expanded?'exitFull':'full')}" aria-pressed="${state.expanded}" class="dr-structure-expand">${t(state.expanded?'exitFull':'full')}</button></div></div>`;
- const selector=keys=>`<div class="dr-structure-controls">${keys.map(k=>`<label class="${state.layers[k]?'is-on':''}"><input type="checkbox" data-structure-layer="${k}" ${state.layers[k]?'checked':''}>${t(k)}</label>`).join('')}</div>`;
- const layersOpen=panel.querySelector('.dr-layer-picker')?.open??false,indicatorsOpen=panel.querySelector('.dr-indicator-picker')?.open??false,extraOpen=panel.querySelector('.dr-extra-indicators')?.open??false;
- const controls=selector(Object.keys(state.layers).filter(k=>!INDICATORS.has(k))),indicatorControls=selector([...INDICATORS]);
- const status=state.loading?t('loading'):state.error?t('error')+(state.errorMessage?' · '+esc(state.errorMessage):''):'';
- let body=status?`<div class="dr-structure-status" role="status">${status}</div>`:'';
- // Never leave the preceding symbol or timeframe's chart under a new heading.
- if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div>${toolBar()}<div class="dr-structure-scroll" dir="ltr">${svg(r)}</div>`;
-  if(fib)body+=`<div class="dr-structure-note">${t('anchors')}: $${pf(fib.start.price)} → $${pf(fib.end.price)} • ${fib.side}${fib.third?' • C $'+pf(fib.third.price):''}<br>${t('golden')}: $${pf(fib.golden[0])} – $${pf(fib.golden[1])} • ${t('equilibrium')}: $${pf(fib.equilibrium)}${state.layers.trendExtensions&&!fib.third?'<br>'+t('waitingC'):''}</div>`;
- }
- if(r&&!state.error)body+='<div class="dr-protection-records">'+
-  protectionInfo(r.protectedHigh,t('externalScope'),t('high'))+
-  protectionInfo(r.protectedLow,t('externalScope'),t('low'))+
-  protectionInfo(r.internal?.protectedHigh,t('internalScope'),t('high'))+
-  protectionInfo(r.internal?.protectedLow,t('internalScope'),t('low'))+'</div>';
-  const noOb=r&&!state.loading&&state.layers.orderBlocks&&!(r.blocks||[]).some(b=>b.status!=='INVALID')?'<div class="dr-structure-note dr-no-ob">'+esc(t('noOrderBlocks'))+'</div>':'';
- panel.innerHTML=header+indicatorQuick()+`<div class="dr-indicator-feedback" data-indicator-feedback role="status" aria-live="polite"></div>`+body+noOb+extraIndicators(extraOpen)+`<div class="dr-plot-options"><details class="dr-layer-picker" ${layersOpen?'open':''}><summary>${wt('layers')}</summary>${controls}</details><details class="dr-indicator-picker" ${indicatorsOpen?'open':''}><summary>${t('indicators')}</summary>${indicatorControls}</details></div><div class="dr-structure-note">${t('note')}${state.layers.timeZones?'<br>'+t('timeNote'):''}</div>`;
-}
-async function load(symbol,tf='4h',force=false){
- if(!symbol)return;symbol=String(symbol).replace(/[^A-Z0-9]/gi,'').toUpperCase();const token=++state.token;state.controller?.abort();if(state.symbol!==symbol||state.tf!==tf){state.view={count:defaultCount(),offset:0};state.pending=null;state.pointers.clear();state.gesture=null}state.symbol=symbol;state.tf=tf;state.result=null;state.error=false;state.errorMessage='';state.loading=true;render();
- const key=symbol+':'+tf,radar=tf==='4h'?window.DeepRisePreMove?.state.structures.get(symbol):null,cached=radar||state.cache.get(key);
- if(!force&&cached&&Date.now()-cached.updated<180000){state.result=cached;state.loading=false;render();return}
- const sources=['https://data-api.binance.vision','https://api.binance.com','https://api1.binance.com','https://api.binance.us'];let lastError=null;
- try{
-  for(const origin of sources){
-   if(token!==state.token)return;
-   const controller=new AbortController();state.controller=controller;const timer=setTimeout(()=>controller.abort(),5200);
-   try{
-    const response=await fetch(origin+'/api/v3/klines?symbol='+encodeURIComponent(symbol)+'&interval='+encodeURIComponent(tf)+'&limit=180',{cache:'no-store',signal:controller.signal});
-    if(!response.ok)throw Error('HTTP '+response.status);
-    const raw=await response.json(),result=window.DeepRiseStructure?.analyse(raw,{tf});
-    if(!result)throw Error('No valid closed candles');
-    if(token!==state.token)return;
-    state.cache.set(key,result);if(state.cache.size>24)state.cache.delete(state.cache.keys().next().value);
-    state.result=result;state.error=false;lastError=null;break;
-   }catch(e){lastError=e}finally{clearTimeout(timer)}
-  }
-  if(!state.result){state.error=true;state.errorMessage=lastError?.message||'Market data unavailable'}
- }finally{if(token===state.token){state.loading=false;render()}}
-}
-function hook(){if(typeof openChart!=='function'||openChart.__drStructure)return;const base=openChart;openChart=function(symbol){const out=base.apply(this,arguments);load(symbol,state.tf);return out};openChart.__drStructure=true;if(typeof closeChart==='function'&&!closeChart.__drStructure){const previous=closeChart;closeChart=function(){if(state.expanded)toggleFullscreen(false);return previous.apply(this,arguments)};closeChart.__drStructure=true}}
-document.getElementById('languageSelect')?.addEventListener('change',()=>{if(state.symbol)render()});
-const hostPanel=document.getElementById('chartPanel');
-function ensureOpenedChart(){
- if(!hostPanel?.classList.contains('active'))return;
- let sym='';
- try{if(typeof chartSymbol==='string')sym=chartSymbol}catch(_){}
- if(!sym){const base=(document.getElementById('chartTitle')?.textContent||'').split('/')[0].trim().replace(/[^A-Z0-9]/gi,'');if(base)sym=base+'USDT'}
- if(!sym)sym='BTCUSDT';
- if(sym!==state.symbol&&!state.loading)load(sym,state.tf);
-}
-if(hostPanel){new MutationObserver(ensureOpenedChart).observe(hostPanel,{attributes:true,attributeFilter:['class']});setTimeout(ensureOpenedChart,100)}
-
-document.addEventListener('deeprise-premove-updated',()=>{const r=window.DeepRisePreMove?.state.structures.get(state.symbol);if(state.tf==='4h'&&r&&!state.loading&&r!==state.result){state.result=r;queuePaint()}});
-window.DeepRiseStructureChart={version:'18.0',state,load,render,zoom,pan,fit,setPreset,viewport,drawings,saveDrawings,addPoint,svg,paintChart,studies,updateLayer,toggleFullscreen};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.expanded){e.preventDefault();e.stopImmediatePropagation();toggleFullscreen(false)}},true);
-const css=document.createElement('style');css.textContent=`.dr-draw-toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:12px 0}.dr-draw-toolbar>div{display:flex;flex-wrap:wrap;align-items:center;gap:5px}.dr-draw-toolbar button{padding:9px 11px;border:1px solid #29465e;background:#102236;color:#cae4f7;font-size:11px;min-height:38px}.dr-draw-toolbar button.active{border-color:#ffd166;color:#ffd166}.dr-draw-toolbar button:disabled{opacity:.35;cursor:default}.dr-draw-toolbar small{font-size:10px;color:#9bb8ca}.dr-layer-picker>summary{cursor:pointer;padding:10px;color:#65b8ff;font-size:12px}.dr-structure-scroll svg[data-dr-interactive]{touch-action:none;user-select:none;min-width:0;width:100%;display:block;outline-offset:-3px}.dr-structure-scroll{overflow:hidden!important}.dr-structure-panel:has([data-chart-tool].active:not([data-chart-tool=pan])) svg{cursor:crosshair}.dr-readiness-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.dr-readiness-tabs button,.dr-structure-head button{border:1px solid #29465e;border-radius:8px;padding:8px 10px;background:#0b2130;color:#a9c1d1;font-size:11px;cursor:pointer}.dr-readiness-tabs button.active,.dr-structure-head button.active{border-color:#35e0a1;color:#72e8bf;background:#10382e}.dr-readiness-tabs b{margin-inline-start:6px}.dr-readiness-group{border-top:1px solid #264056;padding-top:5px;margin-top:12px;min-width:0}.dr-readiness-group h3{color:#9abbd0;font-size:14px;display:flex;gap:9px;align-items:center}.dr-readiness-group h3 span{font-size:11px;border-radius:20px;background:#163145;padding:3px 8px}.dr-readiness-group.ready h3{color:#35e0a1}.dr-readiness-group.near h3{color:#65b8ff}.dr-readiness-group.early h3{color:#ffd166}.dr-readiness-group.blocked h3{color:#ff9f62}.dr-premove-card.ready{border-color:#35e0a1}.dr-premove-card.near{border-color:#396d9b}.dr-premove-card.early{border-color:#6b5b32}.dr-premove-card.blocked{border-color:#8e533a}.dr-readiness-action{margin-top:8px;font-size:11px;color:#c5dce8;line-height:1.6}.dr-structure-panel{padding:16px;background:#071421;border-top:1px solid #26485d;min-width:0}.dr-structure-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;color:#d9edfa}.dr-structure-head>div{display:flex;gap:5px;flex-wrap:wrap}.dr-structure-controls{display:flex;flex-wrap:wrap;gap:8px 15px;margin:13px 0;font-size:11px;color:#a1bed0}.dr-structure-controls label{display:flex;gap:5px;align-items:center;cursor:pointer}.dr-structure-summary{display:flex;gap:10px 18px;flex-wrap:wrap;font-size:11px;color:#9bb8cd;margin:10px 0}.dr-structure-summary b{color:#dceef9}.dr-structure-scroll{overflow-x:auto;max-width:100%;border:1px solid #18344c;border-radius:10px;background:#050e19}.dr-structure-scroll svg{display:block;width:100%;min-width:900px;height:auto;font-family:Arial,sans-serif}.dr-structure-note{font-size:10px;color:#8da7b9;line-height:1.7;margin-top:9px;overflow-wrap:anywhere}.dr-structure-status{padding:18px;color:#ffd166}@media(min-width:1200px){.dr-readiness-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.dr-readiness-groups>.dr-readiness-group:only-child{grid-column:1/-1}}@media(max-width:700px){.dr-structure-panel{padding:11px}.dr-readiness-tabs button{padding:9px 7px;font-size:10px}.dr-premove-card{overflow-wrap:anywhere}.dr-premove-metrics b,.dr-premove-levels b{unicode-bidi:isolate;direction:ltr;display:inline-block}}`;
-css.textContent+=".dr-structure-scroll svg[data-dr-interactive]{width:100%!important;min-width:0!important;height:auto;touch-action:none}.dr-draw-toolbar>div{max-width:100%;overflow-x:auto;flex-wrap:nowrap!important}.dr-draw-toolbar button{white-space:nowrap;flex-shrink:0;border-radius:7px}.dr-structure-scroll{overflow:hidden!important;contain:layout paint}.dr-chart-expanded .dr-structure-scroll svg[data-dr-interactive]{height:auto;min-height:min(50dvh,540px)}@media(max-width:650px){.dr-draw-toolbar>div{width:100%}.dr-structure-head button{min-height:38px}}";css.textContent+=".dr-plot-options{display:flex;gap:9px 18px;flex-wrap:wrap}.dr-plot-options details{flex:1 1 200px;min-width:0}.dr-indicator-picker>summary{padding:10px;color:#65b8ff;font-size:12px;cursor:pointer}.dr-plot-options .dr-structure-controls{max-height:210px;overflow-y:auto}.dr-structure-panel svg text{pointer-events:none}";css.textContent+=`.dr-no-ob{color:#ffc97b;border:1px dashed #906638;padding:8px 12px;border-radius:8px}.dr-quick-layer-group>b{font-size:12px;color:#b5d1e1;display:block;margin:7px 0}.dr-quick-layer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.dr-indicator-shortcuts{display:block!important;margin:8px 0}.dr-indicator-shortcuts button{min-height:40px!important;text-align:center!important;white-space:normal!important;overflow-wrap:anywhere}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(6,minmax(0,1fr))}@media(max-width:650px){.dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-group>b{font-size:10px}}.dr-indicator-feedback{min-height:17px;color:#9edfc5;font-size:12px;padding:1px 4px}.dr-indicator-shortcuts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:10px 0}.dr-indicator-shortcuts button{position:relative;z-index:1;-webkit-user-select:none;user-select:none;border:1px solid #31506b;background:#0e2435;color:#c1d8e8;padding:10px 12px;border-radius:10px;font-size:12px;cursor:pointer;min-height:42px;touch-action:manipulation}.dr-indicator-shortcuts button.active{background:#10382e;border-color:#35e0a1;color:#85f0cb}.dr-indicator-shortcuts [data-indicator-status]{font-size:15px;margin-inline-start:5px}.dr-structure-controls label.is-on{color:#81e9c2}.dr-structure-expand{border-color:#35e0a1!important;color:#a3f8d8!important;font-weight:700}.dr-structure-fullscreen{position:fixed!important;inset:0!important;z-index:9999999!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;overflow:auto!important;border:0!important;border-radius:0!important;margin:0!important;padding:calc(9px + env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))!important;box-sizing:border-box;background:#050e19!important;display:flex!important;flex-direction:column!important;overscroll-behavior:contain}.dr-structure-fullscreen .dr-structure-head{position:sticky;top:0;z-index:3;background:#050e19;padding:8px 0}.dr-structure-fullscreen .dr-draw-toolbar{margin:6px 0}.dr-structure-fullscreen .dr-plot-options{flex-shrink:0}.dr-structure-fullscreen .dr-plot-options details:not([open]){flex:0 1 auto}.dr-structure-fullscreen .dr-structure-scroll{flex:1 1 auto!important;min-height:44dvh;overflow:hidden!important;contain:none!important}.dr-structure-fullscreen .dr-structure-scroll svg[data-dr-interactive]{height:100%!important;max-height:none!important;width:100%!important;min-width:0!important}.dr-structure-immersive .dr-bottom-nav,.dr-structure-immersive #deepriseInstall{visibility:hidden!important}@media(max-width:700px){.dr-structure-fullscreen .dr-structure-head{gap:5px}.dr-structure-fullscreen .dr-structure-note{font-size:9px}.dr-structure-fullscreen .dr-indicator-shortcuts{flex-wrap:nowrap;overflow-x:auto;padding:6px 0}.dr-indicator-shortcuts button{white-space:nowrap}.dr-structure-fullscreen .dr-draw-toolbar>div{overflow-x:auto!important}}`;
-css.textContent+=`.dr-structure-scroll svg[data-dr-interactive],.dr-structure-scroll svg[data-dr-interactive] *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}.dr-protection-records{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:7px;margin:10px 0}.dr-protection-record{border:1px solid #29485f;background:#0a2130;padding:9px 11px;border-radius:9px;display:grid;gap:5px;font-size:11px;line-height:1.5}.dr-protection-record>b{color:#dbedf7}.dr-protection-record>span{color:#9ac2d5}.dr-structure-scroll{overscroll-behavior:contain}.dr-structure-head button,.dr-indicator-shortcuts button,.dr-draw-toolbar button{touch-action:manipulation}`;
-css.textContent+=`
-/* V18: Chart-first, compact touch controls, self-contained chart interaction */
-.dr-quick-chart-controls{display:grid;gap:7px;margin:9px 0 4px}
-.dr-chart-presets{display:flex;align-items:stretch;gap:6px}
-.dr-chart-presets button{min-height:38px;flex:1 1 0;padding:7px 5px;border:1px solid #31506b;border-radius:9px;background:#102236;color:#aecde1;font-size:12px;touch-action:manipulation}
-.dr-chart-presets button.active{background:#13503c;border-color:#35e0a1;color:#a6ffe0}
-.dr-fast-toggles{display:flex;overflow-x:auto;gap:6px;overscroll-behavior-x:contain;padding:2px 1px 6px;scrollbar-width:thin}
-.dr-fast-toggles button{flex:1 0 auto;min-height:39px;white-space:nowrap;padding:7px 11px;border:1px solid #31506b;border-radius:9px;background:#102236;color:#bdd4e4;font-size:12px}
-.dr-fast-toggles button.active{background:#10382e;border-color:#35e0a1;color:#8ff4d3}
-.dr-extra-indicators{border:1px solid #24445c;border-radius:10px;padding:5px 10px;margin:10px 0;background:#091d2c}
-.dr-extra-indicators>summary{padding:9px 0;cursor:pointer;color:#9fddf6;font-size:13px;font-weight:700;touch-action:manipulation}
-.dr-extra-indicators .dr-indicator-shortcuts{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;margin:0}
-.dr-extra-indicators .dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-.dr-structure-panel .dr-draw-toolbar{background:#0a2030;border:1px solid #25445c;border-radius:10px;padding:7px;margin:8px 0 5px;gap:7px}
-.dr-structure-panel .dr-draw-toolbar>div:first-child{display:flex;flex:1;justify-content:center}
-.dr-structure-panel .dr-draw-toolbar>div:nth-child(2){display:flex;justify-content:flex-start;max-width:100%;overflow:auto}
-.dr-draw-toolbar button{min-width:38px;min-height:42px!important;font-size:12px!important}
-.dr-structure-head{align-items:flex-start}
-.dr-structure-head>div{flex-wrap:nowrap!important;overflow-x:auto;max-width:100%;scrollbar-width:thin}
-.dr-structure-scroll{min-height:380px;user-select:none}
-.dr-structure-summary{padding:7px 9px;border:1px solid #1c364c;border-radius:8px;background:#081d2b;font-size:11px}
-.dr-structure-panel .dr-structure-note{margin-top:5px}
-@media(max-width:650px){
- .dr-structure-panel{padding:9px!important}
- .dr-structure-scroll{min-height:370px!important}
- .dr-structure-head>div{width:100%;gap:3px!important}
- .dr-structure-head button{padding:8px 7px!important;min-width:42px!important}
- .dr-chart-presets button{font-size:12px}
- .dr-extra-indicators .dr-indicator-shortcuts{grid-template-columns:1fr}
- .dr-extra-indicators .dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .dr-draw-toolbar>div{width:100%}
- .dr-structure-scroll svg{width:100%!important;height:auto!important}
-}
-.dr-structure-fullscreen .dr-quick-chart-controls{position:sticky;top:0;z-index:4;background:#050e19;padding:3px 0}
-.dr-structure-fullscreen .dr-structure-scroll{min-height:50dvh!important;flex:1 1 auto!important}
-`;document.head.appendChild(css);hook();let resizeQueued=false;addEventListener('resize',()=>{if(resizeQueued||!state.result||state.pointers.size)return;resizeQueued=true;requestAnimationFrame(()=>{resizeQueued=false;paintChart()})});
-})();
-+pf(q.zone.upper)+'</small>':'')+
+  (q.zone?'<small>'+esc(q.zone.type)+' $'+pf(q.zone.lower)+' – $'+pf(q.zone.upper)+'</small>':'')+
   '<small style="display:block;margin-top:5px">'+esc(t('smcInfo'))+'</small></div>';
 }
 
@@ -501,7 +293,7 @@ function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?
  const status=state.loading?t('loading'):state.error?t('error')+(state.errorMessage?' · '+esc(state.errorMessage):''):'';
  let body=status?`<div class="dr-structure-status" role="status">${status}</div>`:'';
  // Never leave the preceding symbol or timeframe's chart under a new heading.
- if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div>${toolBar()}<div class="dr-structure-scroll" dir="ltr">${svg(r)}</div>`;
+ if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div>${smcCard(r)}${toolBar()}<div class="dr-structure-scroll" dir="ltr">${svg(r)}</div>`;
   if(fib)body+=`<div class="dr-structure-note">${t('anchors')}: $${pf(fib.start.price)} → $${pf(fib.end.price)} • ${fib.side}${fib.third?' • C $'+pf(fib.third.price):''}<br>${t('golden')}: $${pf(fib.golden[0])} – $${pf(fib.golden[1])} • ${t('equilibrium')}: $${pf(fib.equilibrium)}${state.layers.trendExtensions&&!fib.third?'<br>'+t('waitingC'):''}</div>`;
  }
  if(r&&!state.error)body+='<div class="dr-protection-records">'+
