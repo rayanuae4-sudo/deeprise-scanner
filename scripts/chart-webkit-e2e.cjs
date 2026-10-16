@@ -19,8 +19,8 @@ const {webkit,devices}=require('playwright');
  for(let i=0;i<15;i++){
   await page.waitForTimeout(7000);
   const version=await page.evaluate(()=>window.DeepRiseStructureChart?.version||null);
-  if(version==='17.9')break;
-  if(i===14)throw Error('Deployment did not serve chart version 17.9; got '+version);
+  if(version==='18.0')break;
+  if(i===14)throw Error('Deployment did not serve chart version 18.0; got '+version);
   response=await page.reload({waitUntil:'domcontentloaded',timeout:60000});
  }
  const detail=await page.evaluate(()=>{
@@ -67,5 +67,5 @@ const {webkit,devices}=require('playwright');
  await page.locator('#nativeTop').click();
  if(await page.locator('#chartPanel').evaluate(el=>el.hidden))throw Error('Native chart did not return');
   await browser.close();
- if(errors.length||!detail.svg||detail.error||detail.version!=='17.9')process.exitCode=1;
+ if(errors.length||!detail.svg||detail.error||detail.version!=='18.0')process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1});
