@@ -5,7 +5,7 @@ const engine=fs.readFileSync('deeprise-market-structure-v174.js','utf8');
 const chartCode=fs.readFileSync('deeprise-structure-chart-v174.js','utf8');
 const win={innerWidth:390,DeepRiseWorkspace:{t:k=>k}};
 vm.runInNewContext(engine,{window:win},{filename:'deeprise-market-structure-v174.js'});
-assert.equal(win.DeepRiseStructure.version,'17.4');
+assert.equal(win.DeepRiseStructure.version,'17.9');
 const closes=[100,101,103,105,103,101,99,100,101,100,99,102,104,108,105,101,98,99,100,96,97,103,110,107,105,103,106,112,108,105,99,96,98,104,113,110,106,103,101,107,114,120];
 const now=Date.now(),interval=14_400_000;
 const raw=closes.map((close,i)=>{
@@ -14,6 +14,9 @@ const raw=closes.map((close,i)=>{
 });
 const result=win.DeepRiseStructure.analyse(raw,{tf:'4h',pivotSpan:2,now});
 assert.ok(result&&result.events.length>=3,'expected confirmed structure breaks');
+assert.ok(result.internal&&result.external,'separate internal/external structure tracks must exist');
+assert.equal(result.internal.pivotSpan,1);
+assert.equal(result.external.pivotSpan,2);
 assert.ok(result.blocks.length>=3,'expected confirmed order blocks');
 assert.ok(result.blocks.some(b=>b.status==='FRESH'),'fresh blocks');
 assert.ok(result.blocks.some(b=>b.status==='TESTED'),'retested blocks');
@@ -41,4 +44,4 @@ assert.ok(chart.svg(result).includes('viewBox="0 0 390 615"'),'RSI/volume expand
 assert.ok(panel.innerHTML.includes('RSI 14'),'RSI pane label');
 assert.ok(panel.innerHTML.includes('حجم التداول'),'volume pane label');
 const oldCount=chart.state.view.count;chart.zoom(.75);assert.ok(chart.state.view.count<=oldCount,'zoom in');
-console.log('V17.4 order-block and chart smoke regression PASS');
+console.log('V17.9 order-block and chart smoke regression PASS');
