@@ -1,7 +1,7 @@
 /* DeepRise V17.4: order blocks and fluid interactive chart. */
 (()=>{'use strict';
 const state={portalMarker:null,previousHtmlOverflow:'',symbol:'',tf:'4h',result:null,token:0,controller:null,loading:false,error:false,errorMessage:'',cache:new Map(),view:{count:75,offset:0},tool:'pan',expanded:false,previousOverflow:'',returnFocus:null,pending:null,geometry:null,pointers:new Map(),gesture:null,drawings:{},layers:{structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,ema20:true,ema50:true,bollinger:false,volume:false,rsi:false,fvg:true,fib:true,extensions:false,trendExtensions:false,sweeps:false,timeZones:false,fan:false}};
-function defaultCount(){return window.innerWidth<650?40:75}
+function defaultCount(){return window.innerWidth<650?30:75}
 const wt=k=>window.DeepRiseWorkspace?.t(k)||k;
 try{const saved=JSON.parse(localStorage.getItem('deeprise_drawings_v173')||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))state.drawings=saved}catch(_){}
 const drawKey=()=>state.symbol+':'+state.tf;
@@ -29,7 +29,8 @@ function updateLayer(key,enabled){
  const panel=document.getElementById('drStructurePanel');
  panel?.querySelectorAll('[data-structure-layer="'+key+'"]').forEach(el=>{el.checked=state.layers[key];el.closest('label')?.classList.toggle('is-on',state.layers[key])});
  panel?.querySelectorAll('[data-toggle-indicator="'+key+'"]').forEach(btn=>{btn.classList.toggle('active',state.layers[key]);btn.setAttribute('aria-pressed',String(state.layers[key]));const flag=btn.querySelector('[data-indicator-status]');if(flag)flag.textContent=state.layers[key]?'●':'○'});
- const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error)queuePaint();
+ state.preset='custom';const presetNodes=panel?.querySelectorAll('[data-chart-preset]');presetNodes?.forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-pressed','false')});
+  const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error)queuePaint();
 }
 const indicatorCache=new WeakMap(),INDICATORS=new Set(['ema20','ema50','bollinger','volume','rsi']);
 function studies(bars){
@@ -102,14 +103,41 @@ function toggleFullscreen(force){
   window.dispatchEvent(new Event('resize'));
  });
 }
-function indicatorQuick(){
- const btn=k=>'<button type="button" data-toggle-indicator="'+k+'" class="'+(state.layers[k]?'active':'')+'" aria-pressed="'+Boolean(state.layers[k])+'">'+esc(t(k))+' <span data-indicator-status>'+(state.layers[k]?'●':'○')+'</span></button>';
- const group=(label,keys)=>'<div class="dr-quick-layer-group"><b>'+esc(t(label))+'</b><div class="dr-quick-layer-grid">'+keys.map(btn).join('')+'</div></div>';
- return '<section class="dr-indicator-shortcuts" aria-label="'+esc(t('indicators'))+'">'+group('structureTools',['orderBlocks','fvg','structure','fib','protection','internalProtection','pivots'])+group('indicatorTools',['rsi','ema20','ema50','bollinger','volume'])+'</section>'
+const CHART_PRESETS={
+ clean:{structure:false,pivots:false,protection:false,internalProtection:false,orderBlocks:false,fvg:false,fib:false,ema20:true,ema50:false,bollinger:false,volume:false,rsi:false},
+ structure:{structure:true,pivots:true,protection:true,internalProtection:false,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:false,bollinger:false,volume:false,rsi:false},
+ advanced:{structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,bollinger:true,volume:true,rsi:true}
+};
+state.preset=localStorage.getItem('deeprise_chart_preset_v180')||'structure';
+if(!CHART_PRESETS[state.preset])state.preset='structure';
+Object.assign(state.layers,CHART_PRESETS[state.preset]);
+function setPreset(name){
+ if(!CHART_PRESETS[name])return;
+ Object.assign(state.layers,CHART_PRESETS[name]);
+ state.preset=name;
+ try{localStorage.setItem('deeprise_chart_preset_v180',name)}catch(_){}
+ render();
 }
+function indicatorButton(k){
+ return '<button type="button" data-toggle-indicator="'+k+'" class="'+(state.layers[k]?'active':'')+'" aria-pressed="'+Boolean(state.layers[k])+'">'+esc(t(k))+' <span data-indicator-status>'+(state.layers[k]?'●':'○')+'</span></button>';
+}
+function indicatorQuick(){
+ const labels=lang()==='ar'?['نظيف','هيكل السوق','متقدم']:lang()==='ru'?['Чистый','Структура','Подробно']:['Clean','Structure','Advanced'];
+ const presets='<div class="dr-chart-presets" role="group" aria-label="Chart density">'+Object.keys(CHART_PRESETS).map((key,i)=>'<button type="button" data-chart-preset="'+key+'" aria-pressed="'+(state.preset===key)+'" class="'+(state.preset===key?'active':'')+'">'+labels[i]+'</button>').join('')+'</div>';
+ const fast='<div class="dr-fast-toggles" role="group" aria-label="Quick indicators">'+['orderBlocks','fvg','rsi','fib'].map(indicatorButton).join('')+'</div>';
+ return '<div class="dr-quick-chart-controls">'+presets+fast+'</div>';
+}
+function extraIndicators(open){
+ const groups=[['structureTools',['structure','pivots','protection','internalProtection','orderBlocks','fvg','fib','sweeps']],['indicatorTools',['ema20','ema50','rsi','bollinger','volume','extensions','trendExtensions','fan','timeZones']]];
+ const inner=groups.map(([label,keys])=>'<div class="dr-quick-layer-group"><b>'+esc(t(label))+'</b><div class="dr-quick-layer-grid">'+keys.map(indicatorButton).join('')+'</div></div>').join('');
+ const label=lang()==='ar'?'جميع المؤشرات وأدوات الرسم':lang()==='ru'?'Все индикаторы и инструменты':'All indicators and drawing tools';
+ return '<details class="dr-extra-indicators" '+(open?'open':'')+'><summary>'+label+' ⚙</summary><section class="dr-indicator-shortcuts">'+inner+'</section></details>';
+}
+
 function activateChartButton(target){
- const btn=target?.closest?.('button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-structure-tf],button[data-structure-refresh]');
+ const btn=target?.closest?.('button[data-chart-preset],button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-structure-tf],button[data-structure-refresh]');
  if(!btn||btn.disabled)return false;
+ if(btn.hasAttribute('data-chart-preset')){setPreset(btn.dataset.chartPreset);return true}
  if(btn.hasAttribute('data-structure-fullscreen')){toggleFullscreen();return true}
  if(btn.hasAttribute('data-toggle-indicator')){const key=btn.dataset.toggleIndicator;updateLayer(key,!state.layers[key]);return true}
  if(btn.hasAttribute('data-chart-zoom')){zoom(Number(btn.dataset.chartZoom));return true}
@@ -135,7 +163,7 @@ function ensure(){
  // WebKit can drop synthetic click after touchend during frequent chart updates.
  // Fire stationary real touches directly and cancel duplicate synthetic clicks.
  let touch=null;
- const selector='button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-structure-tf],button[data-structure-refresh]';
+ const selector='button[data-chart-preset],button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-structure-tf],button[data-structure-refresh]';
  panel.addEventListener('touchstart',e=>{
   const button=e.target?.closest?.(selector),t=e.touches?.[0];
   touch=button&&e.touches.length===1?{button,x:t.clientX,y:t.clientY,id:t.identifier}:null;
@@ -228,12 +256,12 @@ function protectionInfo(p,scope,label){
 function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?'rtl':'ltr';const r=state.result,fib=r?.fib;
  const header=`<div class="dr-structure-head"><b>${t('title')} • ${esc(state.symbol)}</b><div>${['5m','15m','1h','4h','1d'].map(tf=>`<button data-structure-tf="${tf}" class="${state.tf===tf?'active':''}" aria-pressed="${state.tf===tf}">${tf}</button>`).join('')}<button data-structure-refresh>${t('retry')}</button><button type="button" data-structure-fullscreen title="${t(state.expanded?'exitFull':'full')}" aria-pressed="${state.expanded}" class="dr-structure-expand">${t(state.expanded?'exitFull':'full')}</button></div></div>`;
  const selector=keys=>`<div class="dr-structure-controls">${keys.map(k=>`<label class="${state.layers[k]?'is-on':''}"><input type="checkbox" data-structure-layer="${k}" ${state.layers[k]?'checked':''}>${t(k)}</label>`).join('')}</div>`;
- const layersOpen=panel.querySelector('.dr-layer-picker')?.open??false,indicatorsOpen=panel.querySelector('.dr-indicator-picker')?.open??true;
+ const layersOpen=panel.querySelector('.dr-layer-picker')?.open??false,indicatorsOpen=panel.querySelector('.dr-indicator-picker')?.open??false,extraOpen=panel.querySelector('.dr-extra-indicators')?.open??false;
  const controls=selector(Object.keys(state.layers).filter(k=>!INDICATORS.has(k))),indicatorControls=selector([...INDICATORS]);
  const status=state.loading?t('loading'):state.error?t('error')+(state.errorMessage?' · '+esc(state.errorMessage):''):'';
  let body=status?`<div class="dr-structure-status" role="status">${status}</div>`:'';
  // Never leave the preceding symbol or timeframe's chart under a new heading.
- if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div><div class="dr-structure-scroll" dir="ltr">${svg(r)}</div>`;
+ if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div>${toolBar()}<div class="dr-structure-scroll" dir="ltr">${svg(r)}</div>`;
   if(fib)body+=`<div class="dr-structure-note">${t('anchors')}: $${pf(fib.start.price)} → $${pf(fib.end.price)} • ${fib.side}${fib.third?' • C $'+pf(fib.third.price):''}<br>${t('golden')}: $${pf(fib.golden[0])} – $${pf(fib.golden[1])} • ${t('equilibrium')}: $${pf(fib.equilibrium)}${state.layers.trendExtensions&&!fib.third?'<br>'+t('waitingC'):''}</div>`;
  }
  if(r&&!state.error)body+='<div class="dr-protection-records">'+
@@ -242,7 +270,7 @@ function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?
   protectionInfo(r.internal?.protectedHigh,t('internalScope'),t('high'))+
   protectionInfo(r.internal?.protectedLow,t('internalScope'),t('low'))+'</div>';
   const noOb=r&&!state.loading&&state.layers.orderBlocks&&!(r.blocks||[]).some(b=>b.status!=='INVALID')?'<div class="dr-structure-note dr-no-ob">'+esc(t('noOrderBlocks'))+'</div>':'';
- panel.innerHTML=header+indicatorQuick()+`<div class="dr-indicator-feedback" data-indicator-feedback role="status" aria-live="polite"></div>`+body+noOb+toolBar()+`<div class="dr-plot-options"><details class="dr-layer-picker" ${layersOpen?'open':''}><summary>${wt('layers')}</summary>${controls}</details><details class="dr-indicator-picker" ${indicatorsOpen?'open':''}><summary>${t('indicators')}</summary>${indicatorControls}</details></div><div class="dr-structure-note">${t('note')}${state.layers.timeZones?'<br>'+t('timeNote'):''}</div>`;
+ panel.innerHTML=header+indicatorQuick()+`<div class="dr-indicator-feedback" data-indicator-feedback role="status" aria-live="polite"></div>`+body+noOb+extraIndicators(extraOpen)+`<div class="dr-plot-options"><details class="dr-layer-picker" ${layersOpen?'open':''}><summary>${wt('layers')}</summary>${controls}</details><details class="dr-indicator-picker" ${indicatorsOpen?'open':''}><summary>${t('indicators')}</summary>${indicatorControls}</details></div><div class="dr-structure-note">${t('note')}${state.layers.timeZones?'<br>'+t('timeNote'):''}</div>`;
 }
 async function load(symbol,tf='4h',force=false){
  if(!symbol)return;symbol=String(symbol).replace(/[^A-Z0-9]/gi,'').toUpperCase();const token=++state.token;state.controller?.abort();if(state.symbol!==symbol||state.tf!==tf){state.view={count:defaultCount(),offset:0};state.pending=null;state.pointers.clear();state.gesture=null}state.symbol=symbol;state.tf=tf;state.result=null;state.error=false;state.errorMessage='';state.loading=true;render();
@@ -280,9 +308,44 @@ function ensureOpenedChart(){
 if(hostPanel){new MutationObserver(ensureOpenedChart).observe(hostPanel,{attributes:true,attributeFilter:['class']});setTimeout(ensureOpenedChart,100)}
 
 document.addEventListener('deeprise-premove-updated',()=>{const r=window.DeepRisePreMove?.state.structures.get(state.symbol);if(state.tf==='4h'&&r&&!state.loading&&r!==state.result){state.result=r;queuePaint()}});
-window.DeepRiseStructureChart={version:'17.9',state,load,render,zoom,pan,fit,viewport,drawings,saveDrawings,addPoint,svg,paintChart,studies,updateLayer,toggleFullscreen};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.expanded){e.preventDefault();e.stopImmediatePropagation();toggleFullscreen(false)}},true);
+window.DeepRiseStructureChart={version:'18.0',state,load,render,zoom,pan,fit,setPreset,viewport,drawings,saveDrawings,addPoint,svg,paintChart,studies,updateLayer,toggleFullscreen};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.expanded){e.preventDefault();e.stopImmediatePropagation();toggleFullscreen(false)}},true);
 const css=document.createElement('style');css.textContent=`.dr-draw-toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:12px 0}.dr-draw-toolbar>div{display:flex;flex-wrap:wrap;align-items:center;gap:5px}.dr-draw-toolbar button{padding:9px 11px;border:1px solid #29465e;background:#102236;color:#cae4f7;font-size:11px;min-height:38px}.dr-draw-toolbar button.active{border-color:#ffd166;color:#ffd166}.dr-draw-toolbar button:disabled{opacity:.35;cursor:default}.dr-draw-toolbar small{font-size:10px;color:#9bb8ca}.dr-layer-picker>summary{cursor:pointer;padding:10px;color:#65b8ff;font-size:12px}.dr-structure-scroll svg[data-dr-interactive]{touch-action:none;user-select:none;min-width:0;width:100%;display:block;outline-offset:-3px}.dr-structure-scroll{overflow:hidden!important}.dr-structure-panel:has([data-chart-tool].active:not([data-chart-tool=pan])) svg{cursor:crosshair}.dr-readiness-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.dr-readiness-tabs button,.dr-structure-head button{border:1px solid #29465e;border-radius:8px;padding:8px 10px;background:#0b2130;color:#a9c1d1;font-size:11px;cursor:pointer}.dr-readiness-tabs button.active,.dr-structure-head button.active{border-color:#35e0a1;color:#72e8bf;background:#10382e}.dr-readiness-tabs b{margin-inline-start:6px}.dr-readiness-group{border-top:1px solid #264056;padding-top:5px;margin-top:12px;min-width:0}.dr-readiness-group h3{color:#9abbd0;font-size:14px;display:flex;gap:9px;align-items:center}.dr-readiness-group h3 span{font-size:11px;border-radius:20px;background:#163145;padding:3px 8px}.dr-readiness-group.ready h3{color:#35e0a1}.dr-readiness-group.near h3{color:#65b8ff}.dr-readiness-group.early h3{color:#ffd166}.dr-readiness-group.blocked h3{color:#ff9f62}.dr-premove-card.ready{border-color:#35e0a1}.dr-premove-card.near{border-color:#396d9b}.dr-premove-card.early{border-color:#6b5b32}.dr-premove-card.blocked{border-color:#8e533a}.dr-readiness-action{margin-top:8px;font-size:11px;color:#c5dce8;line-height:1.6}.dr-structure-panel{padding:16px;background:#071421;border-top:1px solid #26485d;min-width:0}.dr-structure-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;color:#d9edfa}.dr-structure-head>div{display:flex;gap:5px;flex-wrap:wrap}.dr-structure-controls{display:flex;flex-wrap:wrap;gap:8px 15px;margin:13px 0;font-size:11px;color:#a1bed0}.dr-structure-controls label{display:flex;gap:5px;align-items:center;cursor:pointer}.dr-structure-summary{display:flex;gap:10px 18px;flex-wrap:wrap;font-size:11px;color:#9bb8cd;margin:10px 0}.dr-structure-summary b{color:#dceef9}.dr-structure-scroll{overflow-x:auto;max-width:100%;border:1px solid #18344c;border-radius:10px;background:#050e19}.dr-structure-scroll svg{display:block;width:100%;min-width:900px;height:auto;font-family:Arial,sans-serif}.dr-structure-note{font-size:10px;color:#8da7b9;line-height:1.7;margin-top:9px;overflow-wrap:anywhere}.dr-structure-status{padding:18px;color:#ffd166}@media(min-width:1200px){.dr-readiness-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.dr-readiness-groups>.dr-readiness-group:only-child{grid-column:1/-1}}@media(max-width:700px){.dr-structure-panel{padding:11px}.dr-readiness-tabs button{padding:9px 7px;font-size:10px}.dr-premove-card{overflow-wrap:anywhere}.dr-premove-metrics b,.dr-premove-levels b{unicode-bidi:isolate;direction:ltr;display:inline-block}}`;
 css.textContent+=".dr-structure-scroll svg[data-dr-interactive]{width:100%!important;min-width:0!important;height:auto;touch-action:none}.dr-draw-toolbar>div{max-width:100%;overflow-x:auto;flex-wrap:nowrap!important}.dr-draw-toolbar button{white-space:nowrap;flex-shrink:0;border-radius:7px}.dr-structure-scroll{overflow:hidden!important;contain:layout paint}.dr-chart-expanded .dr-structure-scroll svg[data-dr-interactive]{height:auto;min-height:min(50dvh,540px)}@media(max-width:650px){.dr-draw-toolbar>div{width:100%}.dr-structure-head button{min-height:38px}}";css.textContent+=".dr-plot-options{display:flex;gap:9px 18px;flex-wrap:wrap}.dr-plot-options details{flex:1 1 200px;min-width:0}.dr-indicator-picker>summary{padding:10px;color:#65b8ff;font-size:12px;cursor:pointer}.dr-plot-options .dr-structure-controls{max-height:210px;overflow-y:auto}.dr-structure-panel svg text{pointer-events:none}";css.textContent+=`.dr-no-ob{color:#ffc97b;border:1px dashed #906638;padding:8px 12px;border-radius:8px}.dr-quick-layer-group>b{font-size:12px;color:#b5d1e1;display:block;margin:7px 0}.dr-quick-layer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.dr-indicator-shortcuts{display:block!important;margin:8px 0}.dr-indicator-shortcuts button{min-height:40px!important;text-align:center!important;white-space:normal!important;overflow-wrap:anywhere}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(6,minmax(0,1fr))}@media(max-width:650px){.dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-group>b{font-size:10px}}.dr-indicator-feedback{min-height:17px;color:#9edfc5;font-size:12px;padding:1px 4px}.dr-indicator-shortcuts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:10px 0}.dr-indicator-shortcuts button{position:relative;z-index:1;-webkit-user-select:none;user-select:none;border:1px solid #31506b;background:#0e2435;color:#c1d8e8;padding:10px 12px;border-radius:10px;font-size:12px;cursor:pointer;min-height:42px;touch-action:manipulation}.dr-indicator-shortcuts button.active{background:#10382e;border-color:#35e0a1;color:#85f0cb}.dr-indicator-shortcuts [data-indicator-status]{font-size:15px;margin-inline-start:5px}.dr-structure-controls label.is-on{color:#81e9c2}.dr-structure-expand{border-color:#35e0a1!important;color:#a3f8d8!important;font-weight:700}.dr-structure-fullscreen{position:fixed!important;inset:0!important;z-index:9999999!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;overflow:auto!important;border:0!important;border-radius:0!important;margin:0!important;padding:calc(9px + env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))!important;box-sizing:border-box;background:#050e19!important;display:flex!important;flex-direction:column!important;overscroll-behavior:contain}.dr-structure-fullscreen .dr-structure-head{position:sticky;top:0;z-index:3;background:#050e19;padding:8px 0}.dr-structure-fullscreen .dr-draw-toolbar{margin:6px 0}.dr-structure-fullscreen .dr-plot-options{flex-shrink:0}.dr-structure-fullscreen .dr-plot-options details:not([open]){flex:0 1 auto}.dr-structure-fullscreen .dr-structure-scroll{flex:1 1 auto!important;min-height:44dvh;overflow:hidden!important;contain:none!important}.dr-structure-fullscreen .dr-structure-scroll svg[data-dr-interactive]{height:100%!important;max-height:none!important;width:100%!important;min-width:0!important}.dr-structure-immersive .dr-bottom-nav,.dr-structure-immersive #deepriseInstall{visibility:hidden!important}@media(max-width:700px){.dr-structure-fullscreen .dr-structure-head{gap:5px}.dr-structure-fullscreen .dr-structure-note{font-size:9px}.dr-structure-fullscreen .dr-indicator-shortcuts{flex-wrap:nowrap;overflow-x:auto;padding:6px 0}.dr-indicator-shortcuts button{white-space:nowrap}.dr-structure-fullscreen .dr-draw-toolbar>div{overflow-x:auto!important}}`;
 css.textContent+=`.dr-structure-scroll svg[data-dr-interactive],.dr-structure-scroll svg[data-dr-interactive] *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}.dr-protection-records{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:7px;margin:10px 0}.dr-protection-record{border:1px solid #29485f;background:#0a2130;padding:9px 11px;border-radius:9px;display:grid;gap:5px;font-size:11px;line-height:1.5}.dr-protection-record>b{color:#dbedf7}.dr-protection-record>span{color:#9ac2d5}.dr-structure-scroll{overscroll-behavior:contain}.dr-structure-head button,.dr-indicator-shortcuts button,.dr-draw-toolbar button{touch-action:manipulation}`;
-document.head.appendChild(css);hook();let resizeQueued=false;addEventListener('resize',()=>{if(resizeQueued||!state.result||state.pointers.size)return;resizeQueued=true;requestAnimationFrame(()=>{resizeQueued=false;paintChart()})});
+css.textContent+=`
+/* V18: Chart-first, compact touch controls, self-contained chart interaction */
+.dr-quick-chart-controls{display:grid;gap:7px;margin:9px 0 4px}
+.dr-chart-presets{display:flex;align-items:stretch;gap:6px}
+.dr-chart-presets button{min-height:38px;flex:1 1 0;padding:7px 5px;border:1px solid #31506b;border-radius:9px;background:#102236;color:#aecde1;font-size:12px;touch-action:manipulation}
+.dr-chart-presets button.active{background:#13503c;border-color:#35e0a1;color:#a6ffe0}
+.dr-fast-toggles{display:flex;overflow-x:auto;gap:6px;overscroll-behavior-x:contain;padding:2px 1px 6px;scrollbar-width:thin}
+.dr-fast-toggles button{flex:1 0 auto;min-height:39px;white-space:nowrap;padding:7px 11px;border:1px solid #31506b;border-radius:9px;background:#102236;color:#bdd4e4;font-size:12px}
+.dr-fast-toggles button.active{background:#10382e;border-color:#35e0a1;color:#8ff4d3}
+.dr-extra-indicators{border:1px solid #24445c;border-radius:10px;padding:5px 10px;margin:10px 0;background:#091d2c}
+.dr-extra-indicators>summary{padding:9px 0;cursor:pointer;color:#9fddf6;font-size:13px;font-weight:700;touch-action:manipulation}
+.dr-extra-indicators .dr-indicator-shortcuts{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;margin:0}
+.dr-extra-indicators .dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.dr-structure-panel .dr-draw-toolbar{background:#0a2030;border:1px solid #25445c;border-radius:10px;padding:7px;margin:8px 0 5px;gap:7px}
+.dr-structure-panel .dr-draw-toolbar>div:first-child{display:flex;flex:1;justify-content:center}
+.dr-structure-panel .dr-draw-toolbar>div:nth-child(2){display:flex;justify-content:flex-start;max-width:100%;overflow:auto}
+.dr-draw-toolbar button{min-width:38px;min-height:42px!important;font-size:12px!important}
+.dr-structure-head{align-items:flex-start}
+.dr-structure-head>div{flex-wrap:nowrap!important;overflow-x:auto;max-width:100%;scrollbar-width:thin}
+.dr-structure-scroll{min-height:380px;user-select:none}
+.dr-structure-summary{padding:7px 9px;border:1px solid #1c364c;border-radius:8px;background:#081d2b;font-size:11px}
+.dr-structure-panel .dr-structure-note{margin-top:5px}
+@media(max-width:650px){
+ .dr-structure-panel{padding:9px!important}
+ .dr-structure-scroll{min-height:370px!important}
+ .dr-structure-head>div{width:100%;gap:3px!important}
+ .dr-structure-head button{padding:8px 7px!important;min-width:42px!important}
+ .dr-chart-presets button{font-size:12px}
+ .dr-extra-indicators .dr-indicator-shortcuts{grid-template-columns:1fr}
+ .dr-extra-indicators .dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .dr-draw-toolbar>div{width:100%}
+ .dr-structure-scroll svg{width:100%!important;height:auto!important}
+}
+.dr-structure-fullscreen .dr-quick-chart-controls{position:sticky;top:0;z-index:4;background:#050e19;padding:3px 0}
+.dr-structure-fullscreen .dr-structure-scroll{min-height:50dvh!important;flex:1 1 auto!important}
+`;document.head.appendChild(css);hook();let resizeQueued=false;addEventListener('resize',()=>{if(resizeQueued||!state.result||state.pointers.size)return;resizeQueued=true;requestAnimationFrame(()=>{resizeQueued=false;paintChart()})});
 })();
