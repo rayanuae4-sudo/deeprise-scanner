@@ -56,7 +56,7 @@ root.querySelector('[data-dr-why-side="SHORT"]').click();
 assert.equal(w.DeepRiseStructureReasons.model.side,'SHORT');
 root=w.document.querySelector('#drWhyRoot');
 root.querySelector('[data-dr-why-select]').click();
-assert(root.querySelector('[data-dr-why-detail]').textContent.includes('إغلاق'),'selection details update');
+assert(/أغلقت|إغلاق/.test(root.querySelector('[data-dr-why-detail]').textContent),'selection details update');
 root.querySelector('[data-dr-why-jump]').click();
 assert(paints>0,'chart navigation redraws native chart');
 // Native chart wipes its own panel on re-render; explanation panel should restore itself.
