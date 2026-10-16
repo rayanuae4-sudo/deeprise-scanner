@@ -60,7 +60,7 @@ jobs:
           ui=Path('deeprise-signal-card-ui-v153.js').read_text(encoding='utf-8')
           premove=Path('deeprise-pre-move-v170.js').read_text(encoding='utf-8')
           index=Path('index.html').read_text(encoding='utf-8')
-          for marker in ['deeprise-market-structure-v172.js?v=1720','deeprise-structure-chart-v172.js?v=1720']:
+          for marker in ['deeprise-market-structure-v172.js?v=1720','deeprise-structure-chart-v172.js?v=1721']:
               assert marker in index and marker in sw, f'structure asset missing: {marker}'
           assert index.index('deeprise-market-structure-v172.js') < index.index('deeprise-pre-move-v170.js')
           assert index.index('deeprise-structure-chart-v172.js') > index.index('deeprise-v13-gate-hotfix.js')
@@ -68,7 +68,7 @@ jobs:
               assert marker in pwa, f'pwa.js missing {marker}'
           assert 'network-v17-2-0' in pwa, 'service-worker network-only registration missing'
           assert "deeprise-pwa-network-v17-2-0" in sw, 'service-worker network cache missing'
-          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1720','./deeprise-pre-move-v170.js?v=1720','./deeprise-signal-stability-v171.js?v=1710','./mobile-app-v11.js?v=1310','./pwa.js?v=1720','networkOnlyNavigation','offlinePage']:
+          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1720','./deeprise-pre-move-v170.js?v=1721','./deeprise-signal-stability-v171.js?v=1710','./mobile-app-v11.js?v=1310','./pwa.js?v=1720','networkOnlyNavigation','offlinePage']:
               assert marker in sw, f'cacheless service-worker wiring missing: {marker}'
           assert "event.request.mode==='navigate'" in sw
           assert "cache:'no-store'" in sw
