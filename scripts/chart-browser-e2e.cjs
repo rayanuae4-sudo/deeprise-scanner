@@ -57,6 +57,7 @@ const {chromium}=require('playwright');
   await page.locator('#fullTop').click({timeout:10000});
   console.log('FULL',await page.evaluate(()=>({expanded:window.DeepRiseStructureChart?.state.expanded,class:document.getElementById('drStructurePanel')?.className})));
  }
+ await page.keyboard.press('Escape');
  await page.locator('#tvTop').click();
  const tv=await page.evaluate(()=>({visible:!document.getElementById('tvStandalone').hidden,
   script:!!document.querySelector('#tvWidget script[src*="embed-widget-advanced-chart.js"]'),
