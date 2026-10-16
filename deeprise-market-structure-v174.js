@@ -66,7 +66,7 @@ function analyse(raw,options={}){
   const up=upTarget&&!broken.has('HIGH:'+upTarget.index)&&b.close>upTarget.price,down=downTarget&&!broken.has('LOW:'+downTarget.index)&&b.close<downTarget.price;
   const fire=(side,target)=>{
    const oldBias=bias,type=oldBias==='RANGE'||oldBias===side?'BOS':'CHOCH';
-   events.push({type,side,index:i,time:b.time,confirmedAt:b.closeTime,price:target.price,pivotIndex:target.index,initial:oldBias==='RANGE'});
+   events.push({type,side,index:i,time:b.time,confirmedAt:b.closeTime,price:target.price,pivotIndex:target.index,initial:oldBias==='RANGE',priorBias:oldBias,close:b.close,atrAtBreak:a});
    // Last opposite candle before a meaningful, closed-candle displacement and BOS / CHoCH.
    // The zone becomes observable ONLY when this break closes, never at its origin candle.
    if(Math.abs(b.close-b.open)>=a*.32&&Math.abs(b.close-target.price)>=a*.07){
@@ -80,6 +80,8 @@ function analyse(raw,options={}){
    broken.add(target.type+':'+target.index);bias=side;
    if(side==='LONG'){protectedLow=protectionPivot(pivots,'LOW',target,i,b,type,protectedLow);protectedHigh=null}
    else{protectedHigh=protectionPivot(pivots,'HIGH',target,i,b,type,protectedHigh);protectedLow=null}
+   // Record the level known AT the break. Future structural updates must not rewrite old explanations.
+   events[events.length-1].protection=side==='LONG'?protectedLow:protectedHigh;
   };
   if(up)fire('LONG',upTarget);else if(down)fire('SHORT',downTarget);
   for(const target of [high,low]){if(!target||broken.has(target.type+':'+target.index))continue;
