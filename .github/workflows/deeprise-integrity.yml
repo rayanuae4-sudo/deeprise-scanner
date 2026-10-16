@@ -61,7 +61,9 @@ jobs:
         run: node scripts/chart-click-regression.cjs
 
       - name: Test explanations, Arabic reasons and chart navigation
-        run: node scripts/deeprise-explain-regression.cjs
+        run: |
+          node scripts/deeprise-explain-regression.cjs
+          node scripts/deeprise-tradingview-regression.cjs
 
       - name: Verify runtime and cacheless PWA wiring
         run: |
