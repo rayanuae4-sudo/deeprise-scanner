@@ -6,6 +6,7 @@ on:
       - 'chart.html'
       - 'deeprise-structure-chart-v174.js'
       - 'scripts/chart-browser-e2e.cjs'
+      - 'scripts/chart-webkit-e2e.cjs'
       - '.github/workflows/deeprise-chart-e2e.yml'
   workflow_dispatch:
 permissions:
@@ -19,6 +20,8 @@ jobs:
       - name: Install browser test dependencies
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
       - name: Inspect public chart in mobile Chromium
         run: node scripts/chart-browser-e2e.cjs
+      - name: Inspect public chart in iPhone Safari WebKit
+        run: node scripts/chart-webkit-e2e.cjs
