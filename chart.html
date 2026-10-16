@@ -7,17 +7,19 @@
 main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;position:sticky;top:0;z-index:12;background:#071724;border-bottom:1px solid #234459}#chartQuickOpen button{flex:1 1 140px;font-weight:700;min-height:44px;padding:10px;border-radius:9px;border:1px solid #478c78;background:#123d31;color:#ddfff0}#chartQuickOpen button:disabled{opacity:.5}#chartQuickOpen button.is-on{border-color:#53edba;background:#1a5a43}.dr-no-ob{margin:8px 0}.help{padding:8px 12px;color:#95acbd;font-size:12px}.chart-panel{display:block;overflow:visible!important;background:#071421;border:1px solid #21415b;border-radius:10px}.chart-head,#tradingview_chart{display:none!important}
 .dr-structure-panel{border-top:0!important}.dr-structure-scroll{min-height:52vh}.dr-structure-scroll svg{touch-action:none!important}.dr-structure-head b{font-size:17px}
 #standaloneStatus{color:#9abed0;font-size:12px;padding:6px 12px}
+.chart-panel[hidden],#tvStandalone[hidden]{display:none!important}#tvStandalone{margin:10px 2px;border:1px solid #31516b;border-radius:12px;background:#071421;min-width:0;padding:8px}#tvActions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;padding:8px;background:#0b1d30;border-radius:9px;margin-bottom:6px;position:sticky;top:0;z-index:3}#tvActions button,#tvActions select,#tvActions a{min-height:42px;background:#112b3f;border:1px solid #3b6382;border-radius:9px;color:#d8efff;padding:8px 12px;font-size:13px}#tvActions select{max-width:130px}#tvWidget{height:min(76dvh,830px);min-height:520px;position:relative}#tvWidget .tradingview-widget-container{height:100%;width:100%}#tvWidget .tradingview-widget-container__widget{height:100%;width:100%}.tv-immersive{position:fixed!important;inset:0!important;z-index:9999998!important;margin:0!important;border-radius:0!important;height:100dvh!important;overflow:auto!important;padding:max(7px,env(safe-area-inset-top)) 7px max(7px,env(safe-area-inset-bottom))!important}.tv-immersive #tvWidget{height:calc(100dvh - 80px);min-height:0}.tv-info{color:#9db5ca;font-size:12px;padding:8px;line-height:1.5}@media(max-width:650px){#tvWidget{height:72dvh;min-height:500px}#tvActions{position:sticky;top:0}#tvActions button,#tvActions a{flex:1 1 auto}}
 @media(max-width:640px){.chart-top{position:static}.chart-top form{width:100%}.chart-top input{flex:1;width:100px}.dr-structure-scroll{min-height:40vh}}
 </style>
 </head><body>
 <header class="chart-top"><b>⚡ DeepRise · Interactive Chart</b><form id="symbolForm"><label for="coinSymbol">Symbol</label><input id="coinSymbol" name="symbol" value="BTCUSDT" autocomplete="off" inputmode="latin" autocapitalize="characters" aria-label="Trading pair"><button type="submit">Open</button><a href="./index.html">← Scanner</a></form></header>
-<div id="chartQuickOpen"><button type="button" id="fullTop" disabled>⛶ Full screen</button><button type="button" id="obTop" disabled>◉ Order Blocks</button><button type="button" id="rsiTop" disabled>RSI 14</button></div>
+<div id="chartQuickOpen"><button type="button" id="nativeTop" class="is-on">◈ DeepRise chart</button><button type="button" id="tvTop">📈 TradingView</button><button type="button" id="fullTop" disabled>⛶ Full screen</button><button type="button" id="obTop" disabled>◉ Order Blocks</button><button type="button" id="rsiTop" disabled>RSI 14</button></div>
 <main><p class="help">Tap indicators to show or hide them. Use Full screen for the marked chart, pinch to zoom, and tap drawing tools to mark levels.</p>
 <div id="standaloneStatus" role="status" aria-live="polite"></div>
 <div id="chartPanel" class="chart-panel active dr-view-structure"><div class="chart-head"><span id="chartTitle">Interactive chart</span></div><div id="tradingview_chart"></div></div>
+<section id="tvStandalone" aria-label="TradingView advanced chart" hidden><div id="tvActions"><strong>TradingView</strong><label for="tvTF">Timeframe</label><select id="tvTF"><option value="5m">5m</option><option value="15m">15m</option><option value="1h">1h</option><option value="4h">4h</option><option value="1d">1D</option></select><button type="button" id="tvExpand">⛶ Full screen</button><a id="tvExternal" target="_blank" rel="noopener noreferrer">↗ TradingView.com</a></div><div id="tvWidget" role="region" aria-label="Interactive TradingView price chart"></div><p class="tv-info">TradingView is a separate market-data widget. DeepRise protected levels and order blocks appear on the DeepRise chart, not automatically inside TradingView.</p></section>
 </main>
-<script defer src="./deeprise-market-structure-v174.js?v=1780"></script>
-<script defer src="./deeprise-structure-chart-v174.js?v=1780"></script>
+<script defer src="./deeprise-market-structure-v174.js?v=1790"></script>
+<script defer src="./deeprise-structure-chart-v174.js?v=1790"></script>
 <script defer>
 (function(){
  const p=new URLSearchParams(location.search), input=document.getElementById('coinSymbol'), status=document.getElementById('standaloneStatus');
@@ -28,6 +30,48 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
  const lang=p.get('lang')||localStorage.getItem('deeprise_language')||'en';try{localStorage.setItem('deeprise_language',lang)}catch(e){}
  window.DeepRiseWorkspace={t:k=>(tr[lang]||tr.en)[k]||tr.en[k]||k};
  const fullTop=document.getElementById('fullTop'),obTop=document.getElementById('obTop'),rsiTop=document.getElementById('rsiTop');
+  const nativeTop=document.getElementById('nativeTop'),tvTop=document.getElementById('tvTop');
+  const nativePanel=document.getElementById('chartPanel'),tvPanel=document.getElementById('tvStandalone');
+  const tvTF=document.getElementById('tvTF'),tvWidget=document.getElementById('tvWidget'),tvExternal=document.getElementById('tvExternal');
+  const tfValue={'5m':'5','15m':'15','1h':'60','4h':'240','1d':'D'};
+  let mode=p.get('view')==='tv'?'tv':'native',tvKey='',tvExpanded=false,previousOverflow='';
+  tvTF.value=tf;
+  function mountTV(s,f){
+   const key=s+':'+f;if(tvKey===key&&tvWidget.querySelector('iframe'))return;
+   tvKey=key;tvTF.value=f;
+   const tvSymbol='BINANCE:'+s;tvExternal.href='https://www.tradingview.com/chart/?symbol='+encodeURIComponent(tvSymbol);
+   tvWidget.replaceChildren();
+   const box=document.createElement('div');box.className='tradingview-widget-container';
+   const host=document.createElement('div');host.className='tradingview-widget-container__widget';box.appendChild(host);tvWidget.appendChild(box);
+   const script=document.createElement('script');script.type='text/javascript';script.async=true;
+   script.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+   script.textContent=JSON.stringify({autosize:true,symbol:tvSymbol,interval:tfValue[f]||'240',timezone:'Etc/UTC',
+     theme:'dark',style:'1',locale:lang==='ar'?'ar':lang==='ru'?'ru':'en',
+     allow_symbol_change:true,hide_side_toolbar:false,hide_top_toolbar:false,
+     withdateranges:true,save_image:true,show_popup_button:true,popup_width:1180,popup_height:760,
+     support_host:'https://www.tradingview.com'});
+   script.onerror=()=>{tvWidget.insertAdjacentHTML('beforeend','<p class="tv-info">TradingView unavailable. Use the external link above.</p>')};
+   box.appendChild(script);
+  }
+  function setMode(which){
+   mode=which==='tv'?'tv':'native';const on=mode==='tv';
+   if(!on&&tvExpanded)setTVFull(false);
+   nativePanel.hidden=on;tvPanel.hidden=!on;nativeTop.classList.toggle('is-on',!on);tvTop.classList.toggle('is-on',on);
+   nativeTop.setAttribute('aria-pressed',String(!on));tvTop.setAttribute('aria-pressed',String(on));
+   if(on)mountTV(input.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase(),tvTF.value||tf);
+  }
+  function setTVFull(force){
+   tvExpanded=typeof force==='boolean'?force:!tvExpanded;
+   if(tvExpanded){previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden'}
+   else document.body.style.overflow=previousOverflow;
+   tvPanel.classList.toggle('tv-immersive',tvExpanded);
+   document.getElementById('tvExpand').textContent=tvExpanded?'✕ Exit full screen':'⛶ Full screen';
+  }
+  nativeTop.addEventListener('click',()=>setMode('native'));tvTop.addEventListener('click',()=>setMode('tv'));
+  document.getElementById('tvExpand').addEventListener('click',()=>setTVFull());
+  tvTF.addEventListener('change',()=>mountTV(input.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase(),tvTF.value));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&tvExpanded)setTVFull(false)});
+
  function syncButtons(){
   const c=window.DeepRiseStructureChart;if(!c)return;
   for(const button of [fullTop,obTop,rsiTop])button.disabled=false;
@@ -57,14 +101,15 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
   const c=window.DeepRiseStructureChart;
   if(!c){status.textContent=lang==='ar'?'خطأ: محرك الشارت غير متاح':'Error: chart module unavailable';return}
   try{await c.load(s,f)}catch(e){status.textContent='Chart error: '+(e?.message||String(e));return}
-  const v=c.state.result;
+  if(mode==='tv')mountTV(s,tvTF.value||f);
+   const v=c.state.result;
   status.textContent=c.state.error
    ?(lang==='ar'?'تعذر تحميل الشموع: ':'Could not load market candles: ')+(c.state.errorMessage||'data unavailable')
    :(s+' · '+f+' · '+v.bars.length+' '+(lang==='ar'?'شمعة':'candles')+' · '+(v.blocks||[]).filter(b=>b.status!=='INVALID').length+' Order Blocks');
   syncButtons();
  };
  document.getElementById('symbolForm').addEventListener('submit',e=>{e.preventDefault();const s=input.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();if(!s)return;history.replaceState(null,'','./chart.html?symbol='+encodeURIComponent(s)+'&tf='+encodeURIComponent(window.DeepRiseStructureChart?.state.tf||tf));start(s,window.DeepRiseStructureChart?.state.tf||tf)});
- const boot=()=>{if(window.DeepRiseStructureChart&&window.DeepRiseStructure)start(sym,tf);else {status.textContent='Chart scripts did not load. Refresh or return to scanner.';fullTop.disabled=obTop.disabled=rsiTop.disabled=true}};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+ const boot=()=>{setMode(mode);if(window.DeepRiseStructureChart&&window.DeepRiseStructure)start(sym,tf);else {status.textContent='Chart scripts did not load. Refresh or return to scanner.';fullTop.disabled=obTop.disabled=rsiTop.disabled=true}};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
 </script>
 </body></html>
