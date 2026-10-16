@@ -2,11 +2,372 @@
   "version": 1,
   "ledger": "DeepRise Central Forecast Ledger",
   "started_at": "2026-08-28T13:47:00Z",
-  "generated_at": "2026-10-16T08:33:18.656Z",
+  "generated_at": "2026-10-16T13:32:08.407Z",
   "source": "GitHub Actions central V17.0 pre-move publisher + Binance public market data; optional CoinGlass authenticated intelligence; historical verified cohorts retained",
   "integrity_note_ar": "هذا سجل مركزي موحّد يبدأ من 28 أغسطس 2026. يعرض توصيات DeepRise التي تم تسجيلها فعليًا بعد تفعيل السجل المركزي، ولا تُحذف النتائج بسبب تحديث التطبيق. كل تحديث للسجل يُحفظ في GitHub بتاريخ Commit قابل للمراجعة.",
   "integrity_note_en": "This is a unified central ledger starting August 28, 2026. It shows DeepRise forecasts actually recorded after central tracking was enabled. App updates do not delete results, and every ledger refresh is preserved in GitHub commit history.",
   "records": [
+    {
+      "forecast_id": "2026-10-16-MAGICUSDT",
+      "source": "central-v17-pre-move",
+      "method": "V17.0 4H Pre-Move Confluence / accumulation + compression + flow + momentum turn + anti-chase",
+      "symbol": "MAGICUSDT",
+      "side": "SHORT",
+      "created_at": "2026-10-16T13:31:12.340Z",
+      "entry": 0.1095,
+      "tp1": 0.09954321428571428,
+      "tp2": 0.09157778571428568,
+      "sl": 0.11613785714285715,
+      "status": "ACTIVE",
+      "score": 91,
+      "predictive": {
+        "model_version": "V17.0 Pre-Move Confluence",
+        "score": 73.3,
+        "coverage_pct": 70.0,
+        "grade": "B",
+        "order_flow": {
+          "available": true,
+          "provider": "Binance closed 15m klines",
+          "taker_buy_ratio": 0.39965,
+          "cvd_proxy_pct": -20.0702,
+          "taker_ratio_acceleration_pp": -2.5326,
+          "alignment": "ALIGNED",
+          "score": 64.8
+        },
+        "liquidity_proxy": {
+          "available": true,
+          "provider": "Binance swing-liquidity proxy",
+          "target_price": 0.0912,
+          "distance_pct": 16.7123,
+          "atr_distance": 2.875,
+          "alignment": "AHEAD",
+          "score": 52.0,
+          "note": "Swing-liquidity proxy; not a liquidation heatmap."
+        },
+        "liquidation_map": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "large_orders": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "smart_money": {
+          "available": false,
+          "provider": "Nansen",
+          "reason": "NANSEN_API_KEY not configured; no Smart Money wallet value inferred"
+        },
+        "explanation": "4H compression/base/flow/turn detected before expansion, then checked against closed 15m order flow and liquidity. Extended prices are rejected rather than chased.",
+        "liquidity_sweep": {
+          "available": true,
+          "type": "NONE",
+          "severity": "LOW",
+          "trap_score": 36,
+          "score_meaning": "Evidence strength, not reversal probability",
+          "liquidity_level": 0.1116,
+          "distance_pct": 1.732,
+          "momentum_30m_pct": 0.2742,
+          "taker_buy_ratio": 0.39911,
+          "taker_acceleration_pp": -6.3505,
+          "upper_wick_ratio": 0.0,
+          "volume_ratio": 0.1631,
+          "evidence": [
+            "weak taker-buy participation",
+            "aggressive buying decelerating",
+            "15m structure not strongly bullish"
+          ],
+          "captured_at": "2026-10-16T13:31:13.793Z"
+        },
+        "whale_divergence": {
+          "available": true,
+          "type": "NONE",
+          "strength": 0,
+          "wallet_confirmed": false,
+          "sources": [
+            "Binance order flow"
+          ],
+          "evidence": [],
+          "note": "No multi-source whale/flow divergence confirmed at forecast creation."
+        },
+        "whale_arrival_radar": {
+          "available": false,
+          "reason": "No fresh public on-chain whale snapshot within 45 minutes"
+        }
+      },
+      "rank": 4,
+      "day": "2026-10-16",
+      "current": 0.1094,
+      "stage": "ARMED",
+      "trigger": 0.1015,
+      "entry_zone": [
+        0.10054535714285714,
+        0.1037275
+      ],
+      "pre_move": {
+        "side": "SHORT",
+        "stage": "ARMED",
+        "score": 91,
+        "raw_score": 91,
+        "reasons": [
+          "ATR compression 0.37",
+          "BB compression 20.32%",
+          "tight 4H base",
+          "negative money flow",
+          "near trigger"
+        ],
+        "distance_atr": 1.3670033670033666,
+        "live_distance_atr": -1.2570145903479224,
+        "live_change_24h": 0.18264840182649067,
+        "extended": false,
+        "base_quality": true,
+        "flow_evidence": true,
+        "directional_repair": true,
+        "watch_price": 0.1095,
+        "closed_price": 0.1102,
+        "trigger": 0.1015,
+        "entry_low": 0.10054535714285714,
+        "entry_high": 0.1037275,
+        "invalid": 0.11613785714285715,
+        "tp1": 0.0811342857142857,
+        "tp2": 0.0643325714285714,
+        "atr": 0.0063642857142857156,
+        "atr_ratio": 0.3743697478991599,
+        "bb_width": 20.32231730299825,
+        "bb_ratio": 0.3856103139508901,
+        "range_high": 0.1468,
+        "range_low": 0.1015,
+        "range_atr": 7.117845117845118,
+        "rsi_4h": 48.54173944574137,
+        "rsi_delta_3": 1.5036349949590502,
+        "cmf_4h": -0.21550546612428034,
+        "taker_buy_ratio": 0.5073529762339092,
+        "volume_build": 0.34888657644990384,
+        "momentum_4h_pct": 1.3799448022079108
+      },
+      "high": 0.1096,
+      "low": 0.1094,
+      "best_move": 0.09132420091324463,
+      "worst_move": -0.09132420091324463,
+      "final_move": null,
+      "end_reason": null,
+      "tp1_hit_at": null,
+      "tp2_hit_at": null,
+      "ended_at": null,
+      "proof_commit": null,
+      "proof_verified_at": null,
+      "quality": {
+        "count": 7,
+        "required": 6,
+        "volume_ratio": 0.3489,
+        "quote_volume_usdt": 3206014.6,
+        "atr_pct": 5.8121,
+        "rsi_15m": 48.08,
+        "candle_confirmed": false,
+        "trend_15m": "PRE_MOVE",
+        "trend_1h": "PRE_MOVE",
+        "rr": 2.7000000000000006,
+        "momentum_15m_pct": -0.0911,
+        "stage": "ARMED",
+        "rsi_4h": 48.54173944574137,
+        "atr_ratio": 0.3743697478991599,
+        "bb_ratio": 0.3856103139508901,
+        "cmf_4h": -0.21550546612428034,
+        "taker_buy_ratio": 0.5073529762339092,
+        "distance_to_trigger_atr": 1.3670033670033666,
+        "anti_chase_extended": false
+      },
+      "opened_at": "2026-10-16T13:31:12.340Z",
+      "status_history": [
+        {
+          "event": "SIGNAL_OPENED",
+          "at": "2026-10-16T13:31:12.340Z",
+          "status": "ACTIVE"
+        }
+      ],
+      "last_checked_at": "2026-10-16T13:32:59.999Z"
+    },
+    {
+      "forecast_id": "2026-10-16-SANDUSDT",
+      "source": "central-v17-pre-move",
+      "method": "V17.0 4H Pre-Move Confluence / accumulation + compression + flow + momentum turn + anti-chase",
+      "symbol": "SANDUSDT",
+      "side": "SHORT",
+      "created_at": "2026-10-16T13:31:12.340Z",
+      "entry": 0.05482,
+      "tp1": 0.05159135714285715,
+      "tp2": 0.04900844285714286,
+      "sl": 0.05697242857142857,
+      "status": "ACTIVE",
+      "score": 77,
+      "predictive": {
+        "model_version": "V17.0 Pre-Move Confluence",
+        "score": 73.6,
+        "coverage_pct": 70.0,
+        "grade": "B",
+        "order_flow": {
+          "available": true,
+          "provider": "Binance closed 15m klines",
+          "taker_buy_ratio": 0.45782,
+          "cvd_proxy_pct": -8.4364,
+          "taker_ratio_acceleration_pp": -7.2843,
+          "alignment": "ALIGNED",
+          "score": 65.6
+        },
+        "liquidity_proxy": {
+          "available": true,
+          "provider": "Binance swing-liquidity proxy",
+          "target_price": 0.05277,
+          "distance_pct": 3.7395,
+          "atr_distance": 1.122,
+          "alignment": "AHEAD",
+          "score": 80.0,
+          "note": "Swing-liquidity proxy; not a liquidation heatmap."
+        },
+        "liquidation_map": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "large_orders": {
+          "available": false,
+          "provider": "CoinGlass",
+          "reason": "COINGLASS_API_KEY not configured"
+        },
+        "smart_money": {
+          "available": false,
+          "provider": "Nansen",
+          "reason": "NANSEN_API_KEY not configured; no Smart Money wallet value inferred"
+        },
+        "explanation": "4H compression/base/flow/turn detected before expansion, then checked against closed 15m order flow and liquidity. Extended prices are rejected rather than chased.",
+        "liquidity_sweep": {
+          "available": true,
+          "type": "NONE",
+          "severity": "LOW",
+          "trap_score": 24,
+          "score_meaning": "Evidence strength, not reversal probability",
+          "liquidity_level": 0.05546,
+          "distance_pct": 1.2413,
+          "momentum_30m_pct": 0.0914,
+          "taker_buy_ratio": 0.37364,
+          "taker_acceleration_pp": -0.6391,
+          "upper_wick_ratio": 0.0667,
+          "volume_ratio": 0.5338,
+          "evidence": [
+            "weak taker-buy participation",
+            "15m structure not strongly bullish"
+          ],
+          "captured_at": "2026-10-16T13:31:15.071Z"
+        },
+        "whale_divergence": {
+          "available": true,
+          "type": "NONE",
+          "strength": 0,
+          "wallet_confirmed": false,
+          "sources": [
+            "Binance order flow"
+          ],
+          "evidence": [],
+          "note": "No multi-source whale/flow divergence confirmed at forecast creation."
+        },
+        "whale_arrival_radar": {
+          "available": false,
+          "reason": "No fresh public on-chain whale snapshot within 45 minutes"
+        }
+      },
+      "rank": 3,
+      "day": "2026-10-16",
+      "current": 0.05481,
+      "stage": "ARMED",
+      "trigger": 0.05277,
+      "entry_zone": [
+        0.05249592857142857,
+        0.0534095
+      ],
+      "pre_move": {
+        "side": "SHORT",
+        "stage": "ARMED",
+        "score": 77,
+        "raw_score": 77,
+        "reasons": [
+          "ATR contraction 0.89",
+          "tight 4H base",
+          "negative money flow",
+          "taker sell pressure",
+          "near trigger"
+        ],
+        "distance_atr": 1.3463643471462106,
+        "live_distance_atr": -1.1219702892885088,
+        "live_change_24h": -0.9485589201021494,
+        "extended": false,
+        "base_quality": true,
+        "flow_evidence": true,
+        "directional_repair": true,
+        "watch_price": 0.05482,
+        "closed_price": 0.05523,
+        "trigger": 0.05277,
+        "entry_low": 0.05249592857142857,
+        "entry_high": 0.0534095,
+        "invalid": 0.05697242857142857,
+        "tp1": 0.04692314285714286,
+        "tp2": 0.042099485714285706,
+        "atr": 0.0018271428571428566,
+        "atr_ratio": 0.8855807512549769,
+        "bb_width": 15.89853512419625,
+        "bb_ratio": 1.045783713124962,
+        "range_high": 0.06677,
+        "range_low": 0.05277,
+        "range_atr": 7.662236121970291,
+        "rsi_4h": 35.58788738583205,
+        "rsi_delta_3": -2.8193357077944157,
+        "cmf_4h": -0.22852102513843323,
+        "taker_buy_ratio": 0.4727200000235553,
+        "volume_build": 0.7687976005521227,
+        "momentum_4h_pct": -1.568347888076993
+      },
+      "high": 0.05486,
+      "low": 0.05464,
+      "best_move": 0.32834731849689824,
+      "worst_move": -0.07296607077708568,
+      "final_move": null,
+      "end_reason": null,
+      "tp1_hit_at": null,
+      "tp2_hit_at": null,
+      "ended_at": null,
+      "proof_commit": null,
+      "proof_verified_at": null,
+      "quality": {
+        "count": 7,
+        "required": 6,
+        "volume_ratio": 0.7688,
+        "quote_volume_usdt": 2971902.07,
+        "atr_pct": 3.333,
+        "rsi_15m": 37.64,
+        "candle_confirmed": false,
+        "trend_15m": "PRE_MOVE",
+        "trend_1h": "PRE_MOVE",
+        "rr": 2.7000000000000006,
+        "momentum_15m_pct": -1.0119,
+        "stage": "ARMED",
+        "rsi_4h": 35.58788738583205,
+        "atr_ratio": 0.8855807512549769,
+        "bb_ratio": 1.045783713124962,
+        "cmf_4h": -0.22852102513843323,
+        "taker_buy_ratio": 0.4727200000235553,
+        "distance_to_trigger_atr": 1.3463643471462106,
+        "anti_chase_extended": false
+      },
+      "opened_at": "2026-10-16T13:31:12.340Z",
+      "status_history": [
+        {
+          "event": "SIGNAL_OPENED",
+          "at": "2026-10-16T13:31:12.340Z",
+          "status": "ACTIVE"
+        }
+      ],
+      "last_checked_at": "2026-10-16T13:32:59.999Z"
+    },
     {
       "forecast_id": "2026-10-16-MEGAUSDT",
       "source": "central-v17-pre-move",
@@ -101,7 +462,7 @@
       },
       "rank": 2,
       "day": "2026-10-16",
-      "current": 0.04691,
+      "current": 0.04679,
       "stage": "ARMED",
       "trigger": 0.04886,
       "entry_zone": [
@@ -148,10 +509,10 @@
         "volume_build": 0.638670243900794,
         "momentum_4h_pct": -0.1054185114906181
       },
-      "high": 0.04707,
-      "low": 0.04691,
-      "best_move": 0.06377551020408641,
-      "worst_move": -0.2763605442176832,
+      "high": 0.0474,
+      "low": 0.04553,
+      "best_move": 0.7653061224489779,
+      "worst_move": -3.2100340136054366,
       "final_move": null,
       "end_reason": null,
       "tp1_hit_at": null,
@@ -188,7 +549,7 @@
           "status": "ACTIVE"
         }
       ],
-      "last_checked_at": "2026-10-16T08:33:59.999Z"
+      "last_checked_at": "2026-10-16T13:32:59.999Z"
     },
     {
       "forecast_id": "2026-10-16-NIGHTUSDT",
@@ -790,7 +1151,7 @@
       "tp1": 0.12912760714285715,
       "tp2": 0.12450169285714284,
       "sl": 0.13876492857142858,
-      "status": "ACTIVE",
+      "status": "STOP HIT",
       "score": 99,
       "predictive": {
         "model_version": "V17.0 Pre-Move Confluence",
@@ -870,7 +1231,7 @@
       },
       "rank": 3,
       "day": "2026-10-15",
-      "current": 0.13743,
+      "current": 0.13879,
       "stage": "ARMED",
       "trigger": 0.13462,
       "entry_zone": [
@@ -919,15 +1280,15 @@
         "volume_build": 1.0443487140700352,
         "momentum_4h_pct": -3.313508920985564
       },
-      "high": 0.13814,
+      "high": 0.1388,
       "low": 0.13101,
       "best_move": 2.890816099621981,
-      "worst_move": -2.39418871840487,
+      "worst_move": -2.883403750648584,
       "final_move": null,
-      "end_reason": null,
+      "end_reason": "STOP",
       "tp1_hit_at": null,
       "tp2_hit_at": null,
-      "ended_at": null,
+      "ended_at": "2026-10-16T13:27:59.999Z",
       "proof_commit": "aa1dc1fb28907b92f2c58714d9161cbbbe79dc5b",
       "proof_verified_at": "2026-10-15T09:22:20.489Z",
       "quality": {
@@ -957,9 +1318,22 @@
           "event": "SIGNAL_OPENED",
           "at": "2026-10-15T09:21:21.828Z",
           "status": "ACTIVE"
+        },
+        {
+          "event": "SIGNAL_CANCELLED",
+          "at": "2026-10-16T13:27:59.999Z",
+          "status": "STOP HIT",
+          "reason": "STOP"
+        },
+        {
+          "event": "SIGNAL_ENDED",
+          "at": "2026-10-16T13:27:59.999Z",
+          "status": "STOP HIT",
+          "reason": "STOP"
         }
       ],
-      "last_checked_at": "2026-10-16T08:33:59.999Z"
+      "last_checked_at": "2026-10-16T13:32:59.999Z",
+      "cancelled_at": "2026-10-16T13:27:59.999Z"
     },
     {
       "forecast_id": "2026-10-15-AUSDT",
@@ -972,7 +1346,7 @@
       "tp1": 0.08773107142857146,
       "tp2": 0.07911592857142863,
       "sl": 0.1056792857142857,
-      "status": "ACTIVE",
+      "status": "STOP HIT",
       "score": 92,
       "predictive": {
         "model_version": "V17.0 Pre-Move Confluence",
@@ -1057,7 +1431,7 @@
       },
       "rank": 3,
       "day": "2026-10-15",
-      "current": 0.0995,
+      "current": 0.1033,
       "stage": "ARMED",
       "trigger": 0.0962,
       "entry_zone": [
@@ -1105,15 +1479,15 @@
         "volume_build": 3.7285414895894986,
         "momentum_4h_pct": -4.541062801932361
       },
-      "high": 0.1001,
+      "high": 0.1092,
       "low": 0.0933,
       "best_move": 5.279187817258894,
-      "worst_move": -1.6243654822334925,
+      "worst_move": -10.862944162436548,
       "final_move": null,
-      "end_reason": null,
+      "end_reason": "STOP",
       "tp1_hit_at": null,
       "tp2_hit_at": null,
-      "ended_at": null,
+      "ended_at": "2026-10-16T11:55:59.999Z",
       "proof_commit": "fd3db282ffbe6852eada0de7db2ef851c4e6de58",
       "proof_verified_at": "2026-10-15T04:28:25.507Z",
       "quality": {
@@ -1143,9 +1517,22 @@
           "event": "SIGNAL_OPENED",
           "at": "2026-10-15T04:27:31.640Z",
           "status": "ACTIVE"
+        },
+        {
+          "event": "SIGNAL_CANCELLED",
+          "at": "2026-10-16T11:55:59.999Z",
+          "status": "STOP HIT",
+          "reason": "STOP"
+        },
+        {
+          "event": "SIGNAL_ENDED",
+          "at": "2026-10-16T11:55:59.999Z",
+          "status": "STOP HIT",
+          "reason": "STOP"
         }
       ],
-      "last_checked_at": "2026-10-16T08:33:59.999Z"
+      "last_checked_at": "2026-10-16T13:32:59.999Z",
+      "cancelled_at": "2026-10-16T11:55:59.999Z"
     },
     {
       "forecast_id": "2026-10-15-WLFIUSDT",
@@ -1633,7 +2020,7 @@
       },
       "rank": 5,
       "day": "2026-10-14",
-      "current": 1.8646,
+      "current": 1.8924,
       "stage": "ARMED",
       "trigger": 2.0218,
       "entry_zone": [
@@ -1726,7 +2113,7 @@
           "status": "TP1 HIT"
         }
       ],
-      "last_checked_at": "2026-10-16T08:33:59.999Z"
+      "last_checked_at": "2026-10-16T13:32:59.999Z"
     },
     {
       "forecast_id": "2026-10-14-CRVUSDT",
@@ -5961,7 +6348,7 @@
       },
       "rank": 4,
       "day": "2026-10-10",
-      "current": 0.05585,
+      "current": 0.05482,
       "stage": "ARMED",
       "trigger": 0.0649,
       "entry_zone": [
@@ -6053,7 +6440,7 @@
           "status": "TP1 HIT"
         }
       ],
-      "last_checked_at": "2026-10-16T08:33:59.999Z"
+      "last_checked_at": "2026-10-16T13:32:59.999Z"
     },
     {
       "forecast_id": "2026-10-10-ATUSDT",
@@ -13408,7 +13795,7 @@
       },
       "rank": 1,
       "day": "2026-10-03",
-      "current": 0.13743,
+      "current": 0.13879,
       "stage": "ARMED",
       "trigger": 0.13471,
       "entry_zone": [
@@ -13502,7 +13889,7 @@
           "status": "TP1 HIT"
         }
       ],
-      "last_checked_at": "2026-10-16T08:33:59.999Z"
+      "last_checked_at": "2026-10-16T13:32:59.999Z"
     },
     {
       "forecast_id": "2026-10-02-SEIUSDT",
