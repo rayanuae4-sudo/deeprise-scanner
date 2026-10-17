@@ -62,7 +62,7 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
   assert.equal(button('#drStructurePanel').parentElement,w.document.getElementById('chartPanel'),'Fullscreen must restore original container');
  const standalone=fs.readFileSync('chart.html','utf8');
  assert.match(standalone,/DOMContentLoaded/);
- assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1800/);
+ assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1810/);
  assert.match(standalone,/symbolForm/);
  console.log('DeepRise v18.0 chart-click DOM regression: PASS');
  dom.window.close();

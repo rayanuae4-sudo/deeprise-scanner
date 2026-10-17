@@ -51,11 +51,19 @@ jobs:
       - name: Run V17.4 order-block and chart regression
         run: node scripts/deeprise-order-block-regression.js
 
+      - name: Run V18.1 strict SMC workflow regression
+        run: node scripts/deeprise-smc-sequence-regression.cjs
+
       - name: Install chart interaction test dependency
         run: npm install --no-save --no-package-lock jsdom@26
 
       - name: Test real indicator button clicks and fullscreen DOM behavior
         run: node scripts/chart-click-regression.cjs
+
+      - name: Test explanations, Arabic reasons and chart navigation
+        run: |
+          node scripts/deeprise-explain-regression.cjs
+          node scripts/deeprise-tradingview-regression.cjs
 
       - name: Verify runtime and cacheless PWA wiring
         run: |
@@ -72,17 +80,19 @@ jobs:
           ui=Path('deeprise-signal-card-ui-v153.js').read_text(encoding='utf-8')
           premove=Path('deeprise-pre-move-v170.js').read_text(encoding='utf-8')
           index=Path('index.html').read_text(encoding='utf-8')
-          for marker in ['deeprise-workspace-v173.js?v=1800','deeprise-market-structure-v174.js?v=1790','deeprise-structure-chart-v174.js?v=1800']:
+          for marker in ['deeprise-workspace-v173.js?v=1800','deeprise-market-structure-v174.js?v=1810','deeprise-structure-chart-v174.js?v=1810']:
               assert marker in index and marker in sw, f'structure asset missing: {marker}'
           assert index.index('deeprise-market-structure-v174.js') < index.index('deeprise-pre-move-v170.js')
           assert index.index('deeprise-structure-chart-v174.js') > index.index('deeprise-v13-gate-hotfix.js')
+          for asset in ['deeprise-structure-explain-v182.js?v=1820','deeprise-structure-reasons-v182.js?v=1820']:
+              assert asset in index and asset in sw, f'missing rationale asset: {asset}'
           chart=Path('deeprise-structure-chart-v174.js').read_text(encoding='utf-8')
           for feature in ['function updateLayer(key,enabled)', 'data-toggle-indicator', 'data-structure-fullscreen', 'function toggleFullscreen(force)', 'dr-structure-fullscreen']:
               assert feature in chart, f'v17.5 interactive chart feature missing: {feature}'
           for marker in ['deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1580','deeprise-integrity-v158.js?v=1580','deeprise-whale-flow-v155.js?v=1550','deeprise-signal-card-ui-v153.js?v=1531','deeprise-whale-inline-v156.js?v=1560','deeprise-trade-zones-v157.js?v=1570']:
               assert marker in pwa, f'pwa.js missing {marker}'
-          assert 'network-v18-0-0' in pwa, 'service-worker network-only registration missing'
-          assert "deeprise-pwa-network-v18-0-0" in sw, 'service-worker network cache missing'
+          assert 'network-v18-2-0' in pwa, 'service-worker network-only registration missing'
+          assert "deeprise-pwa-network-v18-2-0" in sw, 'service-worker network cache missing'
           for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1730','./deeprise-pre-move-v170.js?v=1730','./deeprise-signal-stability-v171.js?v=1710','./mobile-app-v11.js?v=1800','./pwa.js?v=1800','networkOnlyNavigation','offlinePage']:
               assert marker in sw, f'cacheless service-worker wiring missing: {marker}'
           assert "event.request.mode==='navigate'" in sw

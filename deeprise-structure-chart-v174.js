@@ -1,6 +1,6 @@
 /* DeepRise V17.4: order blocks and fluid interactive chart. */
 (()=>{'use strict';
-const state={portalMarker:null,previousHtmlOverflow:'',symbol:'',tf:'4h',result:null,token:0,controller:null,loading:false,error:false,errorMessage:'',cache:new Map(),view:{count:75,offset:0},tool:'pan',expanded:false,previousOverflow:'',returnFocus:null,pending:null,geometry:null,pointers:new Map(),gesture:null,drawings:{},layers:{structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,ema20:true,ema50:true,bollinger:false,volume:false,rsi:false,fvg:true,fib:true,extensions:false,trendExtensions:false,sweeps:false,timeZones:false,fan:false}};
+const state={portalMarker:null,previousHtmlOverflow:'',symbol:'',tf:'4h',result:null,token:0,controller:null,loading:false,error:false,errorMessage:'',cache:new Map(),view:{count:75,offset:0},tool:'pan',expanded:false,previousOverflow:'',returnFocus:null,pending:null,geometry:null,pointers:new Map(),gesture:null,drawings:{},layers:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,ema20:true,ema50:true,bollinger:false,volume:false,rsi:false,fvg:true,fib:true,extensions:false,trendExtensions:false,sweeps:false,timeZones:false,fan:false}};
 function defaultCount(){return window.innerWidth<650?30:75}
 const wt=k=>window.DeepRiseWorkspace?.t(k)||k;
 try{const saved=JSON.parse(localStorage.getItem('deeprise_drawings_v173')||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))state.drawings=saved}catch(_){}
@@ -71,6 +71,9 @@ const copy={
  ar:{internalProtection:'القمم والقيعان الداخلية المحمية',reason:'سبب الحماية',initial:'مبدئي / ينتظر BOS جديد',confirmedStructure:'حماية مؤكدة بكسر البنية',externalScope:'الهيكل الخارجي',internalScope:'الهيكل الداخلي',title:'هيكل السوق وفيبوناتشي',loading:'تحميل الشموع المغلقة…',error:'تعذر تحديث الشموع. أعد المحاولة.',retry:'تحديث',structure:'BOS / CHoCH',pivots:'القمم والقيعان HH / HL / LH / LL',protection:'القمم والقيعان المحمية',fvg:'فجوات FVG النشطة',fib:'تصحيح فيبوناتشي',extensions:'امتدادات نقطتين',trendExtensions:'امتدادات ثلاث نقاط',sweeps:'سحب السيولة',timeZones:'مناطق فيبوناتشي الزمنية',fan:'مروحة فيبوناتشي',orderBlocks:'مناطق الأوردر بلوك',ema20:'متوسط EMA 20',ema50:'متوسط EMA 50',bollinger:'بولينجر',volume:'حجم التداول',rsi:'مؤشر RSI 14',indicators:'المؤشرات',structureTools:'الهيكل والأوردر بلوك',indicatorTools:'المؤشرات الفنية',noOrderBlocks:'لا توجد مناطق أوردر بلوك نشطة مؤكدة على هذا الفريم',full:'ملء الشاشة',exitFull:'إغلاق ملء الشاشة',note:'شموع مغلقة فقط. تأكيد القمة أو القاع بعد 3 شموع لاحقة؛ مرّر فوق العلامة لمعرفة وقت التأكيد. تصنيف الجاهزية يستخدم 4 ساعات مستقلًا عن فريم هذه الخريطة.',bias:'الهيكل',range:'نطاق عرضي',long:'صاعد',short:'هابط',high:'قمة محمية',low:'قاع محمي',gap:'FVG',partial:'ممتلئة جزئيًا',unfilled:'غير ممتلئة',none:'لا يوجد مستوى مؤكد',anchors:'نقطتا فيبوناتشي المؤكدتان A ← B',third:'C',waitingC:'امتدادات الثلاث نقاط تنتظر تأكيد نقطة التصحيح C.',equilibrium:'التوازن 0.5',golden:'فيبوناتشي 0.618–0.786',premium:'النصف العلوي',discount:'النصف السفلي',confirmed:'وقت التأكيد',asof:'آخر إغلاق',timeNote:'المناطق الزمنية علامات نسبية وليست توقعًا لموعد التفعيل.'},
  ru:{internalProtection:'Внутренние защищённые экстремумы',reason:'Причина защиты',initial:'Предварительно / ожидание BOS',confirmedStructure:'Подтверждено BOS',externalScope:'Внешняя',internalScope:'Внутренняя',title:'Структура рынка и Фибоначчи',loading:'Загрузка закрытых свечей…',error:'Не удалось обновить свечи.',retry:'Обновить',structure:'BOS / CHoCH',pivots:'HH / HL / LH / LL',protection:'Защищённые экстремумы',fvg:'Активные FVG',fib:'Коррекция Fib',extensions:'Расширения 2 точки',trendExtensions:'Расширения 3 точки',sweeps:'Снятие ликвидности',timeZones:'Временные зоны Fib',fan:'Веер Fib',orderBlocks:'Ордер-блоки',ema20:'EMA 20',ema50:'EMA 50',bollinger:'Полосы Боллинджера',volume:'Объём',rsi:'RSI 14',indicators:'Индикаторы',structureTools:'Структура и ордер-блоки',indicatorTools:'Технические индикаторы',noOrderBlocks:'Нет подтверждённых активных ордер-блоков',full:'Во весь экран',exitFull:'Закрыть полный экран',note:'Только закрытые свечи. Пивот подтверждается через 3 свечи; время подтверждения в подсказке. Готовность использует 4H независимо от графика.',bias:'Структура',range:'Диапазон',long:'Бычья',short:'Медвежья',high:'Защищённый максимум',low:'Защищённый минимум',gap:'FVG',partial:'Частично заполнен',unfilled:'Не заполнен',none:'Нет подтверждённого уровня',anchors:'Подтверждённые точки Fib A → B',third:'C',waitingC:'Для расширения 3 точек нужна подтверждённая точка C.',equilibrium:'Равновесие 0.5',golden:'Fib 0.618–0.786',premium:'Премия',discount:'Дисконт',confirmed:'Подтверждено',asof:'Закрыто',timeNote:'Временные зоны — отношения, не прогноз времени.'}
 };
+Object.assign(copy.en,{smc:'SMC workflow',smcStages:'Ordered confirmations',smcInfo:'Sweep → CHoCH → BOS → active OB/FVG → retest. Closed candles only.'});
+Object.assign(copy.ar,{smc:'تسلسل السيولة والهيكل SMC',smcStages:'التأكيدات بالترتيب',smcInfo:'سحب السيولة ← CHoCH ← BOS ← منطقة OB/FVG ← إعادة الاختبار. شموع مغلقة فقط.'});
+Object.assign(copy.ru,{smc:'Последовательность SMC',smcStages:'Подтверждения по порядку',smcInfo:'Снятие ликвидности → CHoCH → BOS → зона OB/FVG → повторный тест. Закрытые свечи.'});
 const lang=()=>localStorage.getItem('deeprise_language')||'en',t=k=>(copy[lang()]||copy.en)[k]||k;
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const pf=v=>Number(v).toLocaleString('en-US',{maximumFractionDigits:8});
@@ -104,9 +107,9 @@ function toggleFullscreen(force){
  });
 }
 const CHART_PRESETS={
- clean:{structure:false,pivots:false,protection:false,internalProtection:false,orderBlocks:false,fvg:false,fib:false,ema20:true,ema50:false,bollinger:false,volume:false,rsi:false},
- structure:{structure:true,pivots:true,protection:true,internalProtection:false,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:false,bollinger:false,volume:false,rsi:false},
- advanced:{structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,bollinger:true,volume:true,rsi:true}
+ clean:{smc:false,structure:false,pivots:false,protection:false,internalProtection:false,orderBlocks:false,fvg:false,fib:false,ema20:true,ema50:false,bollinger:false,volume:false,rsi:false},
+ structure:{smc:true,structure:true,pivots:true,protection:true,internalProtection:false,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,bollinger:false,volume:false,rsi:false},
+ advanced:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,bollinger:true,volume:true,rsi:true}
 };
 state.preset=localStorage.getItem('deeprise_chart_preset_v180')||'structure';
 if(!CHART_PRESETS[state.preset])state.preset='structure';
@@ -124,11 +127,11 @@ function indicatorButton(k){
 function indicatorQuick(){
  const labels=lang()==='ar'?['نظيف','هيكل السوق','متقدم']:lang()==='ru'?['Чистый','Структура','Подробно']:['Clean','Structure','Advanced'];
  const presets='<div class="dr-chart-presets" role="group" aria-label="Chart density">'+Object.keys(CHART_PRESETS).map((key,i)=>'<button type="button" data-chart-preset="'+key+'" aria-pressed="'+(state.preset===key)+'" class="'+(state.preset===key?'active':'')+'">'+labels[i]+'</button>').join('')+'</div>';
- const fast='<div class="dr-fast-toggles" role="group" aria-label="Quick indicators">'+['orderBlocks','fvg','rsi','fib'].map(indicatorButton).join('')+'</div>';
+ const fast='<div class="dr-fast-toggles" role="group" aria-label="Quick indicators">'+['smc','orderBlocks','fvg','rsi','fib'].map(indicatorButton).join('')+'</div>';
  return '<div class="dr-quick-chart-controls">'+presets+fast+'</div>';
 }
 function extraIndicators(open){
- const groups=[['structureTools',['structure','pivots','protection','internalProtection','orderBlocks','fvg','fib','sweeps']],['indicatorTools',['ema20','ema50','rsi','bollinger','volume','extensions','trendExtensions','fan','timeZones']]];
+ const groups=[['structureTools',['smc','structure','pivots','protection','internalProtection','orderBlocks','fvg','fib','sweeps']],['indicatorTools',['ema20','ema50','rsi','bollinger','volume','extensions','trendExtensions','fan','timeZones']]];
  const inner=groups.map(([label,keys])=>'<div class="dr-quick-layer-group"><b>'+esc(t(label))+'</b><div class="dr-quick-layer-grid">'+keys.map(indicatorButton).join('')+'</div></div>').join('');
  const label=lang()==='ar'?'جميع المؤشرات وأدوات الرسم':lang()==='ru'?'Все индикаторы и инструменты':'All indicators and drawing tools';
  return '<details class="dr-extra-indicators" '+(open?'open':'')+'><summary>'+label+' ⚙</summary><section class="dr-indicator-shortcuts">'+inner+'</section></details>';
@@ -231,6 +234,17 @@ function svg(result){
  }
  if(state.layers.pivots)for(const p of pivots.filter(p=>p.index>=first&&p.index<end)){const y=Y(p.price)+(p.type==='HIGH'?-8:17);out+=`<g><title>${esc(p.label+' $'+pf(p.price)+' • '+t('confirmed')+': '+stamp(p.confirmedAt))}</title>${text(X(p.index)-7,y,p.label,p.type==='HIGH'?red:green)}</g>`}
  if(state.layers.structure)for(const e of events.filter(e=>e.index>=first&&e.index<end)){const x1=Math.max(left,X(e.pivotIndex)),x2=X(e.index),color=e.side==='LONG'?green:red;out+=`<g><title>${esc(e.type+' '+e.side+' • '+stamp(e.confirmedAt))}</title><line x1="${x1}" x2="${x2}" y1="${Y(e.price)}" y2="${Y(e.price)}" stroke="${color}" stroke-width="2"/>${text((x1+x2)/2,Y(e.price)-5,e.type==='CHOCH'?'CHoCH':'BOS',color,11)}<circle cx="${x2}" cy="${Y(e.price)}" r="3" fill="${color}"/></g>`}
+ if(state.layers.smc&&result.smc){
+  const seq=result.smc[result.bias]||(result.smc.LONG?.sweep?.index>=result.smc.SHORT?.sweep?.index?result.smc.LONG:result.smc.SHORT);
+  for(const [label,e,p] of [['SW',seq?.sweep,seq?.sweep?.price],['CH',seq?.choch,seq?.choch?.price],['BOS',seq?.bos,seq?.bos?.price]]){
+   if(!e||e.index<first||e.index>=end||!Number.isFinite(p))continue;
+   const cx=X(e.index),cy=Y(p),color=seq.side==='LONG'?green:red;
+   out+='<g><title>'+esc(label+' · '+seq.side+' · '+stamp(bars[e.index].closeTime))+'</title><circle cx="'+cx+'" cy="'+cy+'" r="7" fill="#071827" stroke="'+color+'" stroke-width="1.8"/>'+text(cx-7,cy-11,label,color,10)+'</g>';
+  }
+  if(seq?.retestIndex!==null&&Number.isInteger(seq?.retestIndex)&&seq.retestIndex>=first&&seq.retestIndex<end&&seq.zone){
+   out+='<g><title>'+esc('SMC retest · '+seq.zone.type)+'</title>'+text(X(seq.retestIndex),Y((seq.zone.upper+seq.zone.lower)/2)-12,'RETEST',gold,10)+'</g>';
+  }
+ }
  if(state.layers.sweeps)for(const s of sweeps.filter(s=>s.index>=first&&s.index<end).slice(-12))out+=text(X(s.index)-4,Y(s.price)+(s.side==='LONG'?22:-16),'SW',gold);
  if(state.layers.protection)for(const [key,p] of [['high',result.protectedHigh],['low',result.protectedLow]])if(p){
    const detail=p.protection;
@@ -245,6 +259,24 @@ function svg(result){
  out+=text(left,26,state.symbol+' • '+state.tf+' • '+t('asof')+' '+stamp(result.barClose),'#d8e7f3',11);
  return `<svg viewBox="0 0 ${W} ${H}" data-dr-interactive tabindex="0" role="application" aria-label="${esc(t('title')+' '+state.symbol+' '+state.tf)}"><defs><clipPath id="drDrawingClip"><rect x="${left}" y="${top}" width="${right-left}" height="${bottom-top}"/></clipPath><clipPath id="drStructureClip"><rect x="${left}" y="0" width="${W-left}" height="${H}"/></clipPath></defs><g clip-path="url(#drStructureClip)">${out}</g>${drawingSvg(state.geometry)}</svg>`;
 }
+
+function smcCard(r){
+ const all=r?.smc;if(!all)return '';
+ const a=all.LONG,b=all.SHORT;
+ const side=r.bias==='LONG'?'LONG':r.bias==='SHORT'?'SHORT':((a?.sweep?.index??-1)>=(b?.sweep?.index??-1)?'LONG':'SHORT');
+ const q=all[side];if(!q)return '';
+ const phases={en:{WAIT_SWEEP:'Waiting for a liquidity sweep',WAIT_CHOCH:'Waiting for CHoCH',WAIT_BOS:'Waiting for continuation BOS',WAIT_ZONE:'Waiting for an active OB/FVG',WAIT_RETEST:'Waiting for zone retest',READY:'SMC sequence confirmed',INVALIDATED:'Swept extreme invalidated',EXPIRED:'Sequence expired',NO_DATA:'No data'},
+ ar:{WAIT_SWEEP:'انتظار سحب السيولة',WAIT_CHOCH:'انتظار تغير الشخصية CHoCH',WAIT_BOS:'انتظار كسر الاستمرار BOS',WAIT_ZONE:'انتظار منطقة OB/FVG نشطة',WAIT_RETEST:'انتظار إعادة اختبار المنطقة',READY:'تسلسل SMC مكتمل',INVALIDATED:'كُسرت منطقة الإبطال بعد سحب السيولة',EXPIRED:'انتهت صلاحية التسلسل',NO_DATA:'لا توجد بيانات'},
+ ru:{WAIT_SWEEP:'Ожидание снятия ликвидности',WAIT_CHOCH:'Ожидание CHoCH',WAIT_BOS:'Ожидание BOS',WAIT_ZONE:'Ожидание OB/FVG',WAIT_RETEST:'Ожидание ретеста зоны',READY:'Последовательность подтверждена',INVALIDATED:'Экстремум пробит',EXPIRED:'Сетап устарел',NO_DATA:'Нет данных'}};
+ const names=lang()==='ar'?['سحب السيولة','CHoCH','BOS','OB/FVG','إعادة الاختبار']:lang()==='ru'?['Ликвидность','CHoCH','BOS','OB/FVG','Ретест']:['Liquidity sweep','CHoCH','BOS','OB/FVG','Retest'];
+ const done=['sweep','choch','bos','zone','retest'];
+ const rows=done.map((key,i)=>'<span style="white-space:nowrap;color:'+(q.checks?.[key]?'#35e0a1':'#8ca5b7')+'">'+(q.checks?.[key]?'✓ ':'○ ')+esc(names[i])+'</span>').join(' <span aria-hidden="true" style="opacity:.5">→</span> ');
+ const phase=(phases[lang()]||phases.en)[q.phase]||q.phase;
+ return '<div class="dr-structure-note dr-smc-path" role="status"><b>'+esc(t('smcStages'))+' · '+side+' · '+esc(phase)+'</b><div style="display:flex;gap:7px;flex-wrap:wrap;margin:7px 0">'+rows+'</div>'+
+  (q.zone?'<small>'+esc(q.zone.type)+' $'+pf(q.zone.lower)+' – $'+pf(q.zone.upper)+'</small>':'')+
+  '<small style="display:block;margin-top:5px">'+esc(t('smcInfo'))+'</small></div>';
+}
+
 function protectionInfo(p,scope,label){
  if(!p)return '';
  const d=p.protection||{},quality=d.quality==='CONFIRMED'?t('confirmedStructure'):t('initial');
@@ -261,7 +293,7 @@ function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?
  const status=state.loading?t('loading'):state.error?t('error')+(state.errorMessage?' · '+esc(state.errorMessage):''):'';
  let body=status?`<div class="dr-structure-status" role="status">${status}</div>`:'';
  // Never leave the preceding symbol or timeframe's chart under a new heading.
- if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div>${toolBar()}<div class="dr-structure-scroll" dir="ltr">${svg(r)}</div>`;
+ if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div>${smcCard(r)}${toolBar()}<div class="dr-structure-scroll" dir="ltr">${svg(r)}</div>`;
   if(fib)body+=`<div class="dr-structure-note">${t('anchors')}: $${pf(fib.start.price)} → $${pf(fib.end.price)} • ${fib.side}${fib.third?' • C $'+pf(fib.third.price):''}<br>${t('golden')}: $${pf(fib.golden[0])} – $${pf(fib.golden[1])} • ${t('equilibrium')}: $${pf(fib.equilibrium)}${state.layers.trendExtensions&&!fib.third?'<br>'+t('waitingC'):''}</div>`;
  }
  if(r&&!state.error)body+='<div class="dr-protection-records">'+

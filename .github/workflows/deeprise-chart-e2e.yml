@@ -17,6 +17,9 @@ on:
       - 'index.html'
       - 'chart.html'
       - 'deeprise-market-structure-v174.js'
+      - 'deeprise-structure-explain-v182.js'
+      - 'deeprise-structure-reasons-v182.js'
+      - 'scripts/deeprise-explain-regression.cjs'
       - 'deeprise-workspace-v173.js'
       - 'deeprise-structure-chart-v174.js'
       - 'scripts/chart-click-regression.cjs'
@@ -43,6 +46,9 @@ jobs:
           node --check deeprise-workspace-v173.js
           node --check scripts/chart-mobile-home-e2e.cjs
           node scripts/chart-click-regression.cjs
+          node scripts/deeprise-smc-sequence-regression.cjs
+          node scripts/deeprise-explain-regression.cjs
+          node scripts/deeprise-tradingview-regression.cjs
           node scripts/deeprise-order-block-regression.js
           node scripts/deeprise-protected-structure-regression.cjs
       - name: Serve tested revision locally

@@ -1,4 +1,4 @@
-const CACHE='deeprise-pwa-network-v18-0-0';
+const CACHE='deeprise-pwa-network-v18-2-0';
 const STATIC_CORE=[
   './chart.html',
   './manifest.json',
@@ -6,8 +6,10 @@ const STATIC_CORE=[
   './mobile-app-v11.css?v=1310',
   './deeprise-analytics-config.js?v=1700',
   './deeprise-workspace-v173.js?v=1800',
-  './deeprise-market-structure-v174.js?v=1790',
-  './deeprise-structure-chart-v174.js?v=1800',
+  './deeprise-market-structure-v174.js?v=1810',
+  './deeprise-structure-chart-v174.js?v=1810',
+  './deeprise-structure-explain-v182.js?v=1820',
+  './deeprise-structure-reasons-v182.js?v=1820',
   './deeprise-pre-move-v170.js?v=1730',
   './deeprise-signal-stability-v171.js?v=1710',
   './deeprise-fast-search-v160.js?v=1601',
