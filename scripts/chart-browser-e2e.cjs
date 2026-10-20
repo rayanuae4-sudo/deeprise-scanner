@@ -80,4 +80,4 @@ const {chromium}=require('playwright');
  if(await page.locator('#chartPanel').evaluate(el=>el.hidden))throw Error('Native chart did not return');
   await browser.close();
  if(errors.length||!detail.svg||detail.error||detail.version!=='18.8')process.exitCode=1;
-})().catch(e=>{console.error(e);process.exitCode=1});
+})().catch(e=>{console.error(e);process.exit(1)});
