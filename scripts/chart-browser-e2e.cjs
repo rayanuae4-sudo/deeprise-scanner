@@ -42,14 +42,14 @@ const {chromium}=require('playwright');
  if(detail.buttons){
   if(await page.evaluate(()=>window.DeepRiseStructureChart?.state.expanded)){await page.locator('#drStructurePanel [data-structure-fullscreen]').click({timeout:10000})}
   await page.evaluate(()=>window.DeepRiseStructureChart?.setPreset('structure'));
-  await page.locator('[data-toggle-indicator="rsi"]').click({timeout:10000});
+  await page.locator('#drStructurePanel .dr-fast-toggles [data-toggle-indicator="rsi"]').click({timeout:10000});
   await page.waitForTimeout(400);
   console.log('RSI',await page.evaluate(()=>({state:window.DeepRiseStructureChart?.state.layers.rsi,rendered:!!document.querySelector('svg path[stroke="#bba2ff"]'),feedback:document.querySelector('[data-indicator-feedback]')?.textContent})));
   if(!detail.obTop||!detail.obToggle||!detail.fullTop)throw Error('Missing prominent OB/full-screen controls');
   await page.locator('#obTop').click();
   const obAfter=await page.evaluate(()=>window.DeepRiseStructureChart?.state.layers.orderBlocks);
   if(obAfter!==false)throw Error('Top order-block button failed');
-  await page.locator('[data-toggle-indicator="orderBlocks"]').click();
+  await page.locator('#drStructurePanel .dr-fast-toggles [data-toggle-indicator="orderBlocks"]').click();
   const obBack=await page.evaluate(()=>window.DeepRiseStructureChart?.state.layers.orderBlocks);
   if(obBack!==true)throw Error('In-chart order-block button failed');
   const beforeZoom=await page.evaluate(()=>window.DeepRiseStructureChart?.state.view.count);
