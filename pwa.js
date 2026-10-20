@@ -15,6 +15,7 @@ function load(id,src){if(document.getElementById(id)||document.querySelector(`sc
 function fastSearchLayer(){load('dr-fast-search-v160-loader','./deeprise-fast-search-v160.js?v=1601')}
 function phonePushLayer(){load('dr-phone-push-v185-loader','./deeprise-phone-push-v185.js?v=1850')}
 function notificationCenterLayer(){load('dr-notification-center-v167-loader','./deeprise-notification-center-v167.js?v=1680')}
+function pushClientLayer(){load('dr-push-client-v185-loader','./deeprise-push-client-v185.js?v=1850')}
 function experienceLayer(){load('dr-experience-v169-loader','./deeprise-experience-v169.js?v=1690')}
 function nextCandleLayer(){load('dr-next-candle-loader','./deeprise-next-candle-v145.js?v=1450')}
 function forecastSafetyLayer(){load('dr-forecast-safety-loader','./deeprise-forecast-safety-v145.js?v=1450')}
