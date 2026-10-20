@@ -201,10 +201,14 @@ function ensure(){
  return panel;
 }
 function svg(result){
- const {bars,pivots,events,gaps,sweeps,fib}=result,{first,end,count}=viewport(bars.length),visible=bars.slice(first,end),W=Math.max(350,Math.min(1700,document.getElementById('drStructurePanel')?.clientWidth||1120)),H=state.layers.rsi?(state.layers.volume?615:570):state.layers.volume?535:460,left=20,right=W-(W<650?112:160),top=32,bottom=400,extra=12;
+ const {bars,pivots,events,gaps,sweeps,fib}=result,{first,end,count}=viewport(bars.length),visible=bars.slice(first,end),W=Math.max(350,Math.min(1700,document.getElementById('drStructurePanel')?.clientWidth||1120)),left=20,right=W-(W<650?98:160),top=32,bottom=W<650?310:400,extra=12;
+  const mobile=W<650,panes={};let cursor=bottom+20;
+  for(const [name,on,height] of [['volume',state.layers.volume,mobile?39:54],['rsi',state.layers.rsi,mobile?51:70],['macd',state.layers.macd,mobile?63:88],['atr',state.layers.atr,mobile?42:60]]){if(on){panes[name]={top:cursor,bottom:cursor+height};cursor+=height+21}}
+  const H=cursor+12;
  const study=studies(bars),active=gaps.filter(g=>g.status!=='FILLED'),values=visible.flatMap(b=>[b.high,b.low]);
  if(state.layers.ema20)values.push(...study.ema20.slice(first,end).filter(Number.isFinite));
  if(state.layers.ema50)values.push(...study.ema50.slice(first,end).filter(Number.isFinite));
+  if(state.layers.ema200)values.push(...study.ema200.slice(first,end).filter(Number.isFinite));
  if(state.layers.bollinger)values.push(...study.bbTop.slice(first,end).filter(Number.isFinite),...study.bbBottom.slice(first,end).filter(Number.isFinite));
  if(state.layers.protection)for(const p of [result.protectedHigh,result.protectedLow])if(p)values.push(p.price);
   if(state.layers.internalProtection&&result.internal)for(const p of [result.internal.protectedHigh,result.internal.protectedLow])if(p)values.push(p.price);
@@ -230,9 +234,10 @@ function svg(result){
   out+=`<g><title>${esc((ob.side==='LONG'?'Bullish':'Bearish')+' order block · '+ob.status+' · $'+pf(ob.lower)+' – $'+pf(ob.upper)+' · '+stamp(ob.confirmedAt))}</title><rect x="${x}" y="${Y(upper)}" width="${Math.max(0,right-x)}" height="${Math.max(1,Y(lower)-Y(upper))}" fill="${c}" fill-opacity="${tested?'.07':'.16'}" stroke="${c}" stroke-width="1.2" stroke-dasharray="${tested?'5 4':'none'}"/>${text(Math.min(right-54,x+3),Y(upper)+11,(ob.side==='LONG'?'BULL':'BEAR')+' OB',c,10)}</g>`;
  }
  const drawStudy=(arr,color,dash='')=>{let path='',moving=false;for(let i=first;i<end;i++){if(!Number.isFinite(arr[i])){moving=false;continue}path+=(moving?' L ':'M ')+X(i).toFixed(1)+' '+Y(arr[i]).toFixed(1);moving=true}return `<path d="${path}" fill="none" stroke="${color}" stroke-width="1.8" stroke-dasharray="${dash}" vector-effect="non-scaling-stroke"/>`};
- if(state.layers.bollinger)out+=drawStudy(study.bbTop,'#9c8ada','5 4')+drawStudy(study.bbBottom,'#9c8ada','5 4');
+ if(state.layers.bollinger)out+=drawStudy(study.bbTop,'#9c8ada','5 4')+drawStudy(study.bbMid,'#c3a8ec','4 5')+drawStudy(study.bbBottom,'#9c8ada','5 4');
  if(state.layers.ema20)out+=drawStudy(study.ema20,'#ffce77');
  if(state.layers.ema50)out+=drawStudy(study.ema50,'#72affd');
+  if(state.layers.ema200)out+=drawStudy(study.ema200,'#ef85f5');
  if(fib&&state.layers.extensions)fib.extensions.forEach(l=>{if(l.price>=lo&&l.price<=hi)out+=line(l.price,'Ext '+l.ratio,'#cf9fff','2 6')});
  if(fib&&state.layers.trendExtensions)fib.trendExtensions.forEach(l=>{if(l.price>=lo&&l.price<=hi)out+=line(l.price,'ABC '+l.ratio,'#76d6ee','8 4')});
  if(fib&&state.layers.timeZones){const unit=fib.end.index-fib.start.index;for(const r of [1,2,3,5,8,13]){const idx=fib.start.index+unit*r;if(idx<first||idx>end+extra-1)continue;const x=X(idx);out+=`<line x1="${x}" x2="${x}" y1="${top}" y2="${bottom}" stroke="#c084fc" stroke-dasharray="3 7" opacity=".4"/>`+text(x+3,top+10,'T '+r,'#c084fc')}}
