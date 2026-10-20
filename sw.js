@@ -120,34 +120,3 @@ self.addEventListener('notificationclick',event=>{
   return self.clients.openWindow(url.href);
  })());
 });
-
-
-/* Push events work while the PWA page is closed; only a separate sending backend can deliver them. */
-self.addEventListener('push',event=>{
-  event.waitUntil((async()=>{
-    let msg={};
-    try{msg=event.data?.json()||{}}catch(_){msg={body:event.data?.text()||''}}
-    const scope=new URL(self.registration.scope),fallback=new URL('./index.html',scope);
-    let link;try{link=new URL(String(msg.url||'./index.html'),scope)}catch(_){link=fallback}
-    if(link.origin!==scope.origin||!link.pathname.startsWith(scope.pathname))link=fallback;
-    const title=String(msg.title||'DeepRise Scanner').slice(0,110);
-    const body=String(msg.body||'A new market alert is available.').slice(0,320);
-    const tag=String(msg.tag||msg.id||'deeprise-alert').slice(0,100);
-    await self.registration.showNotification(title,{
-      body,icon:'./icon.svg',badge:'./icon.svg',tag,renotify:false,
-      data:{url:link.toString(),symbol:String(msg.symbol||'').replace(/[^A-Z0-9]/gi,'').slice(0,22)}
-    });
-  })());
-});
-self.addEventListener('notificationclick',event=>{
-  event.notification.close();
-  event.waitUntil((async()=>{
-    const scope=new URL(self.registration.scope);
-    let url;try{url=new URL(event.notification.data?.url||'./index.html',scope)}catch(_){url=new URL('./index.html',scope)}
-    if(url.origin!==scope.origin||!url.pathname.startsWith(scope.pathname))url=new URL('./index.html',scope);
-    const windows=await clients.matchAll({type:'window',includeUncontrolled:true});
-    const existing=windows.find(w=>w.url.split('?')[0]===url.toString().split('?')[0]);
-    if(existing){await existing.focus();try{await existing.navigate(url.toString())}catch(_){}}
-    else await clients.openWindow(url.toString());
-  })());
-});
