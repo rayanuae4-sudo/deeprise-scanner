@@ -245,16 +245,32 @@ function svg(result){
  const width=Math.max(3,(right-left)/(visible.length+extra)*.55);
  visible.forEach((b,j)=>{const x=X(first+j),color=b.close>=b.open?green:red;out+=`<g><title>${esc(stamp(b.closeTime)+' • O '+pf(b.open)+' H '+pf(b.high)+' L '+pf(b.low)+' C '+pf(b.close))}</title><line x1="${x}" x2="${x}" y1="${Y(b.high)}" y2="${Y(b.low)}" stroke="${color}"/><rect x="${x-width/2}" y="${Math.min(Y(b.open),Y(b.close))}" width="${width}" height="${Math.max(1,Math.abs(Y(b.open)-Y(b.close)))}" fill="${color}"/></g>`;if(j%15===0)out+=text(x,bottom+25,new Date(b.time).toISOString().slice(5,16).replace('T',' '),'#6e879c',9)});
  if(state.layers.volume){
-  const maxVolume=Math.max(1,...visible.map(b=>b.volume||0)),volumeTop=444,volumeBottom=485;
-  out+=`<line x1="${left}" x2="${right}" y1="${volumeBottom}" y2="${volumeBottom}" stroke="#29445a"/>${text(left,437,t('volume'),'#9bb8ca',11)}`;
-  visible.forEach((b,j)=>{const x=X(first+j),height=Math.max(1,(b.volume||0)/maxVolume*(volumeBottom-volumeTop)),color=b.close>=b.open?green:red;out+=`<rect x="${x-width/2}" y="${volumeBottom-height}" width="${width}" height="${height}" fill="${color}" fill-opacity=".58"/>`});
- }
- if(state.layers.rsi){
-  const rTop=state.layers.volume?515:450,rBottom=rTop+70,rY=n=>rBottom-n/100*(rBottom-rTop);
-  for(const level of [30,50,70])out+=`<line x1="${left}" x2="${right}" y1="${rY(level)}" y2="${rY(level)}" stroke="#52627a" stroke-dasharray="4 5" opacity=".6"/>${text(right+6,rY(level)+4,level,'#9bb8ca',9)}`;
-  let path='',started=false;for(let i=first;i<end;i++){if(!Number.isFinite(study.rsi[i])){started=false;continue}path+=(started?' L ':'M ')+X(i).toFixed(1)+' '+rY(study.rsi[i]).toFixed(1);started=true}
-  const last=study.rsi.at(-1);out+=`<path d="${path}" fill="none" stroke="#bba2ff" stroke-width="2" vector-effect="non-scaling-stroke"/>${text(left,rTop-8,'RSI 14'+(Number.isFinite(last)?' · '+last.toFixed(1):''),'#bba2ff',11)}`;
- }
+   const p=panes.volume,maxVolume=Math.max(1,...visible.map((b,j)=>Math.max(Number(b.volume)||0,Number(study.volMA[first+j])||0)));
+   const y=v=>p.bottom-v/maxVolume*(p.bottom-p.top);
+   out+=`<line x1="${left}" x2="${right}" y1="${p.bottom}" y2="${p.bottom}" stroke="#29445a"/>${text(left,p.top-5,t('volume')+' MA20 · '+(Number.isFinite(study.volMA[end-1])?((Number(visible.at(-1)?.volume)||0)/study.volMA[end-1]).toFixed(2)+'×':'—'),'#9bb8ca',10)}`;
+   visible.forEach((b,j)=>{const x=X(first+j),height=Math.max(1,p.bottom-y(Number(b.volume)||0)),color=b.close>=b.open?green:red;out+=`<rect x="${x-width/2}" y="${p.bottom-height}" width="${width}" height="${height}" fill="${color}" fill-opacity=".58"/>`});
+   let volPath='',active=false;for(let i=first;i<end;i++){if(!Number.isFinite(study.volMA[i])){active=false;continue}volPath+=(active?' L ':'M ')+X(i).toFixed(1)+' '+y(study.volMA[i]).toFixed(1);active=true}
+   out+=`<path d="${volPath}" stroke="#f5d37c" stroke-width="1.5" fill="none" vector-effect="non-scaling-stroke"/>`;
+  }
+  if(state.layers.rsi){
+   const p=panes.rsi,rY=n=>p.bottom-n/100*(p.bottom-p.top);
+   for(const level of [30,50,70])out+=`<line x1="${left}" x2="${right}" y1="${rY(level)}" y2="${rY(level)}" stroke="#52627a" stroke-dasharray="4 5" opacity=".6"/>${text(right+5,rY(level)+4,level,'#9bb8ca',9)}`;
+   let path='',active=false;for(let i=first;i<end;i++){if(!Number.isFinite(study.rsi[i])){active=false;continue}path+=(active?' L ':'M ')+X(i).toFixed(1)+' '+rY(study.rsi[i]).toFixed(1);active=true}
+   const last=study.rsi[end-1];out+=`<path d="${path}" fill="none" stroke="#bba2ff" stroke-width="2" vector-effect="non-scaling-stroke"/>${text(left,p.top-4,'RSI 14'+(Number.isFinite(last)?' · '+last.toFixed(1):''),'#bba2ff',10)}`;
+  }
+  if(state.layers.macd){
+   const p=panes.macd,series=[...study.macd.slice(first,end),...study.macdSignal.slice(first,end),...study.macdHist.slice(first,end)].filter(Number.isFinite),extent=Math.max(...series.map(Math.abs),1e-9),center=(p.top+p.bottom)/2,dy=extent?((p.bottom-p.top)*.46)/extent:1;
+   const my=v=>center-v*dy;
+   out+=`<line x1="${left}" x2="${right}" y1="${center}" y2="${center}" stroke="#416074" stroke-dasharray="3 4"/>${text(left,p.top-5,'MACD 12/26/9 · '+(Number.isFinite(study.macdHist[end-1])?pf(study.macdHist[end-1]):'—'),'#8cc7ff',10)}`;
+   for(let i=first;i<end;i++){const v=study.macdHist[i];if(Number.isFinite(v))out+=`<rect x="${X(i)-width/2}" y="${Math.min(center,my(v))}" width="${width}" height="${Math.max(1,Math.abs(v*dy))}" fill="${v>=0?green:red}" opacity=".65"/>`}
+   for(const [key,color] of [['macd','#68b8ff'],['macdSignal','#ffbb7c']]){let path='',active=false;for(let i=first;i<end;i++){const v=study[key][i];if(!Number.isFinite(v)){active=false;continue}path+=(active?' L ':'M ')+X(i).toFixed(1)+' '+my(v).toFixed(1);active=true}out+=`<path d="${path}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>`}
+  }
+  if(state.layers.atr){
+   const p=panes.atr,vals=study.atr.slice(first,end).filter(Number.isFinite),amax=Math.max(...vals,1e-9),amin=Math.max(0,Math.min(...vals,amax)*.88),ay=v=>p.bottom-(v-amin)/(amax-amin||1)*(p.bottom-p.top);
+   let path='',active=false;for(let i=first;i<end;i++){const v=study.atr[i];if(!Number.isFinite(v)){active=false;continue}path+=(active?' L ':'M ')+X(i).toFixed(1)+' '+ay(v).toFixed(1);active=true}
+   const val=study.atr[end-1],ratio=Number.isFinite(val)&&visible.length?100*val/visible.at(-1).close:null;
+   out+=`<path d="${path}" fill="none" stroke="#e2a4f1" stroke-width="2" vector-effect="non-scaling-stroke"/>${text(left,p.top-5,'ATR 14 · '+(Number.isFinite(val)?pf(val):'—')+(ratio!==null?' ('+ratio.toFixed(2)+'%)':''),'#e2a4f1',10)}`;
+  }
  if(state.layers.pivots)for(const p of pivots.filter(p=>p.index>=first&&p.index<end)){const y=Y(p.price)+(p.type==='HIGH'?-8:17);out+=`<g><title>${esc(p.label+' $'+pf(p.price)+' • '+t('confirmed')+': '+stamp(p.confirmedAt))}</title>${text(X(p.index)-7,y,p.label,p.type==='HIGH'?red:green)}</g>`}
  if(state.layers.structure)for(const e of events.filter(e=>e.index>=first&&e.index<end)){const x1=Math.max(left,X(e.pivotIndex)),x2=X(e.index),color=e.side==='LONG'?green:red;out+=`<g><title>${esc(e.type+' '+e.side+' • '+stamp(e.confirmedAt))}</title><line x1="${x1}" x2="${x2}" y1="${Y(e.price)}" y2="${Y(e.price)}" stroke="${color}" stroke-width="2"/>${text((x1+x2)/2,Y(e.price)-5,e.type==='CHOCH'?'CHoCH':'BOS',color,11)}<circle cx="${x2}" cy="${Y(e.price)}" r="3" fill="${color}"/></g>`}
  if(state.layers.smc&&result.smc){
