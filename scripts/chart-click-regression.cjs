@@ -26,7 +26,7 @@ w.DeepRiseStructure={
 w.eval(fs.readFileSync('deeprise-structure-chart-v174.js','utf8'));
 const engine=w.DeepRiseStructureChart;
 assert.ok(engine,'Structure chart module should boot');
-assert.equal(engine.version,'18.0');
+assert.equal(engine.version,'18.5');
 function button(selector){const b=w.document.querySelector(selector);assert.ok(b,'Missing '+selector);return b}
 (async()=>{
  w.openChart('BTCUSDT');
@@ -40,7 +40,9 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
  assert.equal(engine.state.layers.orderBlocks,false,'Order Block button must toggle off');
  button('[data-toggle-indicator="orderBlocks"]').click();
  assert.equal(engine.state.layers.orderBlocks,true,'Order Block button must toggle on');
- assert.equal(engine.state.layers.rsi,false);
+ assert.equal(engine.state.layers.rsi,true,'Advanced preset shows RSI by default');
+ engine.setPreset('structure');
+ assert.equal(engine.state.layers.rsi,false,'Structure preset hides extra panes');
  button('[data-toggle-indicator="rsi"]').click();
  assert.equal(engine.state.layers.rsi,true,'RSI button must activate study');
  await wait(25);
@@ -62,8 +64,8 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
   assert.equal(button('#drStructurePanel').parentElement,w.document.getElementById('chartPanel'),'Fullscreen must restore original container');
  const standalone=fs.readFileSync('chart.html','utf8');
  assert.match(standalone,/DOMContentLoaded/);
- assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1810/);
+ assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1850/);
  assert.match(standalone,/symbolForm/);
- console.log('DeepRise v18.0 chart-click DOM regression: PASS');
+ console.log('DeepRise v18.5 chart-click DOM regression: PASS');
  dom.window.close();
 })().catch(e=>{console.error(e);process.exitCode=1;dom.window.close()});

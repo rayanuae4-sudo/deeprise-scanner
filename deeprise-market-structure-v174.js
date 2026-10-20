@@ -152,6 +152,7 @@ function classify(z,structure,now=Date.now()){
  if(z.stage==='LATE'||z.extended)return{group:'BLOCKED',reason:'EXTENDED'};
  if(!Number.isFinite(z.ts)||now-z.ts>360000||z.ts>now+60000)return{group:'EARLY',reason:'STALE'};
  if(!(p>0&&atr>0&&trigger>0&&closed>0))return{group:'EARLY',reason:'MISSING_DATA'};
+ const profit=window.DeepRiseProfitQuality?.radar(z);if(profit&&!profit.ok)return{group:'BLOCKED',reason:'PROFIT_'+profit.reason,profit,detail:profit.reasons?.map(x=>x.description).join(' · ')||'Profit/risk constraints were not met'};
  if((long?p<=z.invalid:p>=z.invalid))return{group:'BLOCKED',reason:'INVALIDATED'};
  const distanceAtr=Math.max(0,(long?trigger-p:p-trigger)/atr),inZone=p>=z.entryLo&&p<=z.entryHi;
  if(long?p>z.entryHi+atr*.25:p<z.entryLo-atr*.25)return{group:'BLOCKED',reason:'OUTSIDE_ENTRY',distanceAtr};

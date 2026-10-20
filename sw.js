@@ -1,21 +1,23 @@
-const CACHE='deeprise-pwa-network-v18-2-0';
+const CACHE='deeprise-pwa-network-v18-5-0';
 const STATIC_CORE=[
   './chart.html',
   './manifest.json',
   './icon.svg',
   './mobile-app-v11.css?v=1310',
   './deeprise-analytics-config.js?v=1700',
-  './deeprise-workspace-v173.js?v=1800',
-  './deeprise-market-structure-v174.js?v=1810',
-  './deeprise-structure-chart-v174.js?v=1810',
+  './deeprise-workspace-v173.js?v=1850',
+  './deeprise-market-structure-v174.js?v=1850',
+  './deeprise-structure-chart-v174.js?v=1850',
   './deeprise-structure-explain-v182.js?v=1820',
   './deeprise-structure-reasons-v182.js?v=1820',
   './deeprise-pre-move-v170.js?v=1730',
+  './deeprise-profit-quality-v185.js?v=1850',
+  './deeprise-phone-push-v185.js?v=1850',
   './deeprise-signal-stability-v171.js?v=1710',
   './deeprise-fast-search-v160.js?v=1601',
   './deeprise-v13-gate-hotfix.js?v=1730',
   './mobile-app-v11.js?v=1800',
-  './pwa.js?v=1800'
+  './pwa.js?v=1850'
 ];
 
 function offlinePage(){
@@ -83,4 +85,38 @@ self.addEventListener('fetch',event=>{
   if(/\.(?:js|css|svg|png|jpg|jpeg|webp|ico|woff2?)$/i.test(url.pathname)){
     event.respondWith(networkFirst(event.request,5000));
   }
+});
+
+
+/* Background Web Push delivery for installed iOS / Android PWAs.
+   Delivery requires a separate authenticated Web Push sender and registered subscription. */
+self.addEventListener('push',event=>{
+ event.waitUntil((async()=>{
+  let data={};try{data=event.data?.json()||{}}catch(_){data={body:event.data?.text()||''}}
+  const title=String(data.title||'DeepRise Alert').slice(0,120);
+  const body=String(data.body||'You have a new scanner alert.').slice(0,260);
+  const candidate=String(data.url||'./index.html');
+  let target='./index.html';
+  try{const parsed=new URL(candidate,self.registration.scope);if(parsed.origin===self.location.origin&&parsed.href.startsWith(self.registration.scope))target=parsed.href}catch(_){}
+  await self.registration.showNotification(title,{
+   body,tag:String(data.tag||'deeprise-market-alert').slice(0,90),icon:'./icon.svg',
+   badge:'./icon.svg',data:{url:target},renotify:false
+  });
+ })());
+});
+self.addEventListener('notificationclick',event=>{
+ event.notification.close();
+ event.waitUntil((async()=>{
+  const requested=String(event.notification.data?.url||'./index.html');
+  const url=new URL(requested,self.registration.scope);
+  if(url.origin!==self.location.origin||!url.href.startsWith(self.registration.scope))return;
+  const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+  for(const client of windows){
+   if(new URL(client.url).origin===url.origin&&'focus'in client){
+    try{await client.navigate(url.href)}catch(_){}
+    return client.focus();
+   }
+  }
+  return self.clients.openWindow(url.href);
+ })());
 });

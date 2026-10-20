@@ -22,15 +22,15 @@ function quality(x){
   ['Score ≥ 72',Number(x.score)>=72],
   ['Volume ≥ 1.2×',Number(x.volumeRatio)>=1.2],
   ['Confirmation candle',long?!!x.candle?.bull:!!x.candle?.bear],
-  ['Liquidity + R:R',Number(x.quoteVolume)>=20000000&&Number(x.rr)>=1.8&&Number(x.atrPct)<=6]
+  ['Liquidity + net R:R / profitable target',Number(x.quoteVolume)>=20000000&&Number(x.rr)>=1.8&&Number(x.atrPct)<=6&&!!window.DeepRiseProfitQuality?.scanner(x)?.ok]
  ];
  const count=items.filter(a=>a[1]).length;
- return{side,count,state:count>=6?'READY':count===5?'CONFIRMED':count===4?'FORMING':'WAIT',items};
+ const profit=window.DeepRiseProfitQuality?.scanner(x)||null;return{side,count,state:count>=6?'READY':count===5?'CONFIRMED':count===4?'FORMING':'WAIT',items,profit,entryReady:count===6&&!!profit?.ok};
 }
 function label(q){return q.state==='READY'?t('ready'):q.state==='CONFIRMED'?t('confirmed'):q.state==='FORMING'?t('forming'):t('wait')}
 function cls(q){return q.state==='READY'?'green':q.state==='CONFIRMED'?'blue':q.state==='FORMING'?'yellow':'red'}
-try{if(typeof analyseCoin==='function'){const base=analyseCoin;analyseCoin=async function(tick){const x=await base(tick);if(!x)return x;if(!x._rawDirection)x._rawDirection=x.direction;const q=quality(x);x.v13Quality=q;if((x._rawDirection==='LONG'||x._rawDirection==='SHORT')&&q.count<5)x.direction='WAIT';else if(q.count>=5)x.direction=x._rawDirection;return x}}}catch(e){}
-function gateAll(){for(const x of md()){if(!x._rawDirection)x._rawDirection=x.direction;const q=quality(x);x.v13Quality=q;if((x._rawDirection==='LONG'||x._rawDirection==='SHORT')&&q.count<5)x.direction='WAIT';else if(q.count>=5)x.direction=x._rawDirection}}
+try{if(typeof analyseCoin==='function'){const base=analyseCoin;analyseCoin=async function(tick){const x=await base(tick);if(!x)return x;if(!x._rawDirection)x._rawDirection=x.direction;const q=quality(x);x.v13Quality=q;x.direction=q.entryReady?x._rawDirection:'WAIT';return x}}}catch(e){}
+function gateAll(){for(const x of md()){if(!x._rawDirection)x._rawDirection=x.direction;const q=quality(x);x.v13Quality=q;x.direction=q.entryReady?x._rawDirection:'WAIT'}}
 function move(z,p){const e=Number(z.entry)||0,c=Number(p??z.current??e);if(!e)return null;let v=(c-e)/e*100;return z.side==='SHORT'?-v:v}
 function best(z){const e=Number(z.entry)||0;if(!e)return null;return z.side==='SHORT'?(e-Number(z.low??e))/e*100:(Number(z.high??e)-e)/e*100}
 function worst(z){const e=Number(z.entry)||0;if(!e)return null;return z.side==='SHORT'?(e-Number(z.high??e))/e*100:(Number(z.low??e)-e)/e*100}

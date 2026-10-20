@@ -19,14 +19,14 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
 </head><body>
 <header class="chart-top"><b>⚡ DeepRise · Interactive Chart</b><form id="symbolForm"><label for="coinSymbol">Symbol</label><input id="coinSymbol" name="symbol" value="BTCUSDT" autocomplete="off" inputmode="latin" autocapitalize="characters" aria-label="Trading pair"><button type="submit">Open</button><a href="./index.html">← Scanner</a></form></header>
 <div id="chartQuickOpen"><button type="button" id="nativeTop" class="is-on">◈ DeepRise chart</button><button type="button" id="tvTop">📈 TradingView</button><button type="button" id="fullTop" disabled>⛶ Full screen</button><button type="button" id="obTop" disabled>◉ Order Blocks</button><button type="button" id="rsiTop" disabled>RSI 14</button></div>
-<main><p class="help">Tap indicators to show or hide them. Use Full screen for the marked chart, pinch to zoom, and tap drawing tools to mark levels.</p>
+<main><p class="help">EMA 20/50/200 · Bollinger · RSI · MACD · Volume MA20 · ATR · Fib · BOS/CHoCH · FVG/OB · Liquidity. Tap controls to show or hide a layer. Pinch to zoom; full screen is automatic on phones.</p>
 <div id="standaloneStatus" role="status" aria-live="polite"></div>
 <div id="chartPanel" class="chart-panel active dr-view-structure"><div class="chart-head"><span id="chartTitle">Interactive chart</span></div><div id="tradingview_chart"></div></div>
 <section id="tvStandalone" aria-label="TradingView advanced chart" hidden><div id="tvActions"><strong>TradingView</strong><label for="tvTF">Timeframe</label><select id="tvTF"><option value="5m">5m</option><option value="15m">15m</option><option value="1h">1h</option><option value="4h">4h</option><option value="1d">1D</option></select><button type="button" id="tvExpand">⛶ Full screen</button><button type="button" id="tvRetry">↻ Retry</button><a id="tvExternal" target="_blank" rel="noopener noreferrer">↗ TradingView.com</a></div><div id="tvLoadStatus" role="status" aria-live="polite"></div><div id="tvWidget" role="region" aria-label="Interactive TradingView price chart"></div><p class="tv-info">TradingView is a separate market-data widget. DeepRise protected levels and order blocks appear on the DeepRise chart, not automatically inside TradingView.</p></section>
 </main>
-<script defer src="./deeprise-market-structure-v174.js?v=1810"></script>
+<script defer src="./deeprise-market-structure-v174.js?v=1850"></script>
 <script defer src="./deeprise-structure-explain-v182.js?v=1820"></script>
-<script defer src="./deeprise-structure-chart-v174.js?v=1810"></script>
+<script defer src="./deeprise-structure-chart-v174.js?v=1850"></script>
 <script defer src="./deeprise-structure-reasons-v182.js?v=1820"></script>
 <script defer>
 (function(){
@@ -42,7 +42,7 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
   const nativePanel=document.getElementById('chartPanel'),tvPanel=document.getElementById('tvStandalone');
   const tvTF=document.getElementById('tvTF'),tvWidget=document.getElementById('tvWidget'),tvExternal=document.getElementById('tvExternal');
   const tfValue={'5m':'5','15m':'15','1h':'60','4h':'240','1d':'D'};
-  let mode=p.get('view')==='tv'?'tv':'native',tvKey='',tvExpanded=false,previousOverflow='',tvCheckTimer=null;
+  let mode=p.get('view')==='tv'?'tv':'native',tvKey='',tvExpanded=false,previousOverflow='',tvCheckTimer=null,mobileFullscreenOpened=false;
   tvTF.value=tf;
   function mountTV(s,f){
    const key=s+':'+f;if(tvKey===key)return; // One widget per symbol/timeframe; Retry explicitly resets tvKey.
@@ -126,6 +126,7 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
    ?(lang==='ar'?'تعذر تحميل الشموع: ':'Could not load market candles: ')+(c.state.errorMessage||'data unavailable')
    :(s+' · '+f+' · '+v.bars.length+' '+(lang==='ar'?'شمعة':'candles')+' · '+(v.blocks||[]).filter(b=>b.status!=='INVALID').length+' Order Blocks');
   syncButtons();
+  if(!mobileFullscreenOpened&&mode==='native'&&!c.state.error&&c.state.result&&window.matchMedia('(max-width:650px)').matches){mobileFullscreenOpened=true;c.toggleFullscreen(true);syncButtons()}
  };
  document.getElementById('symbolForm').addEventListener('submit',e=>{e.preventDefault();const s=input.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();if(!s)return;history.replaceState(null,'','./chart.html?symbol='+encodeURIComponent(s)+'&tf='+encodeURIComponent(window.DeepRiseStructureChart?.state.tf||tf));start(s,window.DeepRiseStructureChart?.state.tf||tf)});
  const boot=()=>{setMode(mode);if(window.DeepRiseStructureChart&&window.DeepRiseStructure)start(sym,tf);else {status.textContent='Chart scripts did not load. Refresh or return to scanner.';fullTop.disabled=obTop.disabled=rsiTop.disabled=true}};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();

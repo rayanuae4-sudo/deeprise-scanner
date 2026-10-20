@@ -1,6 +1,6 @@
-/* DeepRise V17.4: order blocks and fluid interactive chart. */
+/* DeepRise V18.5: technical indicators + SMC overlay + iPhone full screen. */
 (()=>{'use strict';
-const state={portalMarker:null,previousHtmlOverflow:'',symbol:'',tf:'4h',result:null,token:0,controller:null,loading:false,error:false,errorMessage:'',cache:new Map(),view:{count:75,offset:0},tool:'pan',expanded:false,previousOverflow:'',returnFocus:null,pending:null,geometry:null,pointers:new Map(),gesture:null,drawings:{},layers:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,ema20:true,ema50:true,bollinger:false,volume:false,rsi:false,fvg:true,fib:true,extensions:false,trendExtensions:false,sweeps:false,timeZones:false,fan:false}};
+const state={portalMarker:null,previousHtmlOverflow:'',symbol:'',tf:'4h',result:null,token:0,controller:null,loading:false,error:false,errorMessage:'',cache:new Map(),view:{count:75,offset:0},tool:'pan',expanded:false,previousOverflow:'',returnFocus:null,pending:null,geometry:null,pointers:new Map(),gesture:null,drawings:{},layers:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,ema20:true,ema50:true,ema200:true,bollinger:true,volume:true,rsi:true,macd:true,atr:true,liquidity:true,fvg:true,fib:true,extensions:false,trendExtensions:false,sweeps:false,timeZones:false,fan:false}};
 function defaultCount(){return window.innerWidth<650?30:75}
 const wt=k=>window.DeepRiseWorkspace?.t(k)||k;
 try{const saved=JSON.parse(localStorage.getItem('deeprise_drawings_v173')||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))state.drawings=saved}catch(_){}
@@ -32,21 +32,39 @@ function updateLayer(key,enabled){
  state.preset='custom';const presetNodes=panel?.querySelectorAll('[data-chart-preset]');presetNodes?.forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-pressed','false')});
   const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error)queuePaint();
 }
-const indicatorCache=new WeakMap(),INDICATORS=new Set(['ema20','ema50','bollinger','volume','rsi']);
+const indicatorCache=new WeakMap(),INDICATORS=new Set(['ema20','ema50','ema200','bollinger','volume','rsi','macd','atr']);
 function studies(bars){
  if(indicatorCache.has(bars))return indicatorCache.get(bars);
- const ema20=[],ema50=[],bbTop=[],bbBottom=[],rsi=[];let e20=bars[0]?.close||0,e50=e20,gainAvg=0,lossAvg=0;
+ const ema20=[],ema50=[],ema200=[],bbTop=[],bbMid=[],bbBottom=[],rsi=[],macd=[],macdSignal=[],macdHist=[],atr=[],volMA=[];
+ let e20=0,e50=0,e200=0,e12=0,e26=0,eSignal=0,gainAvg=0,lossAvg=0,trSum=0,atrPrev=0;
  for(let i=0;i<bars.length;i++){
-  const close=bars[i].close;e20=i?e20+(close-e20)*2/21:close;e50=i?e50+(close-e50)*2/51:close;
-  ema20.push(i>=19?e20:null);ema50.push(i>=49?e50:null);
-  if(i>=19){let mid=0;for(let k=i-19;k<=i;k++)mid+=bars[k].close;mid/=20;let variance=0;for(let k=i-19;k<=i;k++)variance+=(bars[k].close-mid)**2;const band=2*Math.sqrt(variance/20);bbTop.push(mid+band);bbBottom.push(mid-band)}
-  else{bbTop.push(null);bbBottom.push(null)}
-  if(i===0){rsi.push(null);continue}
-  const move=close-bars[i-1].close,g=Math.max(0,move),l=Math.max(0,-move);
-  if(i<=14){gainAvg+=g;lossAvg+=l;if(i===14){gainAvg/=14;lossAvg/=14}}else{gainAvg=(gainAvg*13+g)/14;lossAvg=(lossAvg*13+l)/14}
-  rsi.push(i>=14?(lossAvg===0?(gainAvg===0?50:100):100-100/(1+gainAvg/lossAvg)):null);
+  const b=bars[i],close=Number(b.close),prev=Number(bars[Math.max(0,i-1)].close),vol=Number(b.volume)||0;
+  if(i===0){e20=e50=e200=e12=e26=close}
+  else{e20+=(close-e20)*2/21;e50+=(close-e50)*2/51;e200+=(close-e200)*2/201;e12+=(close-e12)*2/13;e26+=(close-e26)*2/27}
+  ema20.push(i>=19?e20:null);ema50.push(i>=49?e50:null);ema200.push(i>=199?e200:null);
+  if(i>=19){
+   let sum=0,vsum=0;for(let k=i-19;k<=i;k++){sum+=Number(bars[k].close);vsum+=Number(bars[k].volume)||0}
+   const mean=sum/20;let sq=0;for(let k=i-19;k<=i;k++)sq+=(Number(bars[k].close)-mean)**2;
+   const spread=2*Math.sqrt(sq/20);bbMid.push(mean);bbTop.push(mean+spread);bbBottom.push(mean-spread);volMA.push(vsum/20);
+  }else{bbMid.push(null);bbTop.push(null);bbBottom.push(null);volMA.push(null)}
+  if(i===0)rsi.push(null);
+  else {
+   const change=close-prev,g=Math.max(change,0),l=Math.max(-change,0);
+   if(i<=14){gainAvg+=g;lossAvg+=l;if(i===14){gainAvg/=14;lossAvg/=14}}
+   else{gainAvg=(gainAvg*13+g)/14;lossAvg=(lossAvg*13+l)/14}
+   rsi.push(i>=14?(lossAvg===0?(gainAvg===0?50:100):100-100/(1+gainAvg/lossAvg)):null);
+  }
+  const diff=e12-e26;
+  if(i===25)eSignal=diff;
+  else if(i>25)eSignal+=(diff-eSignal)*.2;
+  macd.push(i>=25?diff:null);macdSignal.push(i>=33?eSignal:null);macdHist.push(i>=33?diff-eSignal:null);
+  const tr=i===0?b.high-b.low:Math.max(b.high-b.low,Math.abs(b.high-prev),Math.abs(b.low-prev));
+  if(i<14){trSum+=tr;if(i===13)atrPrev=trSum/14}
+  else atrPrev=(atrPrev*13+tr)/14;
+  atr.push(i>=13?atrPrev:null);
  }
- const result={ema20,ema50,bbTop,bbBottom,rsi};indicatorCache.set(bars,result);return result;
+ const result={ema20,ema50,ema200,bbTop,bbMid,bbBottom,rsi,macd,macdSignal,macdHist,atr,volMA};
+ indicatorCache.set(bars,result);return result;
 }
 function pointFromEvent(e){const svg=e.target.closest('svg[data-dr-interactive]'),g=state.geometry;if(!svg||!g)return null;const r=svg.getBoundingClientRect();let x=(e.clientX-r.left)/r.width*g.W,y=(e.clientY-r.top)/r.height*g.H;const matrix=svg.getScreenCTM?.();if(matrix&&svg.createSVGPoint){const raw=svg.createSVGPoint();raw.x=e.clientX;raw.y=e.clientY;const mapped=raw.matrixTransform(matrix.inverse());x=mapped.x;y=mapped.y;}if(x<g.left||x>g.right||y<g.top||y>g.bottom)return null;const i=g.first+(x-g.left)/(g.right-g.left)*(g.count+g.extra-1);return{time:g.origin+i*g.step,price:g.hi-(y-g.top)/(g.bottom-g.top)*(g.hi-g.lo)}}
 function addPoint(p){if(!p||!(p.price>0))return;if(state.tool==='horizontal'){saveDrawings([...drawings(),{type:state.tool,a:p,b:p}]);return}if(!state.pending){state.pending=p;render();return}const a=state.pending;state.pending=null;saveDrawings([...drawings(),{type:state.tool,a,b:p}])}
@@ -67,9 +85,9 @@ function bindInteractive(panel){
  panel.addEventListener('keydown',e=>{if(!e.target.matches('svg[data-dr-interactive]'))return;if(e.key==='+'||e.key==='='){e.preventDefault();zoom(.75)}if(e.key==='-'){e.preventDefault();zoom(1.3333)}if(e.key==='ArrowLeft'){e.preventDefault();pan(10)}if(e.key==='ArrowRight'){e.preventDefault();pan(-10)}if(e.key==='0'){e.preventDefault();fit()}});
 }
 const copy={
- en:{internalProtection:'Internal protected swings',reason:'Protection confirmed by',initial:'Initial / pending further BOS',confirmedStructure:'Confirmed BOS protection',externalScope:'External',internalScope:'Internal',title:'Market structure & Fibonacci',loading:'Loading closed candles…',error:'Could not refresh candles. Retry.',retry:'Refresh',structure:'BOS / CHoCH',pivots:'HH / HL / LH / LL',protection:'Protected highs / lows',fvg:'Active FVG',fib:'Fib retracement',extensions:'2-point extensions',trendExtensions:'3-point extensions',sweeps:'Liquidity sweeps',timeZones:'Fib time zones',fan:'Fib fan',orderBlocks:'Order blocks',ema20:'EMA 20',ema50:'EMA 50',bollinger:'Bollinger bands',volume:'Volume',rsi:'RSI 14',indicators:'Indicators',structureTools:'Structure & order blocks',indicatorTools:'Technical indicators',noOrderBlocks:'No confirmed active order blocks on this timeframe',full:'Full screen',exitFull:'Exit full screen',note:'Closed candles only. Pivots need 3 subsequent closed candles; hover a label for its confirmation time. Readiness uses 4H, independently of this chart timeframe.',bias:'Structure',range:'Range',long:'Bullish',short:'Bearish',high:'Protected high',low:'Protected low',gap:'FVG',partial:'Partially filled',unfilled:'Unfilled',none:'No confirmed level',anchors:'Confirmed Fib anchors A → B',third:'C',waitingC:'A confirmed retracement point C is needed for 3-point extensions.',equilibrium:'Equilibrium 0.5',golden:'Fib 0.618–0.786',premium:'Premium',discount:'Discount',confirmed:'Confirmed',asof:'Closed at',timeNote:'Time zones are ratio markers, not activation forecasts.'},
- ar:{internalProtection:'القمم والقيعان الداخلية المحمية',reason:'سبب الحماية',initial:'مبدئي / ينتظر BOS جديد',confirmedStructure:'حماية مؤكدة بكسر البنية',externalScope:'الهيكل الخارجي',internalScope:'الهيكل الداخلي',title:'هيكل السوق وفيبوناتشي',loading:'تحميل الشموع المغلقة…',error:'تعذر تحديث الشموع. أعد المحاولة.',retry:'تحديث',structure:'BOS / CHoCH',pivots:'القمم والقيعان HH / HL / LH / LL',protection:'القمم والقيعان المحمية',fvg:'فجوات FVG النشطة',fib:'تصحيح فيبوناتشي',extensions:'امتدادات نقطتين',trendExtensions:'امتدادات ثلاث نقاط',sweeps:'سحب السيولة',timeZones:'مناطق فيبوناتشي الزمنية',fan:'مروحة فيبوناتشي',orderBlocks:'مناطق الأوردر بلوك',ema20:'متوسط EMA 20',ema50:'متوسط EMA 50',bollinger:'بولينجر',volume:'حجم التداول',rsi:'مؤشر RSI 14',indicators:'المؤشرات',structureTools:'الهيكل والأوردر بلوك',indicatorTools:'المؤشرات الفنية',noOrderBlocks:'لا توجد مناطق أوردر بلوك نشطة مؤكدة على هذا الفريم',full:'ملء الشاشة',exitFull:'إغلاق ملء الشاشة',note:'شموع مغلقة فقط. تأكيد القمة أو القاع بعد 3 شموع لاحقة؛ مرّر فوق العلامة لمعرفة وقت التأكيد. تصنيف الجاهزية يستخدم 4 ساعات مستقلًا عن فريم هذه الخريطة.',bias:'الهيكل',range:'نطاق عرضي',long:'صاعد',short:'هابط',high:'قمة محمية',low:'قاع محمي',gap:'FVG',partial:'ممتلئة جزئيًا',unfilled:'غير ممتلئة',none:'لا يوجد مستوى مؤكد',anchors:'نقطتا فيبوناتشي المؤكدتان A ← B',third:'C',waitingC:'امتدادات الثلاث نقاط تنتظر تأكيد نقطة التصحيح C.',equilibrium:'التوازن 0.5',golden:'فيبوناتشي 0.618–0.786',premium:'النصف العلوي',discount:'النصف السفلي',confirmed:'وقت التأكيد',asof:'آخر إغلاق',timeNote:'المناطق الزمنية علامات نسبية وليست توقعًا لموعد التفعيل.'},
- ru:{internalProtection:'Внутренние защищённые экстремумы',reason:'Причина защиты',initial:'Предварительно / ожидание BOS',confirmedStructure:'Подтверждено BOS',externalScope:'Внешняя',internalScope:'Внутренняя',title:'Структура рынка и Фибоначчи',loading:'Загрузка закрытых свечей…',error:'Не удалось обновить свечи.',retry:'Обновить',structure:'BOS / CHoCH',pivots:'HH / HL / LH / LL',protection:'Защищённые экстремумы',fvg:'Активные FVG',fib:'Коррекция Fib',extensions:'Расширения 2 точки',trendExtensions:'Расширения 3 точки',sweeps:'Снятие ликвидности',timeZones:'Временные зоны Fib',fan:'Веер Fib',orderBlocks:'Ордер-блоки',ema20:'EMA 20',ema50:'EMA 50',bollinger:'Полосы Боллинджера',volume:'Объём',rsi:'RSI 14',indicators:'Индикаторы',structureTools:'Структура и ордер-блоки',indicatorTools:'Технические индикаторы',noOrderBlocks:'Нет подтверждённых активных ордер-блоков',full:'Во весь экран',exitFull:'Закрыть полный экран',note:'Только закрытые свечи. Пивот подтверждается через 3 свечи; время подтверждения в подсказке. Готовность использует 4H независимо от графика.',bias:'Структура',range:'Диапазон',long:'Бычья',short:'Медвежья',high:'Защищённый максимум',low:'Защищённый минимум',gap:'FVG',partial:'Частично заполнен',unfilled:'Не заполнен',none:'Нет подтверждённого уровня',anchors:'Подтверждённые точки Fib A → B',third:'C',waitingC:'Для расширения 3 точек нужна подтверждённая точка C.',equilibrium:'Равновесие 0.5',golden:'Fib 0.618–0.786',premium:'Премия',discount:'Дисконт',confirmed:'Подтверждено',asof:'Закрыто',timeNote:'Временные зоны — отношения, не прогноз времени.'}
+ en:{internalProtection:'Internal protected swings',reason:'Protection confirmed by',initial:'Initial / pending further BOS',confirmedStructure:'Confirmed BOS protection',externalScope:'External',internalScope:'Internal',title:'Market structure & Fibonacci',loading:'Loading closed candles…',error:'Could not refresh candles. Retry.',retry:'Refresh',structure:'BOS / CHoCH',pivots:'HH / HL / LH / LL',protection:'Protected highs / lows',fvg:'Active FVG',fib:'Fib retracement',extensions:'2-point extensions',trendExtensions:'3-point extensions',sweeps:'Liquidity sweeps',timeZones:'Fib time zones',fan:'Fib fan',orderBlocks:'Order blocks',ema20:'EMA 20',ema50:'EMA 50',ema200:'EMA 200',bollinger:'Bollinger (20,2)',volume:'Volume + MA20',rsi:'RSI 14',macd:'MACD (12,26,9)',atr:'ATR 14',liquidity:'Liquidity lines',indicators:'Indicators',structureTools:'Structure & order blocks',indicatorTools:'Technical indicators',noOrderBlocks:'No confirmed active order blocks on this timeframe',full:'Full screen',exitFull:'Exit full screen',note:'Closed candles only. Pivots need 3 subsequent closed candles; hover a label for its confirmation time. Readiness uses 4H, independently of this chart timeframe.',bias:'Structure',range:'Range',long:'Bullish',short:'Bearish',high:'Protected high',low:'Protected low',gap:'FVG',partial:'Partially filled',unfilled:'Unfilled',none:'No confirmed level',anchors:'Confirmed Fib anchors A → B',third:'C',waitingC:'A confirmed retracement point C is needed for 3-point extensions.',equilibrium:'Equilibrium 0.5',golden:'Fib 0.618–0.786',premium:'Premium',discount:'Discount',confirmed:'Confirmed',asof:'Closed at',timeNote:'Time zones are ratio markers, not activation forecasts.'},
+ ar:{internalProtection:'القمم والقيعان الداخلية المحمية',reason:'سبب الحماية',initial:'مبدئي / ينتظر BOS جديد',confirmedStructure:'حماية مؤكدة بكسر البنية',externalScope:'الهيكل الخارجي',internalScope:'الهيكل الداخلي',title:'هيكل السوق وفيبوناتشي',loading:'تحميل الشموع المغلقة…',error:'تعذر تحديث الشموع. أعد المحاولة.',retry:'تحديث',structure:'BOS / CHoCH',pivots:'القمم والقيعان HH / HL / LH / LL',protection:'القمم والقيعان المحمية',fvg:'فجوات FVG النشطة',fib:'تصحيح فيبوناتشي',extensions:'امتدادات نقطتين',trendExtensions:'امتدادات ثلاث نقاط',sweeps:'سحب السيولة',timeZones:'مناطق فيبوناتشي الزمنية',fan:'مروحة فيبوناتشي',orderBlocks:'مناطق الأوردر بلوك',ema20:'متوسط EMA 20',ema50:'متوسط EMA 50',ema200:'متوسط EMA 200',bollinger:'بولينجر (20،2)',volume:'الحجم ومتوسط 20',rsi:'RSI 14',macd:'MACD (12،26،9)',atr:'ATR 14',liquidity:'خطوط السيولة',indicators:'المؤشرات',structureTools:'الهيكل والأوردر بلوك',indicatorTools:'المؤشرات الفنية',noOrderBlocks:'لا توجد مناطق أوردر بلوك نشطة مؤكدة على هذا الفريم',full:'ملء الشاشة',exitFull:'إغلاق ملء الشاشة',note:'شموع مغلقة فقط. تأكيد القمة أو القاع بعد 3 شموع لاحقة؛ مرّر فوق العلامة لمعرفة وقت التأكيد. تصنيف الجاهزية يستخدم 4 ساعات مستقلًا عن فريم هذه الخريطة.',bias:'الهيكل',range:'نطاق عرضي',long:'صاعد',short:'هابط',high:'قمة محمية',low:'قاع محمي',gap:'FVG',partial:'ممتلئة جزئيًا',unfilled:'غير ممتلئة',none:'لا يوجد مستوى مؤكد',anchors:'نقطتا فيبوناتشي المؤكدتان A ← B',third:'C',waitingC:'امتدادات الثلاث نقاط تنتظر تأكيد نقطة التصحيح C.',equilibrium:'التوازن 0.5',golden:'فيبوناتشي 0.618–0.786',premium:'النصف العلوي',discount:'النصف السفلي',confirmed:'وقت التأكيد',asof:'آخر إغلاق',timeNote:'المناطق الزمنية علامات نسبية وليست توقعًا لموعد التفعيل.'},
+ ru:{internalProtection:'Внутренние защищённые экстремумы',reason:'Причина защиты',initial:'Предварительно / ожидание BOS',confirmedStructure:'Подтверждено BOS',externalScope:'Внешняя',internalScope:'Внутренняя',title:'Структура рынка и Фибоначчи',loading:'Загрузка закрытых свечей…',error:'Не удалось обновить свечи.',retry:'Обновить',structure:'BOS / CHoCH',pivots:'HH / HL / LH / LL',protection:'Защищённые экстремумы',fvg:'Активные FVG',fib:'Коррекция Fib',extensions:'Расширения 2 точки',trendExtensions:'Расширения 3 точки',sweeps:'Снятие ликвидности',timeZones:'Временные зоны Fib',fan:'Веер Fib',orderBlocks:'Ордер-блоки',ema20:'EMA 20',ema50:'EMA 50',ema200:'EMA 200',bollinger:'Боллинджер (20,2)',volume:'Объём + MA20',rsi:'RSI 14',macd:'MACD (12,26,9)',atr:'ATR 14',liquidity:'Линии ликвидности',indicators:'Индикаторы',structureTools:'Структура и ордер-блоки',indicatorTools:'Технические индикаторы',noOrderBlocks:'Нет подтверждённых активных ордер-блоков',full:'Во весь экран',exitFull:'Закрыть полный экран',note:'Только закрытые свечи. Пивот подтверждается через 3 свечи; время подтверждения в подсказке. Готовность использует 4H независимо от графика.',bias:'Структура',range:'Диапазон',long:'Бычья',short:'Медвежья',high:'Защищённый максимум',low:'Защищённый минимум',gap:'FVG',partial:'Частично заполнен',unfilled:'Не заполнен',none:'Нет подтверждённого уровня',anchors:'Подтверждённые точки Fib A → B',third:'C',waitingC:'Для расширения 3 точек нужна подтверждённая точка C.',equilibrium:'Равновесие 0.5',golden:'Fib 0.618–0.786',premium:'Премия',discount:'Дисконт',confirmed:'Подтверждено',asof:'Закрыто',timeNote:'Временные зоны — отношения, не прогноз времени.'}
 };
 Object.assign(copy.en,{smc:'SMC workflow',smcStages:'Ordered confirmations',smcInfo:'Sweep → CHoCH → BOS → active OB/FVG → retest. Closed candles only.'});
 Object.assign(copy.ar,{smc:'تسلسل السيولة والهيكل SMC',smcStages:'التأكيدات بالترتيب',smcInfo:'سحب السيولة ← CHoCH ← BOS ← منطقة OB/FVG ← إعادة الاختبار. شموع مغلقة فقط.'});
@@ -107,18 +125,18 @@ function toggleFullscreen(force){
  });
 }
 const CHART_PRESETS={
- clean:{smc:false,structure:false,pivots:false,protection:false,internalProtection:false,orderBlocks:false,fvg:false,fib:false,ema20:true,ema50:false,bollinger:false,volume:false,rsi:false},
- structure:{smc:true,structure:true,pivots:true,protection:true,internalProtection:false,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,bollinger:false,volume:false,rsi:false},
- advanced:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,bollinger:true,volume:true,rsi:true}
+ clean:{smc:false,structure:false,pivots:false,protection:false,internalProtection:false,orderBlocks:false,fvg:false,fib:false,ema20:true,ema50:false,ema200:false,bollinger:false,volume:false,rsi:false,macd:false,atr:false,liquidity:false},
+ structure:{smc:true,structure:true,pivots:true,protection:true,internalProtection:false,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,ema200:true,bollinger:false,volume:false,rsi:false,macd:false,atr:false,liquidity:true},
+ advanced:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,ema200:true,bollinger:true,volume:true,rsi:true,macd:true,atr:true,liquidity:true}
 };
-state.preset=localStorage.getItem('deeprise_chart_preset_v180')||'structure';
+state.preset=localStorage.getItem('deeprise_chart_preset_v185')||'advanced';
 if(!CHART_PRESETS[state.preset])state.preset='structure';
 Object.assign(state.layers,CHART_PRESETS[state.preset]);
 function setPreset(name){
  if(!CHART_PRESETS[name])return;
  Object.assign(state.layers,CHART_PRESETS[name]);
  state.preset=name;
- try{localStorage.setItem('deeprise_chart_preset_v180',name)}catch(_){}
+ try{localStorage.setItem('deeprise_chart_preset_v185',name)}catch(_){}
  render();
 }
 function indicatorButton(k){
@@ -127,11 +145,11 @@ function indicatorButton(k){
 function indicatorQuick(){
  const labels=lang()==='ar'?['نظيف','هيكل السوق','متقدم']:lang()==='ru'?['Чистый','Структура','Подробно']:['Clean','Structure','Advanced'];
  const presets='<div class="dr-chart-presets" role="group" aria-label="Chart density">'+Object.keys(CHART_PRESETS).map((key,i)=>'<button type="button" data-chart-preset="'+key+'" aria-pressed="'+(state.preset===key)+'" class="'+(state.preset===key?'active':'')+'">'+labels[i]+'</button>').join('')+'</div>';
- const fast='<div class="dr-fast-toggles" role="group" aria-label="Quick indicators">'+['smc','orderBlocks','fvg','rsi','fib'].map(indicatorButton).join('')+'</div>';
+ const fast='<div class="dr-fast-toggles" role="group" aria-label="Quick indicators">'+['smc','orderBlocks','fvg','liquidity','ema20','ema50','ema200','bollinger','volume','rsi','macd','atr','fib'].map(indicatorButton).join('')+'</div>';
  return '<div class="dr-quick-chart-controls">'+presets+fast+'</div>';
 }
 function extraIndicators(open){
- const groups=[['structureTools',['smc','structure','pivots','protection','internalProtection','orderBlocks','fvg','fib','sweeps']],['indicatorTools',['ema20','ema50','rsi','bollinger','volume','extensions','trendExtensions','fan','timeZones']]];
+ const groups=[['structureTools',['smc','structure','pivots','protection','internalProtection','orderBlocks','fvg','fib','sweeps','liquidity']],['indicatorTools',['ema20','ema50','ema200','rsi','macd','atr','bollinger','volume','extensions','trendExtensions','fan','timeZones']]];
  const inner=groups.map(([label,keys])=>'<div class="dr-quick-layer-group"><b>'+esc(t(label))+'</b><div class="dr-quick-layer-grid">'+keys.map(indicatorButton).join('')+'</div></div>').join('');
  const label=lang()==='ar'?'جميع المؤشرات وأدوات الرسم':lang()==='ru'?'Все индикаторы и инструменты':'All indicators and drawing tools';
  return '<details class="dr-extra-indicators" '+(open?'open':'')+'><summary>'+label+' ⚙</summary><section class="dr-indicator-shortcuts">'+inner+'</section></details>';
@@ -183,10 +201,14 @@ function ensure(){
  return panel;
 }
 function svg(result){
- const {bars,pivots,events,gaps,sweeps,fib}=result,{first,end,count}=viewport(bars.length),visible=bars.slice(first,end),W=Math.max(350,Math.min(1700,document.getElementById('drStructurePanel')?.clientWidth||1120)),H=state.layers.rsi?(state.layers.volume?615:570):state.layers.volume?535:460,left=20,right=W-(W<650?112:160),top=32,bottom=400,extra=12;
+ const {bars,pivots,events,gaps,sweeps,fib}=result,{first,end,count}=viewport(bars.length),visible=bars.slice(first,end),W=Math.max(350,Math.min(1700,document.getElementById('drStructurePanel')?.clientWidth||1120)),left=20,right=W-(W<650?98:160),top=32,bottom=W<650?310:400,extra=12;
+  const mobile=W<650,panes={};let cursor=bottom+20;
+  for(const [name,on,height] of [['volume',state.layers.volume,mobile?39:54],['rsi',state.layers.rsi,mobile?51:70],['macd',state.layers.macd,mobile?63:88],['atr',state.layers.atr,mobile?42:60]]){if(on){panes[name]={top:cursor,bottom:cursor+height};cursor+=height+21}}
+  const H=cursor+12;
  const study=studies(bars),active=gaps.filter(g=>g.status!=='FILLED'),values=visible.flatMap(b=>[b.high,b.low]);
  if(state.layers.ema20)values.push(...study.ema20.slice(first,end).filter(Number.isFinite));
  if(state.layers.ema50)values.push(...study.ema50.slice(first,end).filter(Number.isFinite));
+  if(state.layers.ema200)values.push(...study.ema200.slice(first,end).filter(Number.isFinite));
  if(state.layers.bollinger)values.push(...study.bbTop.slice(first,end).filter(Number.isFinite),...study.bbBottom.slice(first,end).filter(Number.isFinite));
  if(state.layers.protection)for(const p of [result.protectedHigh,result.protectedLow])if(p)values.push(p.price);
   if(state.layers.internalProtection&&result.internal)for(const p of [result.internal.protectedHigh,result.internal.protectedLow])if(p)values.push(p.price);
@@ -212,9 +234,10 @@ function svg(result){
   out+=`<g><title>${esc((ob.side==='LONG'?'Bullish':'Bearish')+' order block · '+ob.status+' · $'+pf(ob.lower)+' – $'+pf(ob.upper)+' · '+stamp(ob.confirmedAt))}</title><rect x="${x}" y="${Y(upper)}" width="${Math.max(0,right-x)}" height="${Math.max(1,Y(lower)-Y(upper))}" fill="${c}" fill-opacity="${tested?'.07':'.16'}" stroke="${c}" stroke-width="1.2" stroke-dasharray="${tested?'5 4':'none'}"/>${text(Math.min(right-54,x+3),Y(upper)+11,(ob.side==='LONG'?'BULL':'BEAR')+' OB',c,10)}</g>`;
  }
  const drawStudy=(arr,color,dash='')=>{let path='',moving=false;for(let i=first;i<end;i++){if(!Number.isFinite(arr[i])){moving=false;continue}path+=(moving?' L ':'M ')+X(i).toFixed(1)+' '+Y(arr[i]).toFixed(1);moving=true}return `<path d="${path}" fill="none" stroke="${color}" stroke-width="1.8" stroke-dasharray="${dash}" vector-effect="non-scaling-stroke"/>`};
- if(state.layers.bollinger)out+=drawStudy(study.bbTop,'#9c8ada','5 4')+drawStudy(study.bbBottom,'#9c8ada','5 4');
+ if(state.layers.bollinger)out+=drawStudy(study.bbTop,'#9c8ada','5 4')+drawStudy(study.bbMid,'#c3a8ec','4 5')+drawStudy(study.bbBottom,'#9c8ada','5 4');
  if(state.layers.ema20)out+=drawStudy(study.ema20,'#ffce77');
  if(state.layers.ema50)out+=drawStudy(study.ema50,'#72affd');
+  if(state.layers.ema200)out+=drawStudy(study.ema200,'#ef85f5');
  if(fib&&state.layers.extensions)fib.extensions.forEach(l=>{if(l.price>=lo&&l.price<=hi)out+=line(l.price,'Ext '+l.ratio,'#cf9fff','2 6')});
  if(fib&&state.layers.trendExtensions)fib.trendExtensions.forEach(l=>{if(l.price>=lo&&l.price<=hi)out+=line(l.price,'ABC '+l.ratio,'#76d6ee','8 4')});
  if(fib&&state.layers.timeZones){const unit=fib.end.index-fib.start.index;for(const r of [1,2,3,5,8,13]){const idx=fib.start.index+unit*r;if(idx<first||idx>end+extra-1)continue;const x=X(idx);out+=`<line x1="${x}" x2="${x}" y1="${top}" y2="${bottom}" stroke="#c084fc" stroke-dasharray="3 7" opacity=".4"/>`+text(x+3,top+10,'T '+r,'#c084fc')}}
@@ -222,16 +245,32 @@ function svg(result){
  const width=Math.max(3,(right-left)/(visible.length+extra)*.55);
  visible.forEach((b,j)=>{const x=X(first+j),color=b.close>=b.open?green:red;out+=`<g><title>${esc(stamp(b.closeTime)+' • O '+pf(b.open)+' H '+pf(b.high)+' L '+pf(b.low)+' C '+pf(b.close))}</title><line x1="${x}" x2="${x}" y1="${Y(b.high)}" y2="${Y(b.low)}" stroke="${color}"/><rect x="${x-width/2}" y="${Math.min(Y(b.open),Y(b.close))}" width="${width}" height="${Math.max(1,Math.abs(Y(b.open)-Y(b.close)))}" fill="${color}"/></g>`;if(j%15===0)out+=text(x,bottom+25,new Date(b.time).toISOString().slice(5,16).replace('T',' '),'#6e879c',9)});
  if(state.layers.volume){
-  const maxVolume=Math.max(1,...visible.map(b=>b.volume||0)),volumeTop=444,volumeBottom=485;
-  out+=`<line x1="${left}" x2="${right}" y1="${volumeBottom}" y2="${volumeBottom}" stroke="#29445a"/>${text(left,437,t('volume'),'#9bb8ca',11)}`;
-  visible.forEach((b,j)=>{const x=X(first+j),height=Math.max(1,(b.volume||0)/maxVolume*(volumeBottom-volumeTop)),color=b.close>=b.open?green:red;out+=`<rect x="${x-width/2}" y="${volumeBottom-height}" width="${width}" height="${height}" fill="${color}" fill-opacity=".58"/>`});
- }
- if(state.layers.rsi){
-  const rTop=state.layers.volume?515:450,rBottom=rTop+70,rY=n=>rBottom-n/100*(rBottom-rTop);
-  for(const level of [30,50,70])out+=`<line x1="${left}" x2="${right}" y1="${rY(level)}" y2="${rY(level)}" stroke="#52627a" stroke-dasharray="4 5" opacity=".6"/>${text(right+6,rY(level)+4,level,'#9bb8ca',9)}`;
-  let path='',started=false;for(let i=first;i<end;i++){if(!Number.isFinite(study.rsi[i])){started=false;continue}path+=(started?' L ':'M ')+X(i).toFixed(1)+' '+rY(study.rsi[i]).toFixed(1);started=true}
-  const last=study.rsi.at(-1);out+=`<path d="${path}" fill="none" stroke="#bba2ff" stroke-width="2" vector-effect="non-scaling-stroke"/>${text(left,rTop-8,'RSI 14'+(Number.isFinite(last)?' · '+last.toFixed(1):''),'#bba2ff',11)}`;
- }
+   const p=panes.volume,maxVolume=Math.max(1,...visible.map((b,j)=>Math.max(Number(b.volume)||0,Number(study.volMA[first+j])||0)));
+   const y=v=>p.bottom-v/maxVolume*(p.bottom-p.top);
+   out+=`<line x1="${left}" x2="${right}" y1="${p.bottom}" y2="${p.bottom}" stroke="#29445a"/>${text(left,p.top-5,t('volume')+' MA20 · '+(Number.isFinite(study.volMA[end-1])?((Number(visible.at(-1)?.volume)||0)/study.volMA[end-1]).toFixed(2)+'×':'—'),'#9bb8ca',10)}`;
+   visible.forEach((b,j)=>{const x=X(first+j),height=Math.max(1,p.bottom-y(Number(b.volume)||0)),color=b.close>=b.open?green:red;out+=`<rect x="${x-width/2}" y="${p.bottom-height}" width="${width}" height="${height}" fill="${color}" fill-opacity=".58"/>`});
+   let volPath='',active=false;for(let i=first;i<end;i++){if(!Number.isFinite(study.volMA[i])){active=false;continue}volPath+=(active?' L ':'M ')+X(i).toFixed(1)+' '+y(study.volMA[i]).toFixed(1);active=true}
+   out+=`<path d="${volPath}" stroke="#f5d37c" stroke-width="1.5" fill="none" vector-effect="non-scaling-stroke"/>`;
+  }
+  if(state.layers.rsi){
+   const p=panes.rsi,rY=n=>p.bottom-n/100*(p.bottom-p.top);
+   for(const level of [30,50,70])out+=`<line x1="${left}" x2="${right}" y1="${rY(level)}" y2="${rY(level)}" stroke="#52627a" stroke-dasharray="4 5" opacity=".6"/>${text(right+5,rY(level)+4,level,'#9bb8ca',9)}`;
+   let path='',active=false;for(let i=first;i<end;i++){if(!Number.isFinite(study.rsi[i])){active=false;continue}path+=(active?' L ':'M ')+X(i).toFixed(1)+' '+rY(study.rsi[i]).toFixed(1);active=true}
+   const last=study.rsi[end-1];out+=`<path d="${path}" fill="none" stroke="#bba2ff" stroke-width="2" vector-effect="non-scaling-stroke"/>${text(left,p.top-4,'RSI 14'+(Number.isFinite(last)?' · '+last.toFixed(1):''),'#bba2ff',10)}`;
+  }
+  if(state.layers.macd){
+   const p=panes.macd,series=[...study.macd.slice(first,end),...study.macdSignal.slice(first,end),...study.macdHist.slice(first,end)].filter(Number.isFinite),extent=Math.max(...series.map(Math.abs),1e-9),center=(p.top+p.bottom)/2,dy=extent?((p.bottom-p.top)*.46)/extent:1;
+   const my=v=>center-v*dy;
+   out+=`<line x1="${left}" x2="${right}" y1="${center}" y2="${center}" stroke="#416074" stroke-dasharray="3 4"/>${text(left,p.top-5,'MACD 12/26/9 · '+(Number.isFinite(study.macdHist[end-1])?pf(study.macdHist[end-1]):'—'),'#8cc7ff',10)}`;
+   for(let i=first;i<end;i++){const v=study.macdHist[i];if(Number.isFinite(v))out+=`<rect x="${X(i)-width/2}" y="${Math.min(center,my(v))}" width="${width}" height="${Math.max(1,Math.abs(v*dy))}" fill="${v>=0?green:red}" opacity=".65"/>`}
+   for(const [key,color] of [['macd','#68b8ff'],['macdSignal','#ffbb7c']]){let path='',active=false;for(let i=first;i<end;i++){const v=study[key][i];if(!Number.isFinite(v)){active=false;continue}path+=(active?' L ':'M ')+X(i).toFixed(1)+' '+my(v).toFixed(1);active=true}out+=`<path d="${path}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>`}
+  }
+  if(state.layers.atr){
+   const p=panes.atr,vals=study.atr.slice(first,end).filter(Number.isFinite),amax=Math.max(...vals,1e-9),amin=Math.max(0,Math.min(...vals,amax)*.88),ay=v=>p.bottom-(v-amin)/(amax-amin||1)*(p.bottom-p.top);
+   let path='',active=false;for(let i=first;i<end;i++){const v=study.atr[i];if(!Number.isFinite(v)){active=false;continue}path+=(active?' L ':'M ')+X(i).toFixed(1)+' '+ay(v).toFixed(1);active=true}
+   const val=study.atr[end-1],ratio=Number.isFinite(val)&&visible.length?100*val/visible.at(-1).close:null;
+   out+=`<path d="${path}" fill="none" stroke="#e2a4f1" stroke-width="2" vector-effect="non-scaling-stroke"/>${text(left,p.top-5,'ATR 14 · '+(Number.isFinite(val)?pf(val):'—')+(ratio!==null?' ('+ratio.toFixed(2)+'%)':''),'#e2a4f1',10)}`;
+  }
  if(state.layers.pivots)for(const p of pivots.filter(p=>p.index>=first&&p.index<end)){const y=Y(p.price)+(p.type==='HIGH'?-8:17);out+=`<g><title>${esc(p.label+' $'+pf(p.price)+' • '+t('confirmed')+': '+stamp(p.confirmedAt))}</title>${text(X(p.index)-7,y,p.label,p.type==='HIGH'?red:green)}</g>`}
  if(state.layers.structure)for(const e of events.filter(e=>e.index>=first&&e.index<end)){const x1=Math.max(left,X(e.pivotIndex)),x2=X(e.index),color=e.side==='LONG'?green:red;out+=`<g><title>${esc(e.type+' '+e.side+' • '+stamp(e.confirmedAt))}</title><line x1="${x1}" x2="${x2}" y1="${Y(e.price)}" y2="${Y(e.price)}" stroke="${color}" stroke-width="2"/>${text((x1+x2)/2,Y(e.price)-5,e.type==='CHOCH'?'CHoCH':'BOS',color,11)}<circle cx="${x2}" cy="${Y(e.price)}" r="3" fill="${color}"/></g>`}
  if(state.layers.smc&&result.smc){
@@ -246,7 +285,25 @@ function svg(result){
   }
  }
  if(state.layers.sweeps)for(const s of sweeps.filter(s=>s.index>=first&&s.index<end).slice(-12))out+=text(X(s.index)-4,Y(s.price)+(s.side==='LONG'?22:-16),'SW',gold);
- if(state.layers.protection)for(const [key,p] of [['high',result.protectedHigh],['low',result.protectedLow]])if(p){
+ if(state.layers.liquidity&&pivots.length){
+    const latest=Math.max(1e-10,...study.atr.filter(Number.isFinite).slice(-20)),tol=latest*.20;
+    const levels=[];
+    for(const kind of ['HIGH','LOW']){
+     const candidates=pivots.filter(p=>p.type===kind&&p.confirmedIndex<bars.length).slice(-22),clusters=[];
+     for(const p of candidates){let c=clusters.find(x=>Math.abs(x.price-p.price)<=tol);
+       if(c){c.items.push(p);c.price=c.items.reduce((a,z)=>a+z.price,0)/c.items.length}
+       else clusters.push({price:p.price,items:[p]});
+     }
+     const last=bars.at(-1).close;
+     const selected=clusters.filter(x=>x.items.length>=2&&(kind==='HIGH'?x.price>last:x.price<last)).sort((a,b)=>b.items.at(-1).index-a.items.at(-1).index).slice(0,2);
+     levels.push(...selected.map(x=>({...x,kind})));
+    }
+    for(const c of levels){
+     const color=c.kind==='HIGH'?'#ffb16b':'#65e1bc',x=Math.max(left,Math.min(right-40,X(c.items[0].index)));
+     out+=`<g><title>${esc((c.kind==='HIGH'?'Potential buy-side liquidity':'Potential sell-side liquidity')+' · '+c.items.length+' confirmed pivots · $'+pf(c.price))}</title>${line(c.price,(c.kind==='HIGH'?'BSL':'SSL')+' ×'+c.items.length,color,'3 5',x)}</g>`;
+    }
+   }
+  if(state.layers.protection)for(const [key,p] of [['high',result.protectedHigh],['low',result.protectedLow]])if(p){
    const detail=p.protection;
    out+='<g><title>'+esc(t('externalScope')+' · '+t(key)+' · '+(detail?.eventType||'BOS')+
     ' · '+(detail?.quality||'INITIAL')+' · '+t('confirmed')+': '+stamp(detail?.breakTime||p.confirmedAt))+
@@ -306,7 +363,7 @@ function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?
 }
 async function load(symbol,tf='4h',force=false){
  if(!symbol)return;symbol=String(symbol).replace(/[^A-Z0-9]/gi,'').toUpperCase();const token=++state.token;state.controller?.abort();if(state.symbol!==symbol||state.tf!==tf){state.view={count:defaultCount(),offset:0};state.pending=null;state.pointers.clear();state.gesture=null}state.symbol=symbol;state.tf=tf;state.result=null;state.error=false;state.errorMessage='';state.loading=true;render();
- const key=symbol+':'+tf,radar=tf==='4h'?window.DeepRisePreMove?.state.structures.get(symbol):null,cached=radar||state.cache.get(key);
+ const key=symbol+':'+tf,radar=tf==='4h'?window.DeepRisePreMove?.state.structures.get(symbol):null,localCache=state.cache.get(key),cached=(localCache?.bars?.length>=220?localCache:radar?.bars?.length>=220?radar:null);
  if(!force&&cached&&Date.now()-cached.updated<180000){state.result=cached;state.loading=false;render();return}
  const sources=['https://data-api.binance.vision','https://api.binance.com','https://api1.binance.com','https://api.binance.us'];let lastError=null;
  try{
@@ -314,7 +371,7 @@ async function load(symbol,tf='4h',force=false){
    if(token!==state.token)return;
    const controller=new AbortController();state.controller=controller;const timer=setTimeout(()=>controller.abort(),5200);
    try{
-    const response=await fetch(origin+'/api/v3/klines?symbol='+encodeURIComponent(symbol)+'&interval='+encodeURIComponent(tf)+'&limit=180',{cache:'no-store',signal:controller.signal});
+    const response=await fetch(origin+'/api/v3/klines?symbol='+encodeURIComponent(symbol)+'&interval='+encodeURIComponent(tf)+'&limit=320',{cache:'no-store',signal:controller.signal});
     if(!response.ok)throw Error('HTTP '+response.status);
     const raw=await response.json(),result=window.DeepRiseStructure?.analyse(raw,{tf});
     if(!result)throw Error('No valid closed candles');
@@ -326,7 +383,7 @@ async function load(symbol,tf='4h',force=false){
   if(!state.result){state.error=true;state.errorMessage=lastError?.message||'Market data unavailable'}
  }finally{if(token===state.token){state.loading=false;render()}}
 }
-function hook(){if(typeof openChart!=='function'||openChart.__drStructure)return;const base=openChart;openChart=function(symbol){const out=base.apply(this,arguments);load(symbol,state.tf);return out};openChart.__drStructure=true;if(typeof closeChart==='function'&&!closeChart.__drStructure){const previous=closeChart;closeChart=function(){if(state.expanded)toggleFullscreen(false);return previous.apply(this,arguments)};closeChart.__drStructure=true}}
+function hook(){if(typeof openChart!=='function'||openChart.__drStructure)return;const base=openChart;openChart=function(symbol){const out=base.apply(this,arguments);load(symbol,state.tf).then(()=>{if(state.result&&!state.error&&window.matchMedia?.('(max-width:650px)')?.matches&&document.getElementById('chartPanel')?.classList.contains('active')&&!state.expanded)toggleFullscreen(true)});return out};openChart.__drStructure=true;if(typeof closeChart==='function'&&!closeChart.__drStructure){const previous=closeChart;closeChart=function(){if(state.expanded)toggleFullscreen(false);return previous.apply(this,arguments)};closeChart.__drStructure=true}}
 document.getElementById('languageSelect')?.addEventListener('change',()=>{if(state.symbol)render()});
 const hostPanel=document.getElementById('chartPanel');
 function ensureOpenedChart(){
@@ -339,12 +396,13 @@ function ensureOpenedChart(){
 }
 if(hostPanel){new MutationObserver(ensureOpenedChart).observe(hostPanel,{attributes:true,attributeFilter:['class']});setTimeout(ensureOpenedChart,100)}
 
-document.addEventListener('deeprise-premove-updated',()=>{const r=window.DeepRisePreMove?.state.structures.get(state.symbol);if(state.tf==='4h'&&r&&!state.loading&&r!==state.result){state.result=r;queuePaint()}});
-window.DeepRiseStructureChart={version:'18.0',state,load,render,zoom,pan,fit,setPreset,viewport,drawings,saveDrawings,addPoint,svg,paintChart,studies,updateLayer,toggleFullscreen};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.expanded){e.preventDefault();e.stopImmediatePropagation();toggleFullscreen(false)}},true);
+document.addEventListener('deeprise-premove-updated',()=>{const r=window.DeepRisePreMove?.state.structures.get(state.symbol);if(state.tf==='4h'&&r?.bars?.length>=220&&!state.loading&&r!==state.result&&(!state.result||r.barClose>state.result.barClose)){state.result=r;queuePaint()}});
+window.DeepRiseStructureChart={version:'18.5',state,load,render,zoom,pan,fit,setPreset,viewport,drawings,saveDrawings,addPoint,svg,paintChart,studies,updateLayer,toggleFullscreen};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.expanded){e.preventDefault();e.stopImmediatePropagation();toggleFullscreen(false)}},true);
 const css=document.createElement('style');css.textContent=`.dr-draw-toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:12px 0}.dr-draw-toolbar>div{display:flex;flex-wrap:wrap;align-items:center;gap:5px}.dr-draw-toolbar button{padding:9px 11px;border:1px solid #29465e;background:#102236;color:#cae4f7;font-size:11px;min-height:38px}.dr-draw-toolbar button.active{border-color:#ffd166;color:#ffd166}.dr-draw-toolbar button:disabled{opacity:.35;cursor:default}.dr-draw-toolbar small{font-size:10px;color:#9bb8ca}.dr-layer-picker>summary{cursor:pointer;padding:10px;color:#65b8ff;font-size:12px}.dr-structure-scroll svg[data-dr-interactive]{touch-action:none;user-select:none;min-width:0;width:100%;display:block;outline-offset:-3px}.dr-structure-scroll{overflow:hidden!important}.dr-structure-panel:has([data-chart-tool].active:not([data-chart-tool=pan])) svg{cursor:crosshair}.dr-readiness-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.dr-readiness-tabs button,.dr-structure-head button{border:1px solid #29465e;border-radius:8px;padding:8px 10px;background:#0b2130;color:#a9c1d1;font-size:11px;cursor:pointer}.dr-readiness-tabs button.active,.dr-structure-head button.active{border-color:#35e0a1;color:#72e8bf;background:#10382e}.dr-readiness-tabs b{margin-inline-start:6px}.dr-readiness-group{border-top:1px solid #264056;padding-top:5px;margin-top:12px;min-width:0}.dr-readiness-group h3{color:#9abbd0;font-size:14px;display:flex;gap:9px;align-items:center}.dr-readiness-group h3 span{font-size:11px;border-radius:20px;background:#163145;padding:3px 8px}.dr-readiness-group.ready h3{color:#35e0a1}.dr-readiness-group.near h3{color:#65b8ff}.dr-readiness-group.early h3{color:#ffd166}.dr-readiness-group.blocked h3{color:#ff9f62}.dr-premove-card.ready{border-color:#35e0a1}.dr-premove-card.near{border-color:#396d9b}.dr-premove-card.early{border-color:#6b5b32}.dr-premove-card.blocked{border-color:#8e533a}.dr-readiness-action{margin-top:8px;font-size:11px;color:#c5dce8;line-height:1.6}.dr-structure-panel{padding:16px;background:#071421;border-top:1px solid #26485d;min-width:0}.dr-structure-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;color:#d9edfa}.dr-structure-head>div{display:flex;gap:5px;flex-wrap:wrap}.dr-structure-controls{display:flex;flex-wrap:wrap;gap:8px 15px;margin:13px 0;font-size:11px;color:#a1bed0}.dr-structure-controls label{display:flex;gap:5px;align-items:center;cursor:pointer}.dr-structure-summary{display:flex;gap:10px 18px;flex-wrap:wrap;font-size:11px;color:#9bb8cd;margin:10px 0}.dr-structure-summary b{color:#dceef9}.dr-structure-scroll{overflow-x:auto;max-width:100%;border:1px solid #18344c;border-radius:10px;background:#050e19}.dr-structure-scroll svg{display:block;width:100%;min-width:900px;height:auto;font-family:Arial,sans-serif}.dr-structure-note{font-size:10px;color:#8da7b9;line-height:1.7;margin-top:9px;overflow-wrap:anywhere}.dr-structure-status{padding:18px;color:#ffd166}@media(min-width:1200px){.dr-readiness-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.dr-readiness-groups>.dr-readiness-group:only-child{grid-column:1/-1}}@media(max-width:700px){.dr-structure-panel{padding:11px}.dr-readiness-tabs button{padding:9px 7px;font-size:10px}.dr-premove-card{overflow-wrap:anywhere}.dr-premove-metrics b,.dr-premove-levels b{unicode-bidi:isolate;direction:ltr;display:inline-block}}`;
 css.textContent+=".dr-structure-scroll svg[data-dr-interactive]{width:100%!important;min-width:0!important;height:auto;touch-action:none}.dr-draw-toolbar>div{max-width:100%;overflow-x:auto;flex-wrap:nowrap!important}.dr-draw-toolbar button{white-space:nowrap;flex-shrink:0;border-radius:7px}.dr-structure-scroll{overflow:hidden!important;contain:layout paint}.dr-chart-expanded .dr-structure-scroll svg[data-dr-interactive]{height:auto;min-height:min(50dvh,540px)}@media(max-width:650px){.dr-draw-toolbar>div{width:100%}.dr-structure-head button{min-height:38px}}";css.textContent+=".dr-plot-options{display:flex;gap:9px 18px;flex-wrap:wrap}.dr-plot-options details{flex:1 1 200px;min-width:0}.dr-indicator-picker>summary{padding:10px;color:#65b8ff;font-size:12px;cursor:pointer}.dr-plot-options .dr-structure-controls{max-height:210px;overflow-y:auto}.dr-structure-panel svg text{pointer-events:none}";css.textContent+=`.dr-no-ob{color:#ffc97b;border:1px dashed #906638;padding:8px 12px;border-radius:8px}.dr-quick-layer-group>b{font-size:12px;color:#b5d1e1;display:block;margin:7px 0}.dr-quick-layer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.dr-indicator-shortcuts{display:block!important;margin:8px 0}.dr-indicator-shortcuts button{min-height:40px!important;text-align:center!important;white-space:normal!important;overflow-wrap:anywhere}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(6,minmax(0,1fr))}@media(max-width:650px){.dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-group>b{font-size:10px}}.dr-indicator-feedback{min-height:17px;color:#9edfc5;font-size:12px;padding:1px 4px}.dr-indicator-shortcuts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:10px 0}.dr-indicator-shortcuts button{position:relative;z-index:1;-webkit-user-select:none;user-select:none;border:1px solid #31506b;background:#0e2435;color:#c1d8e8;padding:10px 12px;border-radius:10px;font-size:12px;cursor:pointer;min-height:42px;touch-action:manipulation}.dr-indicator-shortcuts button.active{background:#10382e;border-color:#35e0a1;color:#85f0cb}.dr-indicator-shortcuts [data-indicator-status]{font-size:15px;margin-inline-start:5px}.dr-structure-controls label.is-on{color:#81e9c2}.dr-structure-expand{border-color:#35e0a1!important;color:#a3f8d8!important;font-weight:700}.dr-structure-fullscreen{position:fixed!important;inset:0!important;z-index:9999999!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;overflow:auto!important;border:0!important;border-radius:0!important;margin:0!important;padding:calc(9px + env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))!important;box-sizing:border-box;background:#050e19!important;display:flex!important;flex-direction:column!important;overscroll-behavior:contain}.dr-structure-fullscreen .dr-structure-head{position:sticky;top:0;z-index:3;background:#050e19;padding:8px 0}.dr-structure-fullscreen .dr-draw-toolbar{margin:6px 0}.dr-structure-fullscreen .dr-plot-options{flex-shrink:0}.dr-structure-fullscreen .dr-plot-options details:not([open]){flex:0 1 auto}.dr-structure-fullscreen .dr-structure-scroll{flex:1 1 auto!important;min-height:44dvh;overflow:hidden!important;contain:none!important}.dr-structure-fullscreen .dr-structure-scroll svg[data-dr-interactive]{height:100%!important;max-height:none!important;width:100%!important;min-width:0!important}.dr-structure-immersive .dr-bottom-nav,.dr-structure-immersive #deepriseInstall{visibility:hidden!important}@media(max-width:700px){.dr-structure-fullscreen .dr-structure-head{gap:5px}.dr-structure-fullscreen .dr-structure-note{font-size:9px}.dr-structure-fullscreen .dr-indicator-shortcuts{flex-wrap:nowrap;overflow-x:auto;padding:6px 0}.dr-indicator-shortcuts button{white-space:nowrap}.dr-structure-fullscreen .dr-draw-toolbar>div{overflow-x:auto!important}}`;
 css.textContent+=`.dr-structure-scroll svg[data-dr-interactive],.dr-structure-scroll svg[data-dr-interactive] *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}.dr-protection-records{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:7px;margin:10px 0}.dr-protection-record{border:1px solid #29485f;background:#0a2130;padding:9px 11px;border-radius:9px;display:grid;gap:5px;font-size:11px;line-height:1.5}.dr-protection-record>b{color:#dbedf7}.dr-protection-record>span{color:#9ac2d5}.dr-structure-scroll{overscroll-behavior:contain}.dr-structure-head button,.dr-indicator-shortcuts button,.dr-draw-toolbar button{touch-action:manipulation}`;
-css.textContent+=`
+css.textContent+="\n/* V18.5 iPhone CSS immersive with readable controls and safe-area padding */\n@media(max-width:700px){\n .dr-structure-fullscreen{position:fixed!important;inset:0!important;height:100dvh!important;max-height:100dvh!important;width:100vw!important;overflow:hidden!important;padding:calc(env(safe-area-inset-top,0px) + 4px) calc(env(safe-area-inset-right,0px) + 5px) calc(env(safe-area-inset-bottom,0px) + 5px) calc(env(safe-area-inset-left,0px) + 5px)!important;display:flex!important;flex-direction:column!important;}\n .dr-structure-fullscreen .dr-structure-head{position:relative!important;top:auto!important;flex-shrink:0;align-items:center;padding:3px 0!important;min-height:38px}\n .dr-structure-fullscreen .dr-structure-head>b{font-size:12px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\n .dr-structure-fullscreen .dr-structure-head>div{width:100%;justify-content:space-between;overflow-x:auto}\n .dr-structure-fullscreen .dr-structure-head button{padding:6px 5px!important;min-height:34px!important;min-width:36px!important;font-size:10px}\n .dr-structure-fullscreen .dr-quick-chart-controls{position:relative!important;top:auto!important;flex-shrink:0;padding:0!important;margin:0!important;gap:2px}\n .dr-structure-fullscreen .dr-chart-presets button{min-height:28px!important;padding:4px!important;font-size:10px}\n .dr-structure-fullscreen .dr-fast-toggles{max-height:37px;margin:0;padding:0 0 2px}\n .dr-structure-fullscreen .dr-fast-toggles button{min-height:32px!important;padding:5px 7px!important;font-size:10px}\n .dr-structure-fullscreen .dr-structure-summary,.dr-structure-fullscreen .dr-smc-card,.dr-structure-fullscreen .dr-protection-records,.dr-structure-fullscreen .dr-extra-indicators,.dr-structure-fullscreen .dr-plot-options,.dr-structure-fullscreen .dr-no-ob,.dr-structure-fullscreen>.dr-structure-note,.dr-structure-fullscreen>.dr-indicator-feedback{display:none!important}\n .dr-structure-fullscreen .dr-draw-toolbar{flex:0 0 auto!important;padding:3px!important;margin:2px 0!important;gap:2px!important}\n .dr-structure-fullscreen .dr-draw-toolbar>div{width:100%;justify-content:flex-start!important;gap:2px}\n .dr-structure-fullscreen .dr-draw-toolbar button{min-height:31px!important;min-width:30px!important;padding:5px 6px!important;font-size:10px!important}\n .dr-structure-fullscreen .dr-structure-scroll{flex:1 1 auto!important;min-height:0!important;height:auto!important;overflow:hidden!important;margin-top:2px;border-color:#355872}\n .dr-structure-fullscreen .dr-structure-scroll svg[data-dr-interactive]{width:100%!important;height:100%!important;max-height:none!important;touch-action:none!important}\n .dr-structure-fullscreen .dr-structure-note[role=status]{display:none}\n}\n@media(orientation:landscape) and (max-height:550px){\n .dr-structure-fullscreen .dr-chart-presets,.dr-structure-fullscreen .dr-fast-toggles{display:none!important}\n .dr-structure-fullscreen .dr-draw-toolbar{padding:1px!important}\n .dr-structure-fullscreen .dr-structure-head{min-height:28px!important}\n}\n";
+ css.textContent+=`
 /* V18: Chart-first, compact touch controls, self-contained chart interaction */
 .dr-quick-chart-controls{display:grid;gap:7px;margin:9px 0 4px}
 .dr-chart-presets{display:flex;align-items:stretch;gap:6px}
