@@ -26,7 +26,7 @@ w.DeepRiseStructure={
 w.eval(fs.readFileSync('deeprise-structure-chart-v174.js','utf8'));
 const engine=w.DeepRiseStructureChart;
 assert.ok(engine,'Structure chart module should boot');
-assert.equal(engine.version,'18.7');
+assert.equal(engine.version,'18.8');
 function button(selector){const b=w.document.querySelector(selector);assert.ok(b,'Missing '+selector);return b}
 (async()=>{
  w.openChart('BTCUSDT');
