@@ -1,6 +1,6 @@
 /* DeepRise V18.5: technical indicators + SMC overlay + iPhone full screen. */
 (()=>{'use strict';
-const state={portalMarker:null,previousHtmlOverflow:'',symbol:'',tf:'4h',result:null,token:0,controller:null,loading:false,error:false,errorMessage:'',cache:new Map(),view:{count:75,offset:0},tool:'pan',expanded:false,previousOverflow:'',returnFocus:null,pending:null,geometry:null,pointers:new Map(),gesture:null,drawings:{},layers:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,ema20:true,ema50:true,ema200:true,bollinger:true,volume:true,rsi:true,macd:true,atr:true,liquidity:true,poc:true,volumeProfile:true,fvg:true,fib:true,extensions:false,trendExtensions:false,sweeps:false,timeZones:false,fan:false}};
+const state={portalMarker:null,previousHtmlOverflow:'',symbol:'',tf:'4h',result:null,token:0,controller:null,loading:false,error:false,errorMessage:'',cache:new Map(),view:{count:75,offset:0},tool:'pan',expanded:false,previousOverflow:'',returnFocus:null,pending:null,geometry:null,pointers:new Map(),gesture:null,dragPreview:null,drawings:{},layers:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,ema20:true,ema50:true,ema200:true,bollinger:true,volume:true,rsi:true,macd:true,atr:true,liquidity:true,poc:true,volumeProfile:true,fvg:true,fib:true,extensions:false,trendExtensions:false,sweeps:false,timeZones:false,fan:false}};
 function defaultCount(){return window.innerWidth<650?30:75}
 const wt=k=>window.DeepRiseWorkspace?.t(k)||k;
 try{const saved=JSON.parse(localStorage.getItem('deeprise_drawings_v173')||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))state.drawings=saved}catch(_){}
@@ -95,6 +95,7 @@ function volumeProfileFor(bars,binCount=48){
    pocIndex,vah:low+(stop+1)*size,val:low+start*size,start,stop,estimation:'OHLCV_UNIFORM_BIN'};
 }
 function pointFromEvent(e){const svg=e.target.closest('svg[data-dr-interactive]'),g=state.geometry;if(!svg||!g)return null;const r=svg.getBoundingClientRect();let x=(e.clientX-r.left)/r.width*g.W,y=(e.clientY-r.top)/r.height*g.H;const matrix=svg.getScreenCTM?.();if(matrix&&svg.createSVGPoint){const raw=svg.createSVGPoint();raw.x=e.clientX;raw.y=e.clientY;const mapped=raw.matrixTransform(matrix.inverse());x=mapped.x;y=mapped.y;}if(x<g.left||x>g.right||y<g.top||y>g.bottom)return null;const i=g.first+(x-g.left)/(g.right-g.left)*(g.count+g.extra-1);return{time:g.origin+i*g.step,price:g.hi-(y-g.top)/(g.bottom-g.top)*(g.hi-g.lo)}}
+function pointFromClient(x,y,rect){const g=state.geometry;if(!g||!rect?.width||!rect?.height)return null;const px=(x-rect.left)/rect.width*g.W,py=(y-rect.top)/rect.height*g.H;if(px<g.left||px>g.right||py<g.top||py>g.bottom)return null;const i=g.first+(px-g.left)/(g.right-g.left)*(g.count+g.extra-1);return{time:g.origin+i*g.step,price:g.hi-(py-g.top)/(g.bottom-g.top)*(g.hi-g.lo)}}
 function addPoint(p){if(!p||!(p.price>0))return;if(state.tool==='horizontal'){saveDrawings([...drawings(),{type:state.tool,a:p,b:p}]);return}if(!state.pending){state.pending=p;render();return}const a=state.pending;state.pending=null;saveDrawings([...drawings(),{type:state.tool,a,b:p}])}
 function drawingSvg(g){const X=p=>g.left+((p.time-g.origin)/g.step-g.first)/(g.count+g.extra-1)*(g.right-g.left),Y=p=>g.bottom-(p-g.lo)/(g.hi-g.lo)*(g.bottom-g.top),label=(x,y,s)=>`<text x="${x}" y="${y}" font-size="11" fill="#ffd166" direction="ltr">${esc(s)}</text>`;let out='';for(const d of drawings()){const x1=X(d.a),x2=X(d.b),y1=Y(d.a.price),y2=Y(d.b.price),title=`<title>${esc(wt(d.type)+' $'+pf(d.a.price)+' → $'+pf(d.b.price))}</title>`;
  if(d.type==='horizontal')out+=`<g>${title}<line x1="${g.left}" x2="${g.right}" y1="${y1}" y2="${y1}" stroke="#ffd166" stroke-width="2" stroke-dasharray="7 3"/>${label(g.left+5,y1-5,'$'+pf(d.a.price))}</g>`;
@@ -107,9 +108,32 @@ function drawingSvg(g){const X=p=>g.left+((p.time-g.origin)/g.step-g.first)/(g.c
 }
 function bindInteractive(panel){
  panel.addEventListener('wheel',e=>{if(!e.target.closest('svg[data-dr-interactive]')||!state.result)return;e.preventDefault();const r=e.target.closest('svg').getBoundingClientRect();zoom(e.deltaY>0?1.15:.87,Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)))},{passive:false});
- panel.addEventListener('pointerdown',e=>{if(!e.target.closest('svg[data-dr-interactive]')||!state.result||e.button>0)return;e.preventDefault();state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});panel.setPointerCapture?.(e.pointerId);if(state.pointers.size===1)state.gesture={startX:e.clientX,startY:e.clientY,offset:state.view.offset,moved:false,rect:e.target.closest('svg').getBoundingClientRect(),point:pointFromEvent(e)};else{const a=[...state.pointers.values()];state.gesture.moved=true;state.gesture.distance=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)}});
- panel.addEventListener('pointermove',e=>{if(!state.pointers.has(e.pointerId)||!state.gesture)return;e.preventDefault();state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const g=state.gesture;if(state.pointers.size===2){const a=[...state.pointers.values()],distance=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);if(g.distance&&distance>0)zoom(g.distance/distance);g.distance=distance;return}if(Math.hypot(e.clientX-g.startX,e.clientY-g.startY)>7)g.moved=true;if(state.tool==='pan'&&g.moved){state.view.offset=g.offset+(e.clientX-g.startX)*state.view.count/g.rect.width;viewport(state.result.bars.length);queuePaint()}});
- const release=e=>{if(!state.pointers.has(e.pointerId))return;const g=state.gesture;state.pointers.delete(e.pointerId);if(!state.pointers.size){state.gesture=null;if(e.type==='pointerup'&&g&&!g.moved&&state.tool!=='pan')addPoint(g.point)}else if(g){const remaining=[...state.pointers.values()][0];g.moved=true;g.distance=null;g.startX=remaining.x;g.startY=remaining.y;g.offset=state.view.offset}};panel.addEventListener('pointerup',release);panel.addEventListener('pointercancel',release);
+ panel.addEventListener('pointerdown',e=>{
+  const canvas=e.target.closest('svg[data-dr-interactive]');if(!canvas||!state.result||e.button>0)return;
+  e.preventDefault();state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  try{panel.setPointerCapture?.(e.pointerId)}catch(_){}
+  if(state.pointers.size===1){state.dragPreview=null;state.gesture={startX:e.clientX,startY:e.clientY,offset:state.view.offset,moved:false,multitouch:false,rect:canvas.getBoundingClientRect(),point:pointFromEvent(e)}}
+  else if(state.gesture){state.gesture.moved=true;state.gesture.multitouch=true;const a=[...state.pointers.values()];state.gesture.distance=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)}
+ });
+ panel.addEventListener('pointermove',e=>{
+  if(!state.pointers.has(e.pointerId)||!state.gesture)return;e.preventDefault();state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  const g=state.gesture;if(state.pointers.size===2){const a=[...state.pointers.values()],distance=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);if(g.distance&&distance>0)zoom(g.distance/distance);g.distance=distance;state.dragPreview=null;return}
+  if(Math.hypot(e.clientX-g.startX,e.clientY-g.startY)>7)g.moved=true;
+  if(state.tool==='pan'&&g.moved){state.view.offset=g.offset+(e.clientX-g.startX)*state.view.count/Math.max(1,g.rect.width);viewport(state.result.bars.length);queuePaint()}
+  else if(state.tool!=='pan'&&g.moved&&!g.multitouch&&g.point){const finish=pointFromClient(e.clientX,e.clientY,g.rect);if(finish){state.dragPreview={type:state.tool,a:g.point,b:finish};queuePaint()}}
+ });
+ const release=e=>{
+  if(!state.pointers.has(e.pointerId))return;const g=state.gesture;state.pointers.delete(e.pointerId);
+  if(!state.pointers.size){
+   state.gesture=null;const wasPreview=!!state.dragPreview;state.dragPreview=null;
+   if(e.type==='pointerup'&&g&&!g.multitouch&&state.tool!=='pan'){
+    if(g.moved&&g.point){const endpoint=pointFromClient(e.clientX,e.clientY,g.rect);if(endpoint){state.pending=null;saveDrawings([...drawings(),{type:state.tool,a:g.point,b:state.tool==='horizontal'?g.point:endpoint}]);return}}
+    if(!g.moved&&g.point){addPoint(g.point);return}
+   }
+   if(wasPreview)queuePaint();
+  }else if(g){const remaining=[...state.pointers.values()][0];g.moved=true;g.multitouch=true;g.distance=null;g.startX=remaining.x;g.startY=remaining.y;g.offset=state.view.offset;state.dragPreview=null}
+ };
+ panel.addEventListener('pointerup',release);panel.addEventListener('pointercancel',release);
  panel.addEventListener('keydown',e=>{if(!e.target.matches('svg[data-dr-interactive]'))return;if(e.key==='+'||e.key==='='){e.preventDefault();zoom(.75)}if(e.key==='-'){e.preventDefault();zoom(1.3333)}if(e.key==='ArrowLeft'){e.preventDefault();pan(10)}if(e.key==='ArrowRight'){e.preventDefault();pan(-10)}if(e.key==='0'){e.preventDefault();fit()}});
 }
 const copy={
@@ -192,7 +216,7 @@ function activateChartButton(target){
  if(btn.hasAttribute('data-chart-zoom')){zoom(Number(btn.dataset.chartZoom));return true}
  if(btn.hasAttribute('data-chart-pan')){pan(Number(btn.dataset.chartPan)*Math.max(5,state.view.count*.25));return true}
  if(btn.hasAttribute('data-chart-fit')){fit();return true}
- if(btn.hasAttribute('data-chart-tool')){state.tool=btn.dataset.chartTool;state.pending=null;render();return true}
+ if(btn.hasAttribute('data-chart-tool')){state.tool=btn.dataset.chartTool;state.pending=null;state.dragPreview=null;render();return true}
  if(btn.hasAttribute('data-chart-undo')){saveDrawings(drawings().slice(0,-1));return true}
  if(btn.hasAttribute('data-chart-clear')){saveDrawings([]);return true}
  if(btn.hasAttribute('data-chart-cancel')){state.pending=null;render();return true}
@@ -390,7 +414,7 @@ function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?
  panel.innerHTML=header+indicatorQuick()+`<div class="dr-indicator-feedback" data-indicator-feedback role="status" aria-live="polite"></div>`+body+noOb+extraIndicators(extraOpen)+`<div class="dr-plot-options"><details class="dr-layer-picker" ${layersOpen?'open':''}><summary>${wt('layers')}</summary>${controls}</details><details class="dr-indicator-picker" ${indicatorsOpen?'open':''}><summary>${t('indicators')}</summary>${indicatorControls}</details></div><div class="dr-structure-note">${t('note')}${state.layers.timeZones?'<br>'+t('timeNote'):''}</div>`;
 }
 async function load(symbol,tf='4h',force=false){
- if(!symbol)return;symbol=String(symbol).replace(/[^A-Z0-9]/gi,'').toUpperCase();const token=++state.token;state.controller?.abort();if(state.symbol!==symbol||state.tf!==tf){state.view={count:defaultCount(),offset:0};state.pending=null;state.pointers.clear();state.gesture=null}state.symbol=symbol;state.tf=tf;state.result=null;state.error=false;state.errorMessage='';state.loading=true;render();
+ if(!symbol)return;symbol=String(symbol).replace(/[^A-Z0-9]/gi,'').toUpperCase();const token=++state.token;state.controller?.abort();if(state.symbol!==symbol||state.tf!==tf){state.view={count:defaultCount(),offset:0};state.pending=null;state.pointers.clear();state.gesture=null;state.dragPreview=null}state.symbol=symbol;state.tf=tf;state.result=null;state.error=false;state.errorMessage='';state.loading=true;render();
  const key=symbol+':'+tf,radar=tf==='4h'?window.DeepRisePreMove?.state.structures.get(symbol):null,localCache=state.cache.get(key),cached=(localCache?.bars?.length>=220?localCache:radar?.bars?.length>=220?radar:null);
  if(!force&&cached&&Date.now()-cached.updated<180000){state.result=cached;state.loading=false;render();return}
  const sources=['https://data-api.binance.vision','https://api.binance.com','https://api1.binance.com','https://api.binance.us'];let lastError=null;
