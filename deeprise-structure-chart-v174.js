@@ -383,7 +383,7 @@ async function load(symbol,tf='4h',force=false){
   if(!state.result){state.error=true;state.errorMessage=lastError?.message||'Market data unavailable'}
  }finally{if(token===state.token){state.loading=false;render()}}
 }
-function hook(){if(typeof openChart!=='function'||openChart.__drStructure)return;const base=openChart;openChart=function(symbol){const out=base.apply(this,arguments);load(symbol,state.tf).then(()=>{if(state.result&&!state.error&&window.matchMedia('(max-width:650px)').matches&&document.getElementById('chartPanel')?.classList.contains('active')&&!state.expanded)toggleFullscreen(true)});return out};openChart.__drStructure=true;if(typeof closeChart==='function'&&!closeChart.__drStructure){const previous=closeChart;closeChart=function(){if(state.expanded)toggleFullscreen(false);return previous.apply(this,arguments)};closeChart.__drStructure=true}}
+function hook(){if(typeof openChart!=='function'||openChart.__drStructure)return;const base=openChart;openChart=function(symbol){const out=base.apply(this,arguments);load(symbol,state.tf).then(()=>{if(state.result&&!state.error&&window.matchMedia?.('(max-width:650px)')?.matches&&document.getElementById('chartPanel')?.classList.contains('active')&&!state.expanded)toggleFullscreen(true)});return out};openChart.__drStructure=true;if(typeof closeChart==='function'&&!closeChart.__drStructure){const previous=closeChart;closeChart=function(){if(state.expanded)toggleFullscreen(false);return previous.apply(this,arguments)};closeChart.__drStructure=true}}
 document.getElementById('languageSelect')?.addEventListener('change',()=>{if(state.symbol)render()});
 const hostPanel=document.getElementById('chartPanel');
 function ensureOpenedChart(){
