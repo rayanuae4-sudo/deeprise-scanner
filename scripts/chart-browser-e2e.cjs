@@ -39,6 +39,7 @@ const {chromium}=require('playwright');
   body:document.body.textContent.slice(-600)}
  });
  console.log('HTTP',response?.status(),'DETAIL',JSON.stringify(detail),'ERRORS',JSON.stringify(errors.slice(0,10)),'FAILED_REQUESTS',JSON.stringify(requests.slice(0,12)));
+ if(detail.state?.symbol!=='BTCUSDT')throw Error('Chart symbol was incorrectly changed: '+detail.state?.symbol);
  if(detail.buttons){
   if(await page.evaluate(()=>window.DeepRiseStructureChart?.state.expanded)){await page.locator('#drStructurePanel [data-structure-fullscreen]').click({timeout:10000})}
   await page.evaluate(()=>window.DeepRiseStructureChart?.setPreset('structure'));
