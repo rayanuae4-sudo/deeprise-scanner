@@ -26,7 +26,7 @@ w.DeepRiseStructure={
 w.eval(fs.readFileSync('deeprise-structure-chart-v174.js','utf8'));
 const engine=w.DeepRiseStructureChart;
 assert.ok(engine,'Structure chart module should boot');
-assert.equal(engine.version,'18.5');
+assert.equal(engine.version,'18.7');
 function button(selector){const b=w.document.querySelector(selector);assert.ok(b,'Missing '+selector);return b}
 (async()=>{
  w.openChart('BTCUSDT');
@@ -34,6 +34,41 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
  assert.ok(engine.state.result,'Opening a coin must fetch and render candles');
  const plot=button('#drStructurePanel svg[data-dr-interactive]');
  assert.match(plot.outerHTML,/BTCUSDT/);
+ assert.ok(button('[data-toggle-indicator="poc"]'),'POC quick toggle must exist');
+ assert.ok(button('[data-toggle-indicator="volumeProfile"]'),'Volume Profile quick toggle must exist');
+ const estimate=engine.volumeProfileFor(engine.state.result.bars.slice(-75));
+ assert(estimate&&estimate.poc>0&&estimate.vah>=estimate.poc&&estimate.val<=estimate.poc,'Estimated value area and POC are ordered');
+ assert.match(plot.outerHTML,/data-volume-profile="estimated-ohlcv"/,'Advanced preset must draw estimated profile');
+ assert.match(plot.outerHTML,/data-poc-price=/,'Advanced preset must draw POC');
+ button('[data-toggle-indicator="volumeProfile"]').click();
+ await wait(25);
+ assert.doesNotMatch(button('#drStructurePanel svg').outerHTML,/data-volume-profile=/,'Volume profile must turn off');
+ button('[data-toggle-indicator="volumeProfile"]').click();
+ await wait(25);
+ assert.match(button('#drStructurePanel svg').outerHTML,/data-volume-profile=/,'Volume profile must turn on');
+ button('[data-toggle-indicator="poc"]').click();
+ await wait(25);
+ assert.doesNotMatch(button('#drStructurePanel svg').outerHTML,/data-poc-price=/,'POC must turn off');
+ button('[data-toggle-indicator="poc"]').click();
+ await wait(25);
+ assert.match(button('#drStructurePanel svg').outerHTML,/data-poc-price=/,'POC must turn on');
+ const panel=button('#drStructurePanel');
+ button('[data-chart-tool="line"]').click();
+ const drawingSvg=button('#drStructurePanel svg[data-dr-interactive]');
+ drawingSvg.getBoundingClientRect=()=>({left:0,top:0,width:800,height:600,right:800,bottom:600});
+ function pointer(target,type,x,y){
+   const e=new w.MouseEvent(type,{bubbles:true,cancelable:true,clientX:x,clientY:y,button:0});
+   Object.defineProperty(e,'pointerId',{value:7});target.dispatchEvent(e);
+ }
+ pointer(drawingSvg,'pointerdown',200,200);
+ pointer(panel,'pointermove',430,260);
+ pointer(panel,'pointerup',430,260);
+ assert.equal(engine.drawings().length,1,'Dragging finger should save a trendline instead of silently doing nothing');
+ assert.equal(engine.drawings()[0].type,'line');
+ assert.match(button('#drStructurePanel svg').outerHTML,/#ffd166/,'Saved trendline must render');
+ button('[data-chart-undo]').click();
+ assert.equal(engine.drawings().length,0,'Undo must remove line');
+
  assert.ok(button('[data-toggle-indicator="orderBlocks"]'),'Order Block toggle must be visible');
  assert.equal(engine.state.layers.orderBlocks,true);
  button('[data-toggle-indicator="orderBlocks"]').click();
@@ -64,8 +99,8 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
   assert.equal(button('#drStructurePanel').parentElement,w.document.getElementById('chartPanel'),'Fullscreen must restore original container');
  const standalone=fs.readFileSync('chart.html','utf8');
  assert.match(standalone,/DOMContentLoaded/);
- assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1850/);
+ assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1870/);
  assert.match(standalone,/symbolForm/);
- console.log('DeepRise v18.5 chart-click DOM regression: PASS');
+ console.log('DeepRise v18.7 profile, POC, touch-draw, indicator and fullscreen DOM regression: PASS');
  dom.window.close();
 })().catch(e=>{console.error(e);process.exitCode=1;dom.window.close()});
