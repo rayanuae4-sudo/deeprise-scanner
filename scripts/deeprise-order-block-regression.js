@@ -43,7 +43,7 @@ const fullHeight=Number(expanded.match(/viewBox="0 0 390 (\d+)"/)?.[1]);
 assert.ok(Number.isFinite(fullHeight)&&fullHeight>=580,'mobile width and stacked indicator panes');
 assert.ok(expanded.includes('MACD 12/26/9'),'MACD pane is plotted');
 assert.ok(expanded.includes('ATR 14'),'ATR pane is plotted');
-assert.ok(expanded.includes('#ef85f5')===false,'EMA200 waits for 200 candles rather than drawing an unreliable value');
+assert.ok(chart.studies(result.bars).ema200.every(v=>v===null),'EMA200 must wait until 200 closed candles');
 chart.state.layers.rsi=false;chart.state.layers.volume=false;chart.render();
 const collapsed=Number(chart.svg(result).match(/viewBox="0 0 390 (\d+)"/)?.[1]);
 assert.ok(collapsed<fullHeight,'indicators shrink the view when hidden');
