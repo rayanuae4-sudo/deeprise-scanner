@@ -145,7 +145,7 @@ function indicatorButton(k){
 function indicatorQuick(){
  const labels=lang()==='ar'?['نظيف','هيكل السوق','متقدم']:lang()==='ru'?['Чистый','Структура','Подробно']:['Clean','Structure','Advanced'];
  const presets='<div class="dr-chart-presets" role="group" aria-label="Chart density">'+Object.keys(CHART_PRESETS).map((key,i)=>'<button type="button" data-chart-preset="'+key+'" aria-pressed="'+(state.preset===key)+'" class="'+(state.preset===key?'active':'')+'">'+labels[i]+'</button>').join('')+'</div>';
- const fast='<div class="dr-fast-toggles" role="group" aria-label="Quick indicators">'+['smc','orderBlocks','fvg','liquidity','ema200','rsi','macd','atr','fib'].map(indicatorButton).join('')+'</div>';
+ const fast='<div class="dr-fast-toggles" role="group" aria-label="Quick indicators">'+['smc','orderBlocks','fvg','liquidity','ema20','ema50','ema200','bollinger','volume','rsi','macd','atr','fib'].map(indicatorButton).join('')+'</div>';
  return '<div class="dr-quick-chart-controls">'+presets+fast+'</div>';
 }
 function extraIndicators(open){
