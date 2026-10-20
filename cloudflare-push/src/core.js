@@ -29,7 +29,7 @@ export function qualityForEntry(event, now = Date.now()) {
   const at = new Date(e.closedAt).getTime();
   const invalid = (code) => ({ ok:false, code });
   if (e.type !== 'ENTRY_CONFIRMED') return invalid('NOT_ENTRY_CONFIRMED');
-  if (!/^[A-Z0-9]{2,18}USDT$/.test(e.symbol || '') || !side) return invalid('SYMBOL_OR_SIDE');
+  if (!/^[A-Z0-9]{1,18}USDT$/.test(e.symbol || '') || !side) return invalid('SYMBOL_OR_SIDE');
   if (!['4h','1h'].includes(e.timeframe)) return invalid('TIMEFRAME');
   if (!Number.isFinite(at) || at > now + 60000 || now - at > 15*60000) return invalid('STALE_CLOSE');
   if (e.confirmed4h !== true || e.confirmed1h !== true || e.closedCandle !== true
@@ -47,7 +47,7 @@ export function qualityForEntry(event, now = Date.now()) {
 }
 export function qualityForLiquidity(alert, now=Date.now()) {
   const a=alert||{},close=new Date(a.bar_closed_at).getTime();
-  if (!/^[A-Z0-9]{2,18}USDT$/.test(a.symbol||'')) return {ok:false,code:'SYMBOL'};
+  if (!/^[A-Z0-9]{1,18}USDT$/.test(a.symbol||'')) return {ok:false,code:'SYMBOL'};
   if (a.type!=='BUY_SIDE_SWEEP_CONFIRMED' && a.type!=='SELL_SIDE_SWEEP_CONFIRMED') return {ok:false,code:'NOT_CONFIRMED'};
   if (a.severity!=='HIGH' || !Number.isFinite(Number(a.trap_score)) || Number(a.trap_score)<85 || Number(a.trap_score)>100) return {ok:false,code:'WEAK'};
   if (![a.quote_volume_usdt,a.volume_ratio].map(Number).every(Number.isFinite) || Number(a.quote_volume_usdt)<20000000 || Number(a.volume_ratio)<1.2) return {ok:false,code:'LIQUIDITY_VOLUME'};
@@ -56,6 +56,6 @@ export function qualityForLiquidity(alert, now=Date.now()) {
   return {ok:true,code:'WATCH_ONLY',side:a.type==='BUY_SIDE_SWEEP_CONFIRMED'?'SHORT':'LONG'};
 }
 export function safeAlertLink(symbol, tf='4h') {
-  if (!/^[A-Z0-9]{2,18}USDT$/.test(symbol||'')) return './index.html';
+  if (!/^[A-Z0-9]{1,18}USDT$/.test(symbol||'')) return './index.html';
   return './chart.html?symbol='+encodeURIComponent(symbol)+'&tf='+(['4h','1h','15m'].includes(tf)?tf:'4h');
 }
