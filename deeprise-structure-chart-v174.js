@@ -1,7 +1,7 @@
 /* DeepRise V18.5: technical indicators + SMC overlay + iPhone full screen. */
 (()=>{'use strict';
-const state={portalMarker:null,previousHtmlOverflow:'',symbol:'',tf:'4h',result:null,token:0,controller:null,loading:false,error:false,errorMessage:'',cache:new Map(),view:{count:75,offset:0},tool:'pan',expanded:false,previousOverflow:'',returnFocus:null,pending:null,geometry:null,pointers:new Map(),gesture:null,dragPreview:null,drawings:{},layers:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,ema20:true,ema50:true,ema200:true,bollinger:true,volume:true,rsi:true,macd:true,atr:true,liquidity:true,poc:true,volumeProfile:true,fvg:true,fib:true,extensions:false,trendExtensions:false,sweeps:false,timeZones:false,fan:false}};
-function defaultCount(){return window.innerWidth<650?30:75}
+const state={portalMarker:null,previousHtmlOverflow:'',symbol:'',tf:'4h',result:null,token:0,controller:null,loading:false,error:false,errorMessage:'',cache:new Map(),view:{count:75,offset:0},tool:'pan',expanded:false,previousOverflow:'',returnFocus:null,pending:null,geometry:null,pointers:new Map(),gesture:null,dragPreview:null,helpOpen:false,priceFocus:false,drawings:{},layers:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,ema20:true,ema50:true,ema200:true,bollinger:true,volume:true,rsi:true,macd:true,atr:true,liquidity:true,poc:true,volumeProfile:true,fvg:true,fib:true,extensions:false,trendExtensions:false,sweeps:false,timeZones:false,fan:false}};
+function defaultCount(){return window.innerWidth<650?38:75}
 const wt=k=>window.DeepRiseWorkspace?.t(k)||k;
 try{const saved=JSON.parse(localStorage.getItem('deeprise_drawings_v173')||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))state.drawings=saved}catch(_){}
 const drawKey=()=>state.symbol+':'+state.tf;
@@ -11,7 +11,7 @@ function viewport(total){const count=Math.min(total,Math.max(20,Math.min(180,Mat
 function zoom(factor,anchor=.5){if(!state.result)return;const before=viewport(state.result.bars.length),idx=before.first+before.count*anchor;state.view.count=Math.max(20,Math.min(180,state.result.bars.length,Math.round(before.count*factor)));const first=idx-state.view.count*anchor;state.view.offset=state.result.bars.length-first-state.view.count;viewport(state.result.bars.length);queuePaint()}
 function pan(candles){if(!state.result)return;state.view.offset+=candles;viewport(state.result.bars.length);queuePaint()}
 function fit(){state.view={count:defaultCount(),offset:0};state.pending=null;queuePaint()}
-function toolBar(){return `<div class="dr-draw-toolbar" aria-label="${esc(wt('drawings'))}"><div><button data-chart-zoom=".75" aria-label="${esc(wt('zoomIn'))}">＋</button><button data-chart-zoom="1.3333" aria-label="${esc(wt('zoomOut'))}">−</button><button data-chart-pan="1" aria-label="${esc(wt('older'))}">◀</button><button data-chart-pan="-1" aria-label="${esc(wt('newer'))}">▶</button><button data-chart-fit>${wt('fit')}</button><small data-bar-count>${state.view.count} ${wt('bars')}</small></div><div>${['pan','line','horizontal','rectangle','drawFib'].map(k=>`<button data-chart-tool="${k}" aria-pressed="${state.tool===k}" class="${state.tool===k?'active':''}">${wt(k)}</button>`).join('')}<button data-chart-undo ${drawings().length?'':'disabled'}>${wt('undo')}</button><button data-chart-clear ${drawings().length?'':'disabled'}>${wt('clear')}</button>${state.pending?`<button data-chart-cancel>${wt('cancel')}</button>`:''}</div></div><div class="dr-structure-note" role="status">${state.pending?wt('pending'):wt('hint')}</div>`}
+function toolBar(){return `<div class="dr-draw-toolbar" aria-label="${esc(wt('drawings'))}"><div><button data-chart-zoom=".75" aria-label="${esc(wt('zoomIn'))}">＋</button><button data-chart-zoom="1.3333" aria-label="${esc(wt('zoomOut'))}">−</button><button data-chart-pan="1" aria-label="${esc(wt('older'))}">◀</button><button data-chart-pan="-1" aria-label="${esc(wt('newer'))}">▶</button><button data-chart-fit>${wt('fit')}</button><small data-bar-count>${state.view.count} ${wt('bars')}</small></div><div>${['pan','line','horizontal','rectangle','drawFib'].map(k=>`<button data-chart-tool="${k}" aria-pressed="${state.tool===k}" class="${state.tool===k?'active':''}">${wt(k)}</button>`).join('')}<button data-chart-undo ${drawings().length?'':'disabled'}>${wt('undo')}</button><button data-chart-clear ${drawings().length?'':'disabled'}>${wt('clear')}</button>${state.pending?`<button data-chart-cancel>${wt('cancel')}</button>`:''}<button type="button" data-chart-price-focus aria-pressed="${state.priceFocus}">${lang()==='ar'?'▣ سعر فقط':'▣ Price focus'}</button><button type="button" data-chart-help aria-expanded="${state.helpOpen}">${lang()==='ar'?'ⓘ شرح الأدوات':'ⓘ Help'}</button></div></div><div class="dr-structure-note" role="status">${state.pending?wt('pending'):wt('hint')}</div>`}
 let chartFrame=0;
 function paintChart(){
  const plot=document.querySelector('#drStructurePanel .dr-structure-scroll');
@@ -20,17 +20,18 @@ function paintChart(){
  plot.innerHTML=svg(state.result);
  const count=document.querySelector('#drStructurePanel [data-bar-count]');
  if(count)count.textContent=state.view.count+' '+wt('bars');
+ const legend=document.querySelector('#drStructurePanel [data-chart-levels]');if(legend)legend.innerHTML=priceLegend(state.result);
  if(focused)plot.querySelector('svg[data-dr-interactive]')?.focus({preventScroll:true});
 }
 function queuePaint(){if(chartFrame)return;chartFrame=requestAnimationFrame(()=>{chartFrame=0;paintChart()})}
 function updateLayer(key,enabled){
  if(!Object.prototype.hasOwnProperty.call(state.layers,key))return;
- state.layers[key]=Boolean(enabled);
+ state.layers[key]=Boolean(enabled);if(['volume','rsi','macd','atr'].includes(key)&&enabled)state.priceFocus=false;
  const panel=document.getElementById('drStructurePanel');
  panel?.querySelectorAll('[data-structure-layer="'+key+'"]').forEach(el=>{el.checked=state.layers[key];el.closest('label')?.classList.toggle('is-on',state.layers[key])});
  panel?.querySelectorAll('[data-toggle-indicator="'+key+'"]').forEach(btn=>{btn.classList.toggle('active',state.layers[key]);btn.setAttribute('aria-pressed',String(state.layers[key]));const flag=btn.querySelector('[data-indicator-status]');if(flag)flag.textContent=state.layers[key]?'●':'○'});
  state.preset='custom';const presetNodes=panel?.querySelectorAll('[data-chart-preset]');presetNodes?.forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-pressed','false')});
-  const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error)queuePaint();
+  const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error)paintChart();
 }
 const indicatorCache=new WeakMap(),INDICATORS=new Set(['ema20','ema50','ema200','bollinger','volume','rsi','macd','atr','poc','volumeProfile']);
 function studies(bars){
@@ -158,6 +159,7 @@ function toggleFullscreen(force){
  const panel=ensure();if(!panel)return;
  const next=typeof force==='boolean'?force:!state.expanded;if(next===state.expanded)return;
  if(next){
+  if(window.matchMedia?.('(max-width:700px)')?.matches)state.priceFocus=true;
   state.returnFocus=document.activeElement;
   state.previousOverflow=document.body.style.overflow;
   state.previousHtmlOverflow=document.documentElement.style.overflow;
@@ -187,12 +189,12 @@ const CHART_PRESETS={
  structure:{smc:true,structure:true,pivots:true,protection:true,internalProtection:false,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,ema200:true,bollinger:false,volume:false,rsi:false,macd:false,atr:false,liquidity:true,poc:true,volumeProfile:false},
  advanced:{smc:true,structure:true,pivots:true,protection:true,internalProtection:true,orderBlocks:true,fvg:true,fib:true,ema20:true,ema50:true,ema200:true,bollinger:true,volume:true,rsi:true,macd:true,atr:true,liquidity:true,poc:true,volumeProfile:true}
 };
-state.preset=localStorage.getItem('deeprise_chart_preset_v185')||'advanced';
+state.preset=localStorage.getItem('deeprise_chart_preset_v185')||'structure';
 if(!CHART_PRESETS[state.preset])state.preset='structure';
 Object.assign(state.layers,CHART_PRESETS[state.preset]);
 function setPreset(name){
  if(!CHART_PRESETS[name])return;
- Object.assign(state.layers,CHART_PRESETS[name]);
+ state.priceFocus=false;Object.assign(state.layers,CHART_PRESETS[name]);
  state.preset=name;
  try{localStorage.setItem('deeprise_chart_preset_v185',name)}catch(_){}
  render();
@@ -213,9 +215,17 @@ function extraIndicators(open){
  return '<details class="dr-extra-indicators" '+(open?'open':'')+'><summary>'+label+' ⚙</summary><section class="dr-indicator-shortcuts">'+inner+'</section></details>';
 }
 
+
+const guide={
+ ar:[['طريقة الرسم','اختر خط الاتجاه أو أفقي أو منطقة سعرية أو فيبوناتشي، ثم اسحب بين نقطتين على الشارت. بإصبعين للتكبير.'],['القمم والقيعان المحمية','تتحدد حماية القمة أو القاع بعد كسر بنية معتبر؛ المستويات وأسعارها موضحة أسفل الشارت.'],['BOS / CHoCH','BOS كسر بنية مؤكد، وCHoCH إشارة أولية محتملة لتغير الاتجاه.'],['Order Block / FVG','مناطق سعرية محتملة وليست ضمانًا للارتداد.'],['Fibonacci','ارسم من القمة إلى القاع أو العكس؛ مستويات 0.618 و0.786 مراجع للتصحيح.'],['POC / Volume Profile','تقدير من شموع OHLCV، وليس بيانات التداول الفعلية عند كل سعر.'],['EMA / RSI / MACD / ATR','EMA للاتجاه، RSI للزخم، MACD لتحوله، وATR للتذبذب. اضغط المؤشر لإظهاره.']],
+ en:[['Draw tools','Select Trendline, Horizontal, Zone or Fib and drag between two points. Pinch to zoom.'],['Protected highs/lows','Require a validated structure break; prices are listed below.'],['BOS / CHoCH','BOS confirms a structural break; CHoCH warns of possible change.'],['Order block / FVG','Potential zones, not guaranteed reversals.'],['Fibonacci','Draw between swing anchors; 0.618 and 0.786 are common references.'],['POC / Profile','Estimated using OHLCV candles, not true trade-by-trade volume at price.'],['EMA / RSI / MACD / ATR','Trend, momentum, momentum shifts and volatility. Tap a control to show the indicator.']]}
+function helpPanel(){if(!state.helpOpen)return '';return '<section class="dr-chart-help" data-chart-help-panel role="region"><b>'+(lang()==='ar'?'شرح أدوات الشارت':'Chart tools explained')+'</b>'+((guide[lang()]||guide.en).map(([a,b])=>'<p><strong>'+esc(a)+'</strong> — '+esc(b)+'</p>').join(''))+'</section>'}
+function priceLegend(r){const v=viewport(r.bars.length),profile=state.layers.poc?volumeProfileFor(r.bars.slice(v.first,v.end),32):null;const levels=[['Close',r.bars.at(-1)?.close],['PH',state.layers.protection?r.protectedHigh?.price:null],['PL',state.layers.protection?r.protectedLow?.price:null],['POC est.',profile?.poc],['VAH est.',profile?.vah],['VAL est.',profile?.val],['Fib 0.618',state.layers.fib?r.fib?.levels?.find(x=>Math.abs(x.ratio-.618)<.001)?.price:null]].filter(x=>Number.isFinite(x[1]));return levels.map(([name,price])=>'<span><small>'+esc(name)+'</small> <b>$'+pf(price)+'</b></span>').join('')}
 function activateChartButton(target){
- const btn=target?.closest?.('button[data-chart-preset],button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-structure-tf],button[data-structure-refresh]');
+ const btn=target?.closest?.('button[data-chart-preset],button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-chart-help],button[data-chart-price-focus],button[data-structure-tf],button[data-structure-refresh]');
  if(!btn||btn.disabled)return false;
+ if(btn.hasAttribute('data-chart-help')){state.helpOpen=!state.helpOpen;render();return true}
+ if(btn.hasAttribute('data-chart-price-focus')){state.priceFocus=!state.priceFocus;render();return true}
  if(btn.hasAttribute('data-chart-preset')){setPreset(btn.dataset.chartPreset);return true}
  if(btn.hasAttribute('data-structure-fullscreen')){toggleFullscreen();return true}
  if(btn.hasAttribute('data-toggle-indicator')){const key=btn.dataset.toggleIndicator;updateLayer(key,!state.layers[key]);return true}
@@ -242,7 +252,7 @@ function ensure(){
  // WebKit can drop synthetic click after touchend during frequent chart updates.
  // Fire stationary real touches directly and cancel duplicate synthetic clicks.
  let touch=null;
- const selector='button[data-chart-preset],button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-structure-tf],button[data-structure-refresh]';
+ const selector='button[data-chart-preset],button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-chart-help],button[data-chart-price-focus],button[data-structure-tf],button[data-structure-refresh]';
  panel.addEventListener('touchstart',e=>{
   const button=e.target?.closest?.(selector),t=e.touches?.[0];
   touch=button&&e.touches.length===1?{button,x:t.clientX,y:t.clientY,id:t.identifier}:null;
@@ -259,10 +269,11 @@ function ensure(){
  return panel;
 }
 function svg(result){
- const {bars,pivots,events,gaps,sweeps,fib}=result,{first,end,count}=viewport(bars.length),visible=bars.slice(first,end),W=Math.max(350,Math.min(1700,document.getElementById('drStructurePanel')?.clientWidth||1120)),left=20,right=W-(W<650?98:160),top=32,bottom=W<650?310:400,extra=12;
-  const mobile=W<650,panes={};let cursor=bottom+20;
-  for(const [name,on,height] of [['volume',state.layers.volume,mobile?39:54],['rsi',state.layers.rsi,mobile?51:70],['macd',state.layers.macd,mobile?63:88],['atr',state.layers.atr,mobile?42:60]]){if(on){panes[name]={top:cursor,bottom:cursor+height};cursor+=height+21}}
-  const H=cursor+12;
+ const {bars,pivots,events,gaps,sweeps,fib}=result,{first,end,count}=viewport(bars.length),visible=bars.slice(first,end),host=document.querySelector('#drStructurePanel .dr-structure-scroll'),W=Math.max(320,Math.min(1700,host?.clientWidth||document.getElementById('drStructurePanel')?.clientWidth||1120)),mobile=W<650,left=mobile?14:20,right=W-(mobile?72:112),top=32,extra=mobile?7:12;
+ const paneSpecs=[['volume',state.layers.volume,mobile?28:54],['rsi',state.layers.rsi,mobile?36:70],['macd',state.layers.macd,mobile?43:88],['atr',state.layers.atr,mobile?30:60]].filter(([,on])=>on&&!(state.expanded&&state.priceFocus));
+ const gap=mobile?13:21,paneTotal=paneSpecs.reduce((n,a)=>n+a[2]+gap,0),target=state.expanded&&host?.clientHeight>250?host.clientHeight:(mobile?600:740),bottom=Math.max(mobile?228:350,target-paneTotal-34),panes={};let cursor=bottom+20;
+ for(const [name,,height] of paneSpecs){panes[name]={top:cursor,bottom:cursor+height};cursor+=height+gap}
+ const H=cursor+12;
  const study=studies(bars),active=gaps.filter(g=>g.status!=='FILLED'),values=visible.flatMap(b=>[b.high,b.low]);
   const profile=(state.layers.poc||state.layers.volumeProfile)?volumeProfileFor(visible,W<650?32:56):null;
  if(state.layers.ema20)values.push(...study.ema20.slice(first,end).filter(Number.isFinite));
@@ -278,8 +289,7 @@ function svg(result){
  const X=i=>left+(i-first)/(visible.length+extra-1)*(right-left),Y=p=>bottom-(p-lo)/(hi-lo)*(bottom-top),green='#35e0a1',red='#ff6574',gold='#ffd166';
  state.geometry={W,H,left,right,top,bottom,first,count,extra,lo,hi,origin:bars[0].time,step:result.intervalMs};
  const text=(x,y,label,color='#a7bccf',size=10)=>`<text x="${x}" y="${y}" fill="${color}" font-size="${size}" direction="ltr">${esc(label)}</text>`;
- const labelRows=[];
- const line=(price,label,color,dash='5 4',start=left)=>{const actual=Y(price);let row=Math.max(top,Math.min(bottom,actual));while(labelRows.some(y=>Math.abs(y-row)<12))row+=12;labelRows.push(row);return `<line x1="${start}" x2="${right}" y1="${actual}" y2="${actual}" stroke="${color}" stroke-dasharray="${dash}"/><path d="M ${right} ${actual} L ${right+5} ${row}" stroke="${color}" opacity=".5"/>${text(right+8,row+3,label+' $'+pf(price),color)}`};
+ const line=(price,label,color,dash='5 4',start=left)=>{const y=Y(price);return Number.isFinite(y)?'<g data-chart-level="'+esc(label)+'"><title>'+esc(label+' · $'+pf(price))+'</title><line x1="'+start+'" x2="'+right+'" y1="'+y+'" y2="'+y+'" stroke="'+color+'" stroke-dasharray="'+dash+'" stroke-width="1.3" opacity=".8"/></g>':''};
  let out='';
   if(profile&&state.layers.volumeProfile){
     const maxBar=(right-left)*(W<650?.24:.19);
@@ -291,7 +301,7 @@ function svg(result){
     });
     out+='</g>';
   }
-  for(let i=0;i<=5;i++){const p=lo+(hi-lo)*i/5;out+=`<line x1="${left}" x2="${right}" y1="${Y(p)}" y2="${Y(p)}" stroke="#173148"/>`+(!(fib&&(state.layers.fib||state.layers.extensions||state.layers.trendExtensions))&&!state.layers.protection?text(right+8,Y(p)+3,'$'+pf(p),'#526c81'):'')}
+  for(let i=0;i<=5;i++){const p=lo+(hi-lo)*i/5;out+=`<line x1="${left}" x2="${right}" y1="${Y(p)}" y2="${Y(p)}" stroke="#173148"/>`+text(right+5,Y(p)+3,'$'+pf(p),'#a9cada',mobile?9:11)}
  if(fib&&state.layers.fib){const from=Math.min(right,Math.max(left,X(fib.start.index))),low=Math.min(fib.start.price,fib.end.price),high=Math.max(fib.start.price,fib.end.price),mid=fib.equilibrium;
   out+=`<rect x="${from}" y="${Y(high)}" width="${right-from}" height="${Y(mid)-Y(high)}" fill="${red}" opacity=".035"/><rect x="${from}" y="${Y(mid)}" width="${right-from}" height="${Y(low)-Y(mid)}" fill="${green}" opacity=".035"/><rect x="${from}" y="${Y(fib.golden[1])}" width="${right-from}" height="${Y(fib.golden[0])-Y(fib.golden[1])}" fill="${gold}" opacity=".09"/>`;
   fib.levels.forEach(l=>{out+=line(l.price,'Fib '+l.ratio,l.ratio===.618||l.ratio===.786?gold:'#716d98','3 5',from)});
@@ -315,9 +325,9 @@ function svg(result){
  if(fib&&state.layers.trendExtensions)fib.trendExtensions.forEach(l=>{if(l.price>=lo&&l.price<=hi)out+=line(l.price,'ABC '+l.ratio,'#76d6ee','8 4')});
  if(fib&&state.layers.timeZones){const unit=fib.end.index-fib.start.index;for(const r of [1,2,3,5,8,13]){const idx=fib.start.index+unit*r;if(idx<first||idx>end+extra-1)continue;const x=X(idx);out+=`<line x1="${x}" x2="${x}" y1="${top}" y2="${bottom}" stroke="#c084fc" stroke-dasharray="3 7" opacity=".4"/>`+text(x+3,top+10,'T '+r,'#c084fc')}}
  if(fib&&state.layers.fan){const x1=X(fib.start.index),x2=X(fib.end.index);if(x2>x1)for(const ratio of [.382,.5,.618]){const y1=Y(fib.start.price),y2=Y(fib.start.price+(fib.end.price-fib.start.price)*ratio),endY=y1+(y2-y1)*(right-x1)/(x2-x1);out+=`<line x1="${x1}" x2="${right}" y1="${y1}" y2="${endY}" stroke="#9d8bcd" stroke-dasharray="6 5"/>`}}
- const width=Math.max(3,(right-left)/(visible.length+extra)*.55);
+ const width=Math.max(3,(right-left)/(visible.length+extra)*.76);
  visible.forEach((b,j)=>{const x=X(first+j),color=b.close>=b.open?green:red;out+=`<g><title>${esc(stamp(b.closeTime)+' • O '+pf(b.open)+' H '+pf(b.high)+' L '+pf(b.low)+' C '+pf(b.close))}</title><line x1="${x}" x2="${x}" y1="${Y(b.high)}" y2="${Y(b.low)}" stroke="${color}"/><rect x="${x-width/2}" y="${Math.min(Y(b.open),Y(b.close))}" width="${width}" height="${Math.max(1,Math.abs(Y(b.open)-Y(b.close)))}" fill="${color}"/></g>`;if(j%15===0)out+=text(x,bottom+25,new Date(b.time).toISOString().slice(5,16).replace('T',' '),'#6e879c',9)});
- if(state.layers.volume){
+ if(panes.volume){
    const p=panes.volume,maxVolume=Math.max(1,...visible.map((b,j)=>Math.max(Number(b.volume)||0,Number(study.volMA[first+j])||0)));
    const y=v=>p.bottom-v/maxVolume*(p.bottom-p.top);
    out+=`<line x1="${left}" x2="${right}" y1="${p.bottom}" y2="${p.bottom}" stroke="#29445a"/>${text(left,p.top-5,t('volume')+' MA20 · '+(Number.isFinite(study.volMA[end-1])?((Number(visible.at(-1)?.volume)||0)/study.volMA[end-1]).toFixed(2)+'×':'—'),'#9bb8ca',10)}`;
@@ -325,20 +335,20 @@ function svg(result){
    let volPath='',active=false;for(let i=first;i<end;i++){if(!Number.isFinite(study.volMA[i])){active=false;continue}volPath+=(active?' L ':'M ')+X(i).toFixed(1)+' '+y(study.volMA[i]).toFixed(1);active=true}
    out+=`<path d="${volPath}" stroke="#f5d37c" stroke-width="1.5" fill="none" vector-effect="non-scaling-stroke"/>`;
   }
-  if(state.layers.rsi){
+  if(panes.rsi){
    const p=panes.rsi,rY=n=>p.bottom-n/100*(p.bottom-p.top);
    for(const level of [30,50,70])out+=`<line x1="${left}" x2="${right}" y1="${rY(level)}" y2="${rY(level)}" stroke="#52627a" stroke-dasharray="4 5" opacity=".6"/>${text(right+5,rY(level)+4,level,'#9bb8ca',9)}`;
    let path='',active=false;for(let i=first;i<end;i++){if(!Number.isFinite(study.rsi[i])){active=false;continue}path+=(active?' L ':'M ')+X(i).toFixed(1)+' '+rY(study.rsi[i]).toFixed(1);active=true}
    const last=study.rsi[end-1];out+=`<path d="${path}" fill="none" stroke="#bba2ff" stroke-width="2" vector-effect="non-scaling-stroke"/>${text(left,p.top-4,'RSI 14'+(Number.isFinite(last)?' · '+last.toFixed(1):''),'#bba2ff',10)}`;
   }
-  if(state.layers.macd){
+  if(panes.macd){
    const p=panes.macd,series=[...study.macd.slice(first,end),...study.macdSignal.slice(first,end),...study.macdHist.slice(first,end)].filter(Number.isFinite),extent=Math.max(...series.map(Math.abs),1e-9),center=(p.top+p.bottom)/2,dy=extent?((p.bottom-p.top)*.46)/extent:1;
    const my=v=>center-v*dy;
    out+=`<line x1="${left}" x2="${right}" y1="${center}" y2="${center}" stroke="#416074" stroke-dasharray="3 4"/>${text(left,p.top-5,'MACD 12/26/9 · '+(Number.isFinite(study.macdHist[end-1])?pf(study.macdHist[end-1]):'—'),'#8cc7ff',10)}`;
    for(let i=first;i<end;i++){const v=study.macdHist[i];if(Number.isFinite(v))out+=`<rect x="${X(i)-width/2}" y="${Math.min(center,my(v))}" width="${width}" height="${Math.max(1,Math.abs(v*dy))}" fill="${v>=0?green:red}" opacity=".65"/>`}
    for(const [key,color] of [['macd','#68b8ff'],['macdSignal','#ffbb7c']]){let path='',active=false;for(let i=first;i<end;i++){const v=study[key][i];if(!Number.isFinite(v)){active=false;continue}path+=(active?' L ':'M ')+X(i).toFixed(1)+' '+my(v).toFixed(1);active=true}out+=`<path d="${path}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>`}
   }
-  if(state.layers.atr){
+  if(panes.atr){
    const p=panes.atr,vals=study.atr.slice(first,end).filter(Number.isFinite),amax=Math.max(...vals,1e-9),amin=Math.max(0,Math.min(...vals,amax)*.88),ay=v=>p.bottom-(v-amin)/(amax-amin||1)*(p.bottom-p.top);
    let path='',active=false;for(let i=first;i<end;i++){const v=study.atr[i];if(!Number.isFinite(v)){active=false;continue}path+=(active?' L ':'M ')+X(i).toFixed(1)+' '+ay(v).toFixed(1);active=true}
    const val=study.atr[end-1],ratio=Number.isFinite(val)&&visible.length?100*val/visible.at(-1).close:null;
@@ -386,7 +396,8 @@ function svg(result){
    out+='<g><title>'+esc(t('internalScope')+' · '+t(key)+' · '+stamp(p.protection?.breakTime||p.confirmedAt))+
     '</title>'+line(p.price,key==='high'?'IN PH':'IN PL',key==='low'?'#8defc7':'#ffb2ab','3 6',Math.max(left,X(p.index)))+'</g>';
   }
- out+=text(left,26,state.symbol+' • '+state.tf+' • '+t('asof')+' '+stamp(result.barClose),'#d8e7f3',11);
+ const last=visible.at(-1);if(last){const y=Y(last.close);out+='<g data-last-close-price="'+last.close+'"><line x1="'+left+'" x2="'+right+'" y1="'+y+'" y2="'+y+'" stroke="#b1ffe3" stroke-dasharray="3 4"/><rect x="'+(right+1)+'" y="'+(y-10)+'" width="'+(W-right-2)+'" height="20" rx="4" fill="#125b4e"/><text x="'+(right+4)+'" y="'+(y+3)+'" font-size="'+(mobile?9:12)+'" fill="#fff" direction="ltr">$'+pf(last.close)+'</text></g>'}
+ out+=text(left,26,state.symbol+' • '+state.tf+' • '+t('asof')+' '+stamp(result.barClose),'#d8e7f3',mobile?9:11);
  return `<svg viewBox="0 0 ${W} ${H}" data-dr-interactive tabindex="0" role="application" aria-label="${esc(t('title')+' '+state.symbol+' '+state.tf)}"><defs><clipPath id="drDrawingClip"><rect x="${left}" y="${top}" width="${right-left}" height="${bottom-top}"/></clipPath><clipPath id="drStructureClip"><rect x="${left}" y="0" width="${W-left}" height="${H}"/></clipPath></defs><g clip-path="url(#drStructureClip)">${out}</g>${drawingSvg(state.geometry)}</svg>`;
 }
 
@@ -423,7 +434,7 @@ function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?
  const status=state.loading?t('loading'):state.error?t('error')+(state.errorMessage?' · '+esc(state.errorMessage):''):'';
  let body=status?`<div class="dr-structure-status" role="status">${status}</div>`:'';
  // Never leave the preceding symbol or timeframe's chart under a new heading.
- if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div>${smcCard(r)}${toolBar()}<div class="dr-structure-scroll" dir="ltr">${svg(r)}</div>`;
+ if(r&&!state.error){body+=`<div class="dr-structure-summary"><span>${t('bias')}: <b>${t(r.bias==='LONG'?'long':r.bias==='SHORT'?'short':'range')}</b></span><span>${t('low')}: <b>${r.protectedLow?'$'+pf(r.protectedLow.price):'—'}</b></span><span>${t('high')}: <b>${r.protectedHigh?'$'+pf(r.protectedHigh.price):'—'}</b></span><span>FVG: <b>${r.gaps.filter(g=>g.status!=='FILLED').length}</b></span><span>OB: <b>${(r.blocks||[]).filter(b=>b.status!=='INVALID').length}</b></span></div>${smcCard(r)}${toolBar()}<div class="dr-structure-scroll" dir="ltr">${svg(r)}</div><div class="dr-chart-levels" data-chart-levels dir="ltr">${priceLegend(r)}</div>${helpPanel()}`;
   if(fib)body+=`<div class="dr-structure-note">${t('anchors')}: $${pf(fib.start.price)} → $${pf(fib.end.price)} • ${fib.side}${fib.third?' • C $'+pf(fib.third.price):''}<br>${t('golden')}: $${pf(fib.golden[0])} – $${pf(fib.golden[1])} • ${t('equilibrium')}: $${pf(fib.equilibrium)}${state.layers.trendExtensions&&!fib.third?'<br>'+t('waitingC'):''}</div>`;
  }
  if(r&&!state.error)body+='<div class="dr-protection-records">'+
@@ -433,6 +444,7 @@ function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?
   protectionInfo(r.internal?.protectedLow,t('internalScope'),t('low'))+'</div>';
   const noOb=r&&!state.loading&&state.layers.orderBlocks&&!(r.blocks||[]).some(b=>b.status!=='INVALID')?'<div class="dr-structure-note dr-no-ob">'+esc(t('noOrderBlocks'))+'</div>':'';
  panel.innerHTML=header+indicatorQuick()+`<div class="dr-indicator-feedback" data-indicator-feedback role="status" aria-live="polite"></div>`+body+noOb+extraIndicators(extraOpen)+`<div class="dr-plot-options"><details class="dr-layer-picker" ${layersOpen?'open':''}><summary>${wt('layers')}</summary>${controls}</details><details class="dr-indicator-picker" ${indicatorsOpen?'open':''}><summary>${t('indicators')}</summary>${indicatorControls}</details></div><div class="dr-structure-note">${t('note')}${state.layers.timeZones?'<br>'+t('timeNote'):''}</div>`;
+ if(r&&!state.error)requestAnimationFrame(()=>{if(panel.isConnected&&!state.pointers.size)paintChart()});
 }
 async function load(symbol,tf='4h',force=false){
  if(!symbol)return;symbol=String(symbol).replace(/[^A-Z0-9]/gi,'').toUpperCase();const token=++state.token;state.controller?.abort();if(state.symbol!==symbol||state.tf!==tf){state.view={count:defaultCount(),offset:0};state.pending=null;state.pointers.clear();state.gesture=null;state.dragPreview=null}state.symbol=symbol;state.tf=tf;state.result=null;state.error=false;state.errorMessage='';state.loading=true;render();
@@ -463,14 +475,15 @@ function ensureOpenedChart(){
  if(!hostPanel?.classList.contains('active'))return;
  let sym='';
  try{if(typeof chartSymbol==='string')sym=chartSymbol}catch(_){}
- if(!sym){const base=(document.getElementById('chartTitle')?.textContent||'').split('/')[0].trim().replace(/[^A-Z0-9]/gi,'');if(base)sym=base+'USDT'}
+ if(!sym&&state.symbol)sym=state.symbol;
+ if(!sym){const raw=(document.getElementById('chartTitle')?.textContent||'').toUpperCase();const pair=raw.match(/([A-Z0-9]+)\/USDT/);if(pair)sym=pair[1]+'USDT';else{const hit=raw.match(/\b([A-Z0-9]+USDT)\b/);if(hit)sym=hit[1]}}
  if(!sym)sym='BTCUSDT';
  if(sym!==state.symbol&&!state.loading)load(sym,state.tf);
 }
 if(hostPanel){new MutationObserver(ensureOpenedChart).observe(hostPanel,{attributes:true,attributeFilter:['class']});setTimeout(ensureOpenedChart,100)}
 
 document.addEventListener('deeprise-premove-updated',()=>{const r=window.DeepRisePreMove?.state.structures.get(state.symbol);if(state.tf==='4h'&&r?.bars?.length>=220&&!state.loading&&r!==state.result&&(!state.result||r.barClose>state.result.barClose)){state.result=r;queuePaint()}});
-window.DeepRiseStructureChart={version:'18.7',state,load,render,zoom,pan,fit,setPreset,viewport,drawings,saveDrawings,addPoint,svg,paintChart,studies,volumeProfileFor,updateLayer,toggleFullscreen};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.expanded){e.preventDefault();e.stopImmediatePropagation();toggleFullscreen(false)}},true);
+window.DeepRiseStructureChart={version:'18.8',state,load,render,zoom,pan,fit,setPreset,viewport,drawings,saveDrawings,addPoint,svg,paintChart,studies,volumeProfileFor,updateLayer,toggleFullscreen};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.expanded){e.preventDefault();e.stopImmediatePropagation();toggleFullscreen(false)}},true);
 const css=document.createElement('style');css.textContent=`.dr-draw-toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin:12px 0}.dr-draw-toolbar>div{display:flex;flex-wrap:wrap;align-items:center;gap:5px}.dr-draw-toolbar button{padding:9px 11px;border:1px solid #29465e;background:#102236;color:#cae4f7;font-size:11px;min-height:38px}.dr-draw-toolbar button.active{border-color:#ffd166;color:#ffd166}.dr-draw-toolbar button:disabled{opacity:.35;cursor:default}.dr-draw-toolbar small{font-size:10px;color:#9bb8ca}.dr-layer-picker>summary{cursor:pointer;padding:10px;color:#65b8ff;font-size:12px}.dr-structure-scroll svg[data-dr-interactive]{touch-action:none;user-select:none;min-width:0;width:100%;display:block;outline-offset:-3px}.dr-structure-scroll{overflow:hidden!important}.dr-structure-panel:has([data-chart-tool].active:not([data-chart-tool=pan])) svg{cursor:crosshair}.dr-readiness-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0}.dr-readiness-tabs button,.dr-structure-head button{border:1px solid #29465e;border-radius:8px;padding:8px 10px;background:#0b2130;color:#a9c1d1;font-size:11px;cursor:pointer}.dr-readiness-tabs button.active,.dr-structure-head button.active{border-color:#35e0a1;color:#72e8bf;background:#10382e}.dr-readiness-tabs b{margin-inline-start:6px}.dr-readiness-group{border-top:1px solid #264056;padding-top:5px;margin-top:12px;min-width:0}.dr-readiness-group h3{color:#9abbd0;font-size:14px;display:flex;gap:9px;align-items:center}.dr-readiness-group h3 span{font-size:11px;border-radius:20px;background:#163145;padding:3px 8px}.dr-readiness-group.ready h3{color:#35e0a1}.dr-readiness-group.near h3{color:#65b8ff}.dr-readiness-group.early h3{color:#ffd166}.dr-readiness-group.blocked h3{color:#ff9f62}.dr-premove-card.ready{border-color:#35e0a1}.dr-premove-card.near{border-color:#396d9b}.dr-premove-card.early{border-color:#6b5b32}.dr-premove-card.blocked{border-color:#8e533a}.dr-readiness-action{margin-top:8px;font-size:11px;color:#c5dce8;line-height:1.6}.dr-structure-panel{padding:16px;background:#071421;border-top:1px solid #26485d;min-width:0}.dr-structure-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;color:#d9edfa}.dr-structure-head>div{display:flex;gap:5px;flex-wrap:wrap}.dr-structure-controls{display:flex;flex-wrap:wrap;gap:8px 15px;margin:13px 0;font-size:11px;color:#a1bed0}.dr-structure-controls label{display:flex;gap:5px;align-items:center;cursor:pointer}.dr-structure-summary{display:flex;gap:10px 18px;flex-wrap:wrap;font-size:11px;color:#9bb8cd;margin:10px 0}.dr-structure-summary b{color:#dceef9}.dr-structure-scroll{overflow-x:auto;max-width:100%;border:1px solid #18344c;border-radius:10px;background:#050e19}.dr-structure-scroll svg{display:block;width:100%;min-width:900px;height:auto;font-family:Arial,sans-serif}.dr-structure-note{font-size:10px;color:#8da7b9;line-height:1.7;margin-top:9px;overflow-wrap:anywhere}.dr-structure-status{padding:18px;color:#ffd166}@media(min-width:1200px){.dr-readiness-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.dr-readiness-groups>.dr-readiness-group:only-child{grid-column:1/-1}}@media(max-width:700px){.dr-structure-panel{padding:11px}.dr-readiness-tabs button{padding:9px 7px;font-size:10px}.dr-premove-card{overflow-wrap:anywhere}.dr-premove-metrics b,.dr-premove-levels b{unicode-bidi:isolate;direction:ltr;display:inline-block}}`;
 css.textContent+=".dr-structure-scroll svg[data-dr-interactive]{width:100%!important;min-width:0!important;height:auto;touch-action:none}.dr-draw-toolbar>div{max-width:100%;overflow-x:auto;flex-wrap:nowrap!important}.dr-draw-toolbar button{white-space:nowrap;flex-shrink:0;border-radius:7px}.dr-structure-scroll{overflow:hidden!important;contain:layout paint}.dr-chart-expanded .dr-structure-scroll svg[data-dr-interactive]{height:auto;min-height:min(50dvh,540px)}@media(max-width:650px){.dr-draw-toolbar>div{width:100%}.dr-structure-head button{min-height:38px}}";css.textContent+=".dr-plot-options{display:flex;gap:9px 18px;flex-wrap:wrap}.dr-plot-options details{flex:1 1 200px;min-width:0}.dr-indicator-picker>summary{padding:10px;color:#65b8ff;font-size:12px;cursor:pointer}.dr-plot-options .dr-structure-controls{max-height:210px;overflow-y:auto}.dr-structure-panel svg text{pointer-events:none}";css.textContent+=`.dr-no-ob{color:#ffc97b;border:1px dashed #906638;padding:8px 12px;border-radius:8px}.dr-quick-layer-group>b{font-size:12px;color:#b5d1e1;display:block;margin:7px 0}.dr-quick-layer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.dr-indicator-shortcuts{display:block!important;margin:8px 0}.dr-indicator-shortcuts button{min-height:40px!important;text-align:center!important;white-space:normal!important;overflow-wrap:anywhere}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(6,minmax(0,1fr))}@media(max-width:650px){.dr-quick-layer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.dr-structure-fullscreen .dr-quick-layer-group>b{font-size:10px}}.dr-indicator-feedback{min-height:17px;color:#9edfc5;font-size:12px;padding:1px 4px}.dr-indicator-shortcuts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:10px 0}.dr-indicator-shortcuts button{position:relative;z-index:1;-webkit-user-select:none;user-select:none;border:1px solid #31506b;background:#0e2435;color:#c1d8e8;padding:10px 12px;border-radius:10px;font-size:12px;cursor:pointer;min-height:42px;touch-action:manipulation}.dr-indicator-shortcuts button.active{background:#10382e;border-color:#35e0a1;color:#85f0cb}.dr-indicator-shortcuts [data-indicator-status]{font-size:15px;margin-inline-start:5px}.dr-structure-controls label.is-on{color:#81e9c2}.dr-structure-expand{border-color:#35e0a1!important;color:#a3f8d8!important;font-weight:700}.dr-structure-fullscreen{position:fixed!important;inset:0!important;z-index:9999999!important;width:100vw!important;height:100dvh!important;max-height:100dvh!important;overflow:auto!important;border:0!important;border-radius:0!important;margin:0!important;padding:calc(9px + env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))!important;box-sizing:border-box;background:#050e19!important;display:flex!important;flex-direction:column!important;overscroll-behavior:contain}.dr-structure-fullscreen .dr-structure-head{position:sticky;top:0;z-index:3;background:#050e19;padding:8px 0}.dr-structure-fullscreen .dr-draw-toolbar{margin:6px 0}.dr-structure-fullscreen .dr-plot-options{flex-shrink:0}.dr-structure-fullscreen .dr-plot-options details:not([open]){flex:0 1 auto}.dr-structure-fullscreen .dr-structure-scroll{flex:1 1 auto!important;min-height:44dvh;overflow:hidden!important;contain:none!important}.dr-structure-fullscreen .dr-structure-scroll svg[data-dr-interactive]{height:100%!important;max-height:none!important;width:100%!important;min-width:0!important}.dr-structure-immersive .dr-bottom-nav,.dr-structure-immersive #deepriseInstall{visibility:hidden!important}@media(max-width:700px){.dr-structure-fullscreen .dr-structure-head{gap:5px}.dr-structure-fullscreen .dr-structure-note{font-size:9px}.dr-structure-fullscreen .dr-indicator-shortcuts{flex-wrap:nowrap;overflow-x:auto;padding:6px 0}.dr-indicator-shortcuts button{white-space:nowrap}.dr-structure-fullscreen .dr-draw-toolbar>div{overflow-x:auto!important}}`;
 css.textContent+=`.dr-structure-scroll svg[data-dr-interactive],.dr-structure-scroll svg[data-dr-interactive] *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}.dr-protection-records{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:7px;margin:10px 0}.dr-protection-record{border:1px solid #29485f;background:#0a2130;padding:9px 11px;border-radius:9px;display:grid;gap:5px;font-size:11px;line-height:1.5}.dr-protection-record>b{color:#dbedf7}.dr-protection-record>span{color:#9ac2d5}.dr-structure-scroll{overscroll-behavior:contain}.dr-structure-head button,.dr-indicator-shortcuts button,.dr-draw-toolbar button{touch-action:manipulation}`;
@@ -510,5 +523,5 @@ css.textContent+="\n/* V18.5 iPhone CSS immersive with readable controls and saf
 }
 .dr-structure-fullscreen .dr-quick-chart-controls{position:sticky;top:0;z-index:4;background:#050e19;padding:3px 0}
 .dr-structure-fullscreen .dr-structure-scroll{min-height:50dvh!important;flex:1 1 auto!important}
-`;document.head.appendChild(css);hook();let resizeQueued=false;addEventListener('resize',()=>{if(resizeQueued||!state.result||state.pointers.size)return;resizeQueued=true;requestAnimationFrame(()=>{resizeQueued=false;paintChart()})});
+`;css.textContent+="\n/* V18.8 adaptive chart axis and accessible mobile controls */\n.dr-chart-levels{display:flex;gap:7px;overflow-x:auto;white-space:nowrap;padding:7px 2px;scrollbar-width:thin}\n.dr-chart-levels span{flex:0 0 auto;display:flex;gap:5px;align-items:center;padding:6px 8px;border:1px solid #31566e;background:#0d2738;border-radius:7px;font-size:11px}\n.dr-chart-levels small{color:#9ac0d5;font-size:10px}.dr-chart-levels b{color:#e4faff}\n.dr-chart-help{position:relative;background:#0b2535;border:1px solid #48b69b;border-radius:10px;margin:8px 0;padding:12px;max-height:50dvh;overflow:auto;line-height:1.6}\n.dr-chart-help>b{color:#8ff5d0}.dr-chart-help p{font-size:12px;margin:7px 0;color:#c7dbea}.dr-chart-help strong{color:#f0f9ff}\n.dr-draw-toolbar button[aria-pressed=true]{border-color:#36d9ac;background:#123f34;color:#a9ffdf}\n.dr-structure-fullscreen .dr-chart-levels{display:none}\n.dr-structure-fullscreen>.dr-indicator-feedback{display:block!important;min-height:18px!important;flex:0 0 auto!important;color:#a1f8d3!important;font-size:11px!important}\n.dr-structure-fullscreen .dr-chart-help{position:absolute;bottom:max(10px,env(safe-area-inset-bottom));left:7px;right:7px;z-index:9;max-height:55dvh;box-shadow:0 -10px 35px #0009}\n@media(max-width:650px){.dr-structure-fullscreen .dr-structure-scroll{min-height:0!important;flex:1 1 auto!important}.dr-structure-fullscreen .dr-structure-scroll svg[data-dr-interactive]{width:100%!important;height:100%!important}}\n";document.head.appendChild(css);hook();let resizeQueued=false;addEventListener('resize',()=>{if(resizeQueued||!state.result||state.pointers.size)return;resizeQueued=true;requestAnimationFrame(()=>{resizeQueued=false;paintChart()})});
 })();

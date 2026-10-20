@@ -21,7 +21,7 @@ const {webkit,devices}=require('playwright');
  });
  await page.waitForFunction(()=>!!window.DeepRiseStructureChart.state.result,{timeout:25000});
  const layer=k=>page.evaluate(k=>window.DeepRiseStructureChart.state.layers[k],k);
- assert.equal(await layer('rsi'),true,'Advanced chart shows RSI by default');
+ assert.equal(await layer('rsi'),false,'Mobile structure preset hides RSI by default to prioritize price');
  await page.evaluate(()=>window.DeepRiseStructureChart.setPreset('structure'));
  assert.equal(await layer('rsi'),false,'Structure preset hides RSI until enabled');
  await page.locator('#drStructurePanel .dr-fast-toggles [data-toggle-indicator="rsi"]').tap();

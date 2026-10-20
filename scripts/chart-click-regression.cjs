@@ -26,7 +26,7 @@ w.DeepRiseStructure={
 w.eval(fs.readFileSync('deeprise-structure-chart-v174.js','utf8'));
 const engine=w.DeepRiseStructureChart;
 assert.ok(engine,'Structure chart module should boot');
-assert.equal(engine.version,'18.7');
+assert.equal(engine.version,'18.8');
 function button(selector){const b=w.document.querySelector(selector);assert.ok(b,'Missing '+selector);return b}
 (async()=>{
  w.openChart('BTCUSDT');
@@ -38,8 +38,10 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
  assert.ok(button('[data-toggle-indicator="volumeProfile"]'),'Volume Profile quick toggle must exist');
  const estimate=engine.volumeProfileFor(engine.state.result.bars.slice(-75));
  assert(estimate&&estimate.poc>0&&estimate.vah>=estimate.poc&&estimate.val<=estimate.poc,'Estimated value area and POC are ordered');
- assert.match(plot.outerHTML,/data-volume-profile="estimated-ohlcv"/,'Advanced preset must draw estimated profile');
- assert.match(plot.outerHTML,/data-poc-price=/,'Advanced preset must draw POC');
+ assert.equal(engine.state.preset,'structure','Default preset must reduce chart clutter');
+ engine.setPreset('advanced');
+ assert.match(button('#drStructurePanel svg').outerHTML,/data-volume-profile="estimated-ohlcv"/,'Advanced preset must draw estimated profile');
+ assert.match(button('#drStructurePanel svg').outerHTML,/data-poc-price=/,'Advanced preset must draw POC');
  button('[data-toggle-indicator="volumeProfile"]').click();
  await wait(25);
  assert.doesNotMatch(button('#drStructurePanel svg').outerHTML,/data-volume-profile=/,'Volume profile must turn off');
@@ -97,10 +99,22 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
  button('[data-structure-fullscreen]').click();
  assert.ok(!button('#drStructurePanel').classList.contains('dr-structure-fullscreen'),'Fullscreen must close');
   assert.equal(button('#drStructurePanel').parentElement,w.document.getElementById('chartPanel'),'Fullscreen must restore original container');
+ assert.ok(button('[data-chart-help]'),'Help control must be visible');
+ button('[data-chart-help]').click();
+ assert.ok(button('[data-chart-help-panel]'),'Help content must open when tapped');
+ button('[data-chart-help]').click();
+ assert.equal(w.document.querySelector('[data-chart-help-panel]'),null,'Help panel must close');
+ assert.ok(button('[data-chart-price-focus]'),'Price focus must be available');
+ button('[data-chart-price-focus]').click();
+ assert.equal(engine.state.priceFocus,true,'Price focus must activate');
+ button('[data-chart-price-focus]').click();
+ assert.equal(engine.state.priceFocus,false,'Price focus must deactivate');
+ assert.ok(button('[data-chart-levels]').textContent.includes('Close'),'Numerical price legend must be displayed');
+ assert.match(button('#drStructurePanel svg').outerHTML,/data-last-close-price=/,'Chart must show last-close price marker');
  const standalone=fs.readFileSync('chart.html','utf8');
  assert.match(standalone,/DOMContentLoaded/);
- assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1870/);
+ assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1880/);
  assert.match(standalone,/symbolForm/);
- console.log('DeepRise v18.7 profile, POC, touch-draw, indicator and fullscreen DOM regression: PASS');
+ console.log('DeepRise v18.8 price-axis, interactive help, profile, touch-draw and fullscreen DOM regression: PASS');
  dom.window.close();
 })().catch(e=>{console.error(e);process.exitCode=1;dom.window.close()});

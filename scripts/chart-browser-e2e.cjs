@@ -21,8 +21,8 @@ const {chromium}=require('playwright');
  for(let i=0;i<attempts;i++){
   await page.waitForTimeout(local?1100:7000);
   const version=await page.evaluate(()=>window.DeepRiseStructureChart?.version||null);
-  if(version==='18.7')break;
-  if(i===attempts-1)throw Error('Chart v18.7 boot failed; got '+version+' errors: '+JSON.stringify(errors.slice(0,6)));
+  if(version==='18.8')break;
+  if(i===attempts-1)throw Error('Chart v18.8 boot failed; got '+version+' errors: '+JSON.stringify(errors.slice(0,6)));
   response=await page.reload({waitUntil:'domcontentloaded',timeout:60000});
  }
  const detail=await page.evaluate(()=>{
@@ -39,6 +39,7 @@ const {chromium}=require('playwright');
   body:document.body.textContent.slice(-600)}
  });
  console.log('HTTP',response?.status(),'DETAIL',JSON.stringify(detail),'ERRORS',JSON.stringify(errors.slice(0,10)),'FAILED_REQUESTS',JSON.stringify(requests.slice(0,12)));
+ if(detail.state?.symbol!=='BTCUSDT')throw Error('Chart symbol was incorrectly changed: '+detail.state?.symbol);
  if(detail.buttons){
   if(await page.evaluate(()=>window.DeepRiseStructureChart?.state.expanded)){await page.locator('#drStructurePanel [data-structure-fullscreen]').click({timeout:10000})}
   await page.evaluate(()=>window.DeepRiseStructureChart?.setPreset('structure'));
@@ -79,5 +80,5 @@ const {chromium}=require('playwright');
  await page.locator('#nativeTop').click();
  if(await page.locator('#chartPanel').evaluate(el=>el.hidden))throw Error('Native chart did not return');
   await browser.close();
- if(errors.length||!detail.svg||detail.error||detail.version!=='18.7')process.exitCode=1;
-})().catch(e=>{console.error(e);process.exitCode=1});
+ if(errors.length||!detail.svg||detail.error||detail.version!=='18.8')process.exitCode=1;
+})().catch(e=>{console.error(e);process.exit(1)});
