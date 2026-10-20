@@ -93,7 +93,7 @@ jobs:
               assert marker in pwa, f'pwa.js missing {marker}'
           assert 'network-v18-5-0' in pwa, 'service-worker network-only registration missing'
           assert "deeprise-pwa-network-v18-5-0" in sw, 'service-worker network cache missing'
-          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1730','./deeprise-pre-move-v170.js?v=1730','./deeprise-signal-stability-v171.js?v=1710','./mobile-app-v11.js?v=1800','./pwa.js?v=1800','networkOnlyNavigation','offlinePage']:
+          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1730','./deeprise-pre-move-v170.js?v=1730','./deeprise-signal-stability-v171.js?v=1710','./mobile-app-v11.js?v=1800','./pwa.js?v=1850','networkOnlyNavigation','offlinePage']:
               assert marker in sw, f'cacheless service-worker wiring missing: {marker}'
           assert "event.request.mode==='navigate'" in sw
           assert "cache:'no-store'" in sw
