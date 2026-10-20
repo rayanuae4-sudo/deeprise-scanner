@@ -21,8 +21,8 @@ const {chromium}=require('playwright');
  for(let i=0;i<attempts;i++){
   await page.waitForTimeout(local?1100:7000);
   const version=await page.evaluate(()=>window.DeepRiseStructureChart?.version||null);
-  if(version==='18.5')break;
-  if(i===attempts-1)throw Error('Chart v18.5 boot failed; got '+version+' errors: '+JSON.stringify(errors.slice(0,6)));
+  if(version==='18.7')break;
+  if(i===attempts-1)throw Error('Chart v18.7 boot failed; got '+version+' errors: '+JSON.stringify(errors.slice(0,6)));
   response=await page.reload({waitUntil:'domcontentloaded',timeout:60000});
  }
  const detail=await page.evaluate(()=>{
@@ -45,6 +45,14 @@ const {chromium}=require('playwright');
   await page.locator('#drStructurePanel .dr-fast-toggles [data-toggle-indicator="rsi"]').click({timeout:10000});
   await page.waitForTimeout(400);
   console.log('RSI',await page.evaluate(()=>({state:window.DeepRiseStructureChart?.state.layers.rsi,rendered:!!document.querySelector('svg path[stroke="#bba2ff"]'),feedback:document.querySelector('[data-indicator-feedback]')?.textContent})));
+  // POC and volume-at-price approximations must respond to real browser taps.
+  await page.locator('#drStructurePanel .dr-fast-toggles [data-toggle-indicator="poc"]').click({timeout:10000});
+  if(await page.evaluate(()=>window.DeepRiseStructureChart.state.layers.poc!==false))throw Error('POC toggle failed to turn off');
+  await page.locator('#drStructurePanel .dr-fast-toggles [data-toggle-indicator="poc"]').click({timeout:10000});
+  if(!await page.evaluate(()=>!!document.querySelector('svg [data-poc-price]')))throw Error('POC graphic did not render');
+  await page.locator('#drStructurePanel .dr-fast-toggles [data-toggle-indicator="volumeProfile"]').click({timeout:10000});
+  if(await page.evaluate(()=>window.DeepRiseStructureChart.state.layers.volumeProfile!==true))throw Error('Volume Profile toggle failed');
+  if(!await page.evaluate(()=>!!document.querySelector('svg [data-volume-profile]')))throw Error('Volume Profile graphic did not render');
   if(!detail.obTop||!detail.obToggle||!detail.fullTop)throw Error('Missing prominent OB/full-screen controls');
   await page.locator('#obTop').click();
   const obAfter=await page.evaluate(()=>window.DeepRiseStructureChart?.state.layers.orderBlocks);
@@ -71,5 +79,5 @@ const {chromium}=require('playwright');
  await page.locator('#nativeTop').click();
  if(await page.locator('#chartPanel').evaluate(el=>el.hidden))throw Error('Native chart did not return');
   await browser.close();
- if(errors.length||!detail.svg||detail.error||detail.version!=='18.5')process.exitCode=1;
+ if(errors.length||!detail.svg||detail.error||detail.version!=='18.7')process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1});

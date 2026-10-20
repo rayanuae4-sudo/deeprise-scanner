@@ -92,7 +92,7 @@ jobs:
           wf=Path('.github/workflows/deeprise-ledger-maintenance.yml').read_text(encoding='utf-8')
           premove=Path('deeprise-pre-move-v170.js').read_text(encoding='utf-8')
           index=Path('index.html').read_text(encoding='utf-8')
-          for marker in ['deeprise-workspace-v173.js?v=1850','deeprise-market-structure-v174.js?v=1850','deeprise-structure-chart-v174.js?v=1850']:
+          for marker in ['deeprise-workspace-v173.js?v=1850','deeprise-market-structure-v174.js?v=1850','deeprise-structure-chart-v174.js?v=1870']:
               assert marker in index and marker in sw, f'structure asset missing: {marker}'
           assert index.index('deeprise-market-structure-v174.js') < index.index('deeprise-pre-move-v170.js')
           assert index.index('deeprise-structure-chart-v174.js') > index.index('deeprise-v13-gate-hotfix.js')
@@ -103,12 +103,12 @@ jobs:
           chart=Path('deeprise-structure-chart-v174.js').read_text(encoding='utf-8')
           for feature in ['function updateLayer(key,enabled)', 'data-toggle-indicator', 'data-structure-fullscreen', 'function toggleFullscreen(force)', 'dr-structure-fullscreen']:
               assert feature in chart, f'v17.5 interactive chart feature missing: {feature}'
-          assert 'network-v18-5-0' in pwa
+          assert 'network-v18-7-0' in pwa
           assert 'deeprise-pre-move-v170.js?v=1730' in pwa
           for marker in ['deeprise-move-timing-v158.js?v=1580','deeprise-entry-ranking-v158.js?v=1850','deeprise-integrity-v158.js?v=1580','deeprise-whale-flow-v155.js?v=1550','deeprise-whale-inline-v156.js?v=1560','deeprise-trade-zones-v157.js?v=1570']:
               assert marker in pwa, f'pwa missing {marker}'
-          assert "deeprise-pwa-network-v18-5-0" in sw
-          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1730','./mobile-app-v11.js?v=1800','./deeprise-pre-move-v170.js?v=1730','./deeprise-signal-stability-v171.js?v=1710','./pwa.js?v=1850','networkOnlyNavigation','offlinePage']:
+          assert "deeprise-pwa-network-v18-7-0" in sw
+          for marker in ['./deeprise-fast-search-v160.js?v=1601','./deeprise-v13-gate-hotfix.js?v=1730','./mobile-app-v11.js?v=1800','./deeprise-pre-move-v170.js?v=1730','./deeprise-signal-stability-v171.js?v=1710','./pwa.js?v=1870','networkOnlyNavigation','offlinePage']:
               assert marker in sw, f'cacheless service worker core missing {marker}'
           assert "event.request.mode==='navigate'" in sw and "cache:'no-store'" in sw
           for marker in ['PRE-MOVE RADAR','ARMED','IGNITION','LATE','interval=4h','MAX_COINS=120','extended']:
