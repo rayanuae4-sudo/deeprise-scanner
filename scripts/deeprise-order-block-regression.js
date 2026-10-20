@@ -33,7 +33,8 @@ const doc={getElementById:id=>id==='drStructurePanel'?panel:null,querySelector:(
 const store={getItem:key=>key==='deeprise_language'?'ar':null};
 vm.runInNewContext(chartCode,{window:win,document:doc,localStorage:store,addEventListener:()=>{},requestAnimationFrame:()=>{}},{filename:'deeprise-structure-chart-v174.js'});
 const chart=win.DeepRiseStructureChart;chart.state.symbol='TESTUSDT';chart.state.tf='4h';chart.state.result=result;
-chart.render();
+assert.equal(chart.state.preset,'structure','Default mobile preset must be less cluttered');
+chart.setPreset('advanced');chart.render();
 assert.ok(panel.innerHTML.includes('مناطق الأوردر بلوك'),'Arabic order-block toggle');
 assert.ok(panel.innerHTML.includes('المؤشرات'),'Arabic indicators picker');
 assert.ok(panel.innerHTML.includes('BULL OB')||panel.innerHTML.includes('BEAR OB'),'plotted active order blocks');
