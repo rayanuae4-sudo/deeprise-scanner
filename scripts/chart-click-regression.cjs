@@ -99,8 +99,8 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
   assert.equal(button('#drStructurePanel').parentElement,w.document.getElementById('chartPanel'),'Fullscreen must restore original container');
  const standalone=fs.readFileSync('chart.html','utf8');
  assert.match(standalone,/DOMContentLoaded/);
- assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1870/);
+ assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1880/);
  assert.match(standalone,/symbolForm/);
- console.log('DeepRise v18.7 profile, POC, touch-draw, indicator and fullscreen DOM regression: PASS');
+ console.log('DeepRise v18.8 price-axis, interactive help, profile, touch-draw and fullscreen DOM regression: PASS');
  dom.window.close();
 })().catch(e=>{console.error(e);process.exitCode=1;dom.window.close()});
