@@ -34,7 +34,7 @@ export function qualityForEntry(event, now = Date.now()) {
   if (!Number.isFinite(at) || at > now + 60000 || now - at > 15*60000) return invalid('STALE_CLOSE');
   if (e.confirmed4h !== true || e.confirmed1h !== true || e.closedCandle !== true
     || e.structureConfirmed !== true || e.entryZoneReached !== true) return invalid('MISSING_CONFIRMATIONS');
-  if (Number(e.confidence) < 74 || Number(e.quoteVolumeUSDT) < 20000000 || Number(e.volumeRatio) < 1.2) return invalid('WEAK_EVIDENCE');
+  if (![e.confidence,e.quoteVolumeUSDT,e.volumeRatio].map(Number).every(Number.isFinite) || Number(e.confidence)<74 || Number(e.confidence)>100 || Number(e.quoteVolumeUSDT)<20000000 || Number(e.volumeRatio)<1.2) return invalid('WEAK_EVIDENCE');
   if (![entry,stop,tp1,tp2].every(x => Number.isFinite(x) && x > 0)) return invalid('LEVELS');
   const riskPct = side * (entry - stop)/entry*100;
   const gross1 = side * (tp1-entry)/entry*100;
@@ -49,8 +49,8 @@ export function qualityForLiquidity(alert, now=Date.now()) {
   const a=alert||{},close=new Date(a.bar_closed_at).getTime();
   if (!/^[A-Z0-9]{2,18}USDT$/.test(a.symbol||'')) return {ok:false,code:'SYMBOL'};
   if (a.type!=='BUY_SIDE_SWEEP_CONFIRMED' && a.type!=='SELL_SIDE_SWEEP_CONFIRMED') return {ok:false,code:'NOT_CONFIRMED'};
-  if (a.severity!=='HIGH' || Number(a.trap_score)<85) return {ok:false,code:'WEAK'};
-  if (Number(a.quote_volume_usdt)<20000000 || Number(a.volume_ratio)<1.2) return {ok:false,code:'LIQUIDITY_VOLUME'};
+  if (a.severity!=='HIGH' || !Number.isFinite(Number(a.trap_score)) || Number(a.trap_score)<85 || Number(a.trap_score)>100) return {ok:false,code:'WEAK'};
+  if (![a.quote_volume_usdt,a.volume_ratio].map(Number).every(Number.isFinite) || Number(a.quote_volume_usdt)<20000000 || Number(a.volume_ratio)<1.2) return {ok:false,code:'LIQUIDITY_VOLUME'};
   if (!Number.isFinite(close) || close>now+60000 || now-close>20*60000) return {ok:false,code:'STALE'};
   if (!Number.isFinite(Number(a.price)) || Number(a.price)<=0) return {ok:false,code:'PRICE'};
   return {ok:true,code:'WATCH_ONLY',side:a.type==='BUY_SIDE_SWEEP_CONFIRMED'?'SHORT':'LONG'};
