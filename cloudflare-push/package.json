@@ -1,0 +1,19 @@
+{
+  "name": "deeprise-cloudflare-push",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "check": "node --check src/core.js && node --check src/index.js",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute deeprise-push --remote --file=./schema.sql"
+  },
+  "dependencies": {
+    "@block65/webcrypto-web-push": "2.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

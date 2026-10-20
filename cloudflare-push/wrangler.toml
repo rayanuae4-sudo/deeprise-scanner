@@ -1,0 +1,18 @@
+name = "deeprise-phone-push"
+main = "src/index.js"
+compatibility_date = "2026-10-20"
+workers_dev = true
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[vars]
+VAPID_SUBJECT = "https://rayanuae4-sudo.github.io"
+# Public key can be set here AFTER generating VAPID keys.
+VAPID_PUBLIC_KEY = ""
+
+[[d1_databases]]
+binding = "DB"
+database_name = "deeprise-push"
+# Replace using ID from: npx wrangler d1 create deeprise-push
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
