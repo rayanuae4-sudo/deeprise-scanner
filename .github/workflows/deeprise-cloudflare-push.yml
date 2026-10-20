@@ -1,0 +1,35 @@
+name: DeepRise Cloudflare Push Checks
+on:
+  pull_request:
+    paths:
+      - 'cloudflare-push/**'
+      - 'deeprise-phone-push-v185.js'
+      - '.github/workflows/deeprise-cloudflare-push.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'cloudflare-push/**'
+      - 'deeprise-phone-push-v185.js'
+      - '.github/workflows/deeprise-cloudflare-push.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloudflare-push
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Worker dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund --no-package-lock
+      - name: Test validation and HTTP behavior
+        run: npm test
+      - name: Check Worker syntax
+        run: npm run check
+      - name: Bundle Worker without deployment
+        run: npx --no-install wrangler deploy --dry-run --outdir ./build
