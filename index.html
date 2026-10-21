@@ -237,7 +237,26 @@ const menuBtn=document.getElementById("menuBtn"),dropdown=document.getElementByI
 menuBtn.addEventListener("click",()=>dropdown.classList.toggle("active"));
 document.addEventListener("click",e=>{if(!e.target.closest(".menu-wrap"))dropdown.classList.remove("active")});
 dropdown.querySelectorAll("[data-menu]").forEach(b=>b.addEventListener("click",()=>{let f=b.dataset.menu;dropdown.classList.remove("active");if(f==="top"){document.querySelector(".hero").scrollIntoView({behavior:"smooth"});return}if(f==="signal-results"){openSignalResults();return}if(f==="forecast"){let best=[...marketData].filter(x=>x.direction!=="WAIT").sort((a,b)=>b.score-a.score)[0]||marketData[0];if(best)openChart(best.symbol);return}currentFilter=f;document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.dataset.filter===f));render();document.getElementById("results").scrollIntoView({behavior:"smooth"})}));
-const languageSelect=document.getElementById("languageSelect");languageSelect.addEventListener("change",e=>setLanguage(e.target.value));setLanguage(currentLang);const languageObserver=new MutationObserver(()=>applyLanguage());languageObserver.observe(document.body,{childList:true,subtree:true});
+const languageSelect=document.getElementById("languageSelect");languageSelect.addEventListener("change",e=>setLanguage(e.target.value));setLanguage(currentLang);// Only translate newly inserted text. Chart redraws should never rescan all page elements.
+let languageFrame=0;const languagePending=new Set();
+const languageObserver=new MutationObserver(records=>{
+ for(const record of records)for(const node of record.addedNodes)languagePending.add(node);
+ if(languageFrame||!languagePending.size)return;
+ languageFrame=requestAnimationFrame(()=>{
+  languageFrame=0;
+  const pending=Array.from(languagePending);languagePending.clear();
+  for(const node of pending){
+   const parent=node.nodeType===3?node.parentElement:node;
+   if(!parent||parent.nodeType!==1||parent.closest('#drStructurePanel,#tradingview_chart,script,style'))continue;
+   if(node.nodeType===3){translateTextNode(node);continue}
+   const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);
+   while(walker.nextNode()){
+    const n=walker.currentNode;
+    if(!n.parentElement?.closest('#drStructurePanel,#tradingview_chart,script,style'))translateTextNode(n);
+   }
+  }
+ });
+});languageObserver.observe(document.body,{childList:true,subtree:true});
 try{
  const r=document.getElementById("results"),t=document.getElementById("top3"),m=document.getElementById("marketRegime");
  if(r)r.innerHTML='<div class="loading">Loading Binance markets…</div>';
@@ -245,5 +264,5 @@ try{
  if(m)m.innerHTML='Market: <b class="yellow">READY</b>';
 }catch(e){}
 </script>
-<script src="deeprise-fast-search-v160.js?v=1651"></script><script src="deeprise-push-config.js?v=1850"></script><script defer src="deeprise-notification-center-v167.js?v=1671"></script><script defer src="deeprise-profit-quality-v185.js?v=1850"></script><script defer src="deeprise-market-structure-v174.js?v=1850"></script><script defer src="deeprise-structure-explain-v182.js?v=1820"></script><script defer src="deeprise-workspace-v173.js?v=1850"></script><script defer src="deeprise-pre-move-v170.js?v=1730"></script><script defer src="deeprise-signal-stability-v171.js?v=1710"></script><script defer src="deeprise-v86-upgrade.js?v=1850"></script><script defer src="deeprise-intelligence-v11.js?v=1310"></script><script defer src="deeprise-v12-experience.js?v=1310"></script><script defer src="deeprise-analytics-config.js?v=1700"></script><script defer src="deeprise-analytics.js?v=1310"></script><script defer src="deeprise-central-ledger.js?v=1700"></script><script defer src="deeprise-v13-product.js?v=1850"></script><script defer src="deeprise-central-forecast-bridge.js?v=1721"></script><script defer src="deeprise-predictive-intelligence.js?v=1310"></script><script defer src="deeprise-performance.js?v=1700"></script><script defer src="deeprise-v13-gate-hotfix.js?v=1850"></script><script defer src="deeprise-trade-monitor-v14.js?v=1653"></script><script defer src="deeprise-card-chart-v166.js?v=1660"></script><script defer src="mobile-app-v11.js?v=1800"></script><script defer src="pwa.js?v=1870"></script><script defer src="deeprise-structure-chart-v174.js?v=1880"></script><script defer src="deeprise-structure-reasons-v182.js?v=1820"></script></body>
+<script src="deeprise-fast-search-v160.js?v=1651"></script><script src="deeprise-push-config.js?v=1850"></script><script defer src="deeprise-notification-center-v167.js?v=1671"></script><script defer src="deeprise-profit-quality-v185.js?v=1850"></script><script defer src="deeprise-market-structure-v174.js?v=1850"></script><script defer src="deeprise-structure-explain-v182.js?v=1820"></script><script defer src="deeprise-workspace-v173.js?v=1850"></script><script defer src="deeprise-pre-move-v170.js?v=1730"></script><script defer src="deeprise-signal-stability-v171.js?v=1710"></script><script defer src="deeprise-v86-upgrade.js?v=1850"></script><script defer src="deeprise-intelligence-v11.js?v=1310"></script><script defer src="deeprise-v12-experience.js?v=1310"></script><script defer src="deeprise-analytics-config.js?v=1700"></script><script defer src="deeprise-analytics.js?v=1310"></script><script defer src="deeprise-central-ledger.js?v=1700"></script><script defer src="deeprise-v13-product.js?v=1850"></script><script defer src="deeprise-central-forecast-bridge.js?v=1721"></script><script defer src="deeprise-predictive-intelligence.js?v=1310"></script><script defer src="deeprise-performance.js?v=1700"></script><script defer src="deeprise-v13-gate-hotfix.js?v=1850"></script><script defer src="deeprise-trade-monitor-v14.js?v=1653"></script><script defer src="deeprise-card-chart-v166.js?v=1660"></script><script defer src="mobile-app-v11.js?v=1800"></script><script defer src="pwa.js?v=1881"></script><script defer src="deeprise-structure-chart-v174.js?v=1881"></script><script defer src="deeprise-structure-reasons-v182.js?v=1820"></script></body>
 </html>
