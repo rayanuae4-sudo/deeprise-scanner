@@ -310,6 +310,8 @@ function ensure(){
  let touch=null;
  const selector='button[data-chart-preset],button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-chart-help],button[data-chart-price-focus],button[data-structure-tf],button[data-structure-refresh]';
  panel.addEventListener('touchstart',e=>{
+  // A second physical touch must remain actionable even during the click guard.
+  lastTouchAt=0;window.__drLastToolTouch=null;
   const button=e.target?.closest?.(selector),t=e.touches?.[0];
   touch=button&&e.touches.length===1?{button,x:t.clientX,y:t.clientY,id:t.identifier}:null;
  },{passive:true});
