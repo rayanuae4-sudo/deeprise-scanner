@@ -27,8 +27,8 @@ function queuePaint(){
  if(chartFrame||paintTimer)return;
  // Mobile Safari must not rebuild the full annotated SVG for every touch event.
  const gap=state.pointers.size?(window.innerWidth<700?64:32):0;
- const delay=Math.max(0,gap-(performance.now()-lastPaintAt));
- const schedule=()=>{paintTimer=0;chartFrame=requestAnimationFrame(()=>{chartFrame=0;lastPaintAt=performance.now();paintChart()})};
+ const delay=Math.max(0,gap-(Date.now()-lastPaintAt));
+ const schedule=()=>{paintTimer=0;chartFrame=requestAnimationFrame(()=>{chartFrame=0;lastPaintAt=Date.now();paintChart()})};
  if(delay)paintTimer=setTimeout(schedule,delay);else schedule();
 }
 function updateLayer(key,enabled){
@@ -262,7 +262,7 @@ function ensure(){
  let lastTouchButton=null,lastTouchAt=0;
  panel.addEventListener('click',e=>{
   const button=e.target?.closest?.('button');
-  if(button&&button===lastTouchButton&&performance.now()-lastTouchAt<750){e.preventDefault();e.stopPropagation();return}
+  if(button&&button===lastTouchButton&&Date.now()-lastTouchAt<750){e.preventDefault();e.stopPropagation();return}
   if(activateChartButton(e.target)){e.preventDefault();e.stopPropagation()}
  },true);
  // WebKit can drop synthetic click after touchend during frequent chart updates.
@@ -279,7 +279,7 @@ function ensure(){
   const t=Array.from(e.changedTouches).find(x=>x.identifier===start.id);
   if(!t||Math.hypot(t.clientX-start.x,t.clientY-start.y)>14)return;
   if(!start.button.contains(e.target))return;
-  e.preventDefault();e.stopPropagation();lastTouchButton=start.button;lastTouchAt=performance.now();activateChartButton(start.button);
+  e.preventDefault();e.stopPropagation();lastTouchButton=start.button;lastTouchAt=Date.now();activateChartButton(start.button);
  },{passive:false});
  panel.addEventListener('touchcancel',()=>{touch=null},{passive:true});
  return panel;
