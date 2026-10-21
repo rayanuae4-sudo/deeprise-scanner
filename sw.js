@@ -1,4 +1,4 @@
-const CACHE='deeprise-pwa-network-v18-8-3';
+const CACHE='deeprise-pwa-network-v18-8-4';
 const STATIC_CORE=[
   './chart.html',
   './manifest.json',
@@ -7,7 +7,7 @@ const STATIC_CORE=[
   './deeprise-analytics-config.js?v=1700',
   './deeprise-workspace-v173.js?v=1850',
   './deeprise-market-structure-v174.js?v=1850',
-  './deeprise-structure-chart-v174.js?v=1883',
+  './deeprise-structure-chart-v174.js?v=1884',
   './deeprise-structure-explain-v182.js?v=1820',
   './deeprise-structure-reasons-v182.js?v=1820',
   './deeprise-pre-move-v170.js?v=1730',
@@ -17,7 +17,7 @@ const STATIC_CORE=[
   './deeprise-fast-search-v160.js?v=1601',
   './deeprise-v13-gate-hotfix.js?v=1730',
   './mobile-app-v11.js?v=1800',
-  './pwa.js?v=1883'
+  './pwa.js?v=1884'
 ];
 
 function offlinePage(){

@@ -38,7 +38,21 @@ function updateLayer(key,enabled){
  panel?.querySelectorAll('[data-structure-layer="'+key+'"]').forEach(el=>{el.checked=state.layers[key];el.closest('label')?.classList.toggle('is-on',state.layers[key])});
  panel?.querySelectorAll('[data-toggle-indicator="'+key+'"]').forEach(btn=>{btn.classList.toggle('active',state.layers[key]);btn.setAttribute('aria-pressed',String(state.layers[key]));const flag=btn.querySelector('[data-indicator-status]');if(flag)flag.textContent=state.layers[key]?'●':'○'});
  state.preset='custom';const presetNodes=panel?.querySelectorAll('[data-chart-preset]');presetNodes?.forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-pressed','false')});
-  const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error){if(state.pointers.size)queuePaint();else paintChart();}
+  const status=panel?.querySelector('[data-indicator-feedback]');
+  const r=state.result;
+  const missing=state.layers[key]&&r?(
+   key==='ema200'&&(r.bars||[]).length<200?'EMA 200 needs 200 closed candles':
+   key==='orderBlocks'&&!(r.blocks||[]).some(b=>b.status!=='INVALID')?'No active Order Blocks on this timeframe':
+   key==='fvg'&&!(r.gaps||[]).some(g=>g.status!=='FILLED')?'No active FVG on this timeframe':
+   key==='fib'&&!r.fib?'No confirmed Fibonacci anchors yet':
+   ['extensions','trendExtensions','fan','timeZones'].includes(key)&&!r.fib?'No confirmed Fibonacci anchors yet':
+   key==='sweeps'&&!(r.sweeps||[]).length?'No confirmed liquidity sweeps yet':
+   key==='protection'&&!r.protectedHigh&&!r.protectedLow?'No confirmed protected levels yet':
+   key==='structure'&&!(r.events||[]).length?'No confirmed BOS/CHoCH yet':
+   key==='pivots'&&!(r.pivots||[]).length?'No confirmed pivots yet':
+   key==='liquidity'&&!(r.pivots||[]).length?'No liquidity levels confirmed yet':''):'';
+  if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(missing?' · '+(lang()==='ar'?'لا توجد إشارة مؤكدة حاليًا · ':lang()==='ru'?'Пока нет подтвержденного сигнала · ':'')+missing:(r?' · Chart updated ↓':' · '+t('loading')));
+  if(r&&!state.error){if(state.pointers.size)queuePaint();else paintChart();}
 }
 const indicatorCache=new WeakMap(),INDICATORS=new Set(['ema20','ema50','ema200','bollinger','volume','rsi','macd','atr','poc','volumeProfile']);
 function studies(bars){
@@ -166,19 +180,32 @@ const lang=()=>localStorage.getItem('deeprise_language')||'en',t=k=>(copy[lang()
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const pf=v=>Number(v).toLocaleString('en-US',{maximumFractionDigits:8});
 const stamp=v=>new Date(v).toLocaleString(lang()==='ar'?'ar-SA':lang()==='ru'?'ru-RU':'en-GB',{timeZone:'Asia/Riyadh',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false})+' UTC+3';
+function syncFullscreenButton(panel){
+ panel?.querySelectorAll('[data-structure-fullscreen]').forEach(btn=>{
+  btn.textContent=t(state.expanded?'exitFull':'full');
+  btn.title=t(state.expanded?'exitFull':'full');
+  btn.setAttribute('aria-pressed',String(state.expanded));
+ });
+ const price=panel?.querySelector('[data-chart-price-focus]');
+ if(price)price.setAttribute('aria-pressed',String(state.priceFocus));
+}
 function toggleFullscreen(force){
  const panel=ensure();if(!panel)return;
- const next=typeof force==='boolean'?force:!state.expanded;if(next===state.expanded)return;
+ const next=typeof force==='boolean'?force:!state.expanded;
+ if(next===state.expanded)return;
  if(next){
-  if(window.matchMedia?.('(max-width:700px)')?.matches)state.priceFocus=true;
+  // Preserve the existing SVG and every live button: a complete DOM rebuild during
+  // touchend used to create re-targeted taps that immediately closed fullscreen.
   state.returnFocus=document.activeElement;
   state.previousOverflow=document.body.style.overflow;
   state.previousHtmlOverflow=document.documentElement.style.overflow;
-  // Escape the chart card stacking context so iPhone headers and bottom navigation cannot cover fullscreen.
-  state.portalMarker=document.createComment('DeepRise fullscreen return position');
-  panel.parentNode?.insertBefore(state.portalMarker,panel);
+  if(!state.portalMarker){
+   state.portalMarker=document.createComment('DeepRise fullscreen return position');
+   panel.parentNode?.insertBefore(state.portalMarker,panel);
+  }
   document.body.appendChild(panel);
-  document.body.style.overflow='hidden';document.documentElement.style.overflow='hidden';
+  document.body.style.overflow='hidden';
+  document.documentElement.style.overflow='hidden';
   document.body.classList.add('dr-structure-immersive');
  }else{
   if(state.portalMarker?.parentNode)state.portalMarker.replaceWith(panel);
@@ -187,12 +214,18 @@ function toggleFullscreen(force){
   document.documentElement.style.overflow=state.previousHtmlOverflow;
   document.body.classList.remove('dr-structure-immersive');
  }
- state.expanded=next;panel.classList.toggle('dr-structure-fullscreen',next);
- render();
+ state.expanded=next;
+ panel.classList.toggle('dr-structure-fullscreen',next);
+ syncFullscreenButton(panel);
+ // Do not change priceFocus automatically. An enabled RSI/MACD/ATR panel must
+ // remain visible after expanding on iPhone.
  requestAnimationFrame(()=>{
-  if(next){panel.scrollTop=0;panel.querySelector('[data-structure-fullscreen]')?.focus({preventScroll:true})}
-  else if(state.returnFocus?.isConnected)state.returnFocus.focus({preventScroll:true});
-  window.dispatchEvent(new Event('resize'));
+  if(!panel.isConnected)return;
+  if(next)panel.scrollTop=0;
+  // Re-size only the chart SVG, without discarding drawing controls or handlers.
+  paintChart();
+  if(!next&&!window.matchMedia?.('(max-width:700px)')?.matches&&state.returnFocus?.isConnected)
+   state.returnFocus.focus({preventScroll:true});
  });
 }
 const CHART_PRESETS={
@@ -236,7 +269,7 @@ function activateChartButton(target){
  const btn=target?.closest?.('button[data-chart-preset],button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-chart-help],button[data-chart-price-focus],button[data-structure-tf],button[data-structure-refresh]');
  if(!btn||btn.disabled)return false;
  if(btn.hasAttribute('data-chart-help')){state.helpOpen=!state.helpOpen;render();return true}
- if(btn.hasAttribute('data-chart-price-focus')){state.priceFocus=!state.priceFocus;render();return true}
+ if(btn.hasAttribute('data-chart-price-focus')){state.priceFocus=!state.priceFocus;const b=document.querySelector('#drStructurePanel [data-chart-price-focus]');if(b)b.setAttribute('aria-pressed',String(state.priceFocus));paintChart();return true}
  if(btn.hasAttribute('data-chart-preset')){setPreset(btn.dataset.chartPreset);return true}
  if(btn.hasAttribute('data-structure-fullscreen')){toggleFullscreen();return true}
  if(btn.hasAttribute('data-toggle-indicator')){const key=btn.dataset.toggleIndicator;updateLayer(key,!state.layers[key]);return true}
@@ -259,7 +292,17 @@ function ensure(){
  panel.addEventListener('change',e=>{const key=e.target?.dataset?.structureLayer;if(key)updateLayer(key,e.target.checked)});
   panel.addEventListener('contextmenu',e=>{if(e.target.closest('svg[data-dr-interactive]'))e.preventDefault()});
  // Delegated click persists when render() replaces controls.
- let lastTouchButton=null,lastTouchAt=0;
+ let lastTouchButton=null,lastTouchAt=0,lastTouchX=0,lastTouchY=0;
+ // Cancel delayed iOS synthetic clicks even if the original button moves in the DOM.
+ document.addEventListener('click',e=>{
+  const last=window.__drLastToolTouch;
+  const timestamp=Math.max(lastTouchAt,last?.at||0);
+  if(!timestamp||Date.now()-timestamp>650)return;
+  const x=last?.at>=lastTouchAt?last.x:lastTouchX;
+  const y=last?.at>=lastTouchAt?last.y:lastTouchY;
+  if(Math.hypot((e.clientX||0)-x,(e.clientY||0)-y)>28)return;
+  e.preventDefault();e.stopImmediatePropagation();
+ },true);
  panel.addEventListener('click',e=>{
   const button=e.target?.closest?.('button');
   if(button&&button===lastTouchButton&&Date.now()-lastTouchAt<750){e.preventDefault();e.stopPropagation();return}
@@ -270,6 +313,8 @@ function ensure(){
  let touch=null;
  const selector='button[data-chart-preset],button[data-toggle-indicator],button[data-structure-fullscreen],button[data-chart-zoom],button[data-chart-pan],button[data-chart-fit],button[data-chart-tool],button[data-chart-undo],button[data-chart-clear],button[data-chart-cancel],button[data-chart-help],button[data-chart-price-focus],button[data-structure-tf],button[data-structure-refresh]';
  panel.addEventListener('touchstart',e=>{
+  // A second physical touch must remain actionable even during the click guard.
+  lastTouchAt=0;window.__drLastToolTouch=null;
   const button=e.target?.closest?.(selector),t=e.touches?.[0];
   touch=button&&e.touches.length===1?{button,x:t.clientX,y:t.clientY,id:t.identifier}:null;
  },{passive:true});
@@ -279,7 +324,7 @@ function ensure(){
   const t=Array.from(e.changedTouches).find(x=>x.identifier===start.id);
   if(!t||Math.hypot(t.clientX-start.x,t.clientY-start.y)>14)return;
   if(!start.button.contains(e.target))return;
-  e.preventDefault();e.stopPropagation();lastTouchButton=start.button;lastTouchAt=Date.now();activateChartButton(start.button);
+  e.preventDefault();e.stopPropagation();lastTouchButton=start.button;lastTouchAt=Date.now();lastTouchX=t.clientX;lastTouchY=t.clientY;window.__drLastToolTouch={at:lastTouchAt,x:lastTouchX,y:lastTouchY};activateChartButton(start.button);
  },{passive:false});
  panel.addEventListener('touchcancel',()=>{touch=null},{passive:true});
  return panel;
@@ -546,5 +591,5 @@ css.textContent+="\n/* V18.5 iPhone CSS immersive with readable controls and saf
 }
 .dr-structure-fullscreen .dr-quick-chart-controls{position:sticky;top:0;z-index:4;background:#050e19;padding:3px 0}
 .dr-structure-fullscreen .dr-structure-scroll{min-height:50dvh!important;flex:1 1 auto!important}
-`;css.textContent+="\n/* V18.8 adaptive chart axis and accessible mobile controls */\n.dr-chart-levels{display:flex;gap:7px;overflow-x:auto;white-space:nowrap;padding:7px 2px;scrollbar-width:thin}\n.dr-chart-levels span{flex:0 0 auto;display:flex;gap:5px;align-items:center;padding:6px 8px;border:1px solid #31566e;background:#0d2738;border-radius:7px;font-size:11px}\n.dr-chart-levels small{color:#9ac0d5;font-size:10px}.dr-chart-levels b{color:#e4faff}\n.dr-chart-help{position:relative;background:#0b2535;border:1px solid #48b69b;border-radius:10px;margin:8px 0;padding:12px;max-height:50dvh;overflow:auto;line-height:1.6}\n.dr-chart-help>b{color:#8ff5d0}.dr-chart-help p{font-size:12px;margin:7px 0;color:#c7dbea}.dr-chart-help strong{color:#f0f9ff}\n.dr-draw-toolbar button[aria-pressed=true]{border-color:#36d9ac;background:#123f34;color:#a9ffdf}\n.dr-structure-fullscreen .dr-chart-levels{display:none}\n.dr-structure-fullscreen>.dr-indicator-feedback{display:block!important;min-height:18px!important;flex:0 0 auto!important;color:#a1f8d3!important;font-size:11px!important}\n.dr-structure-fullscreen .dr-chart-help{position:absolute;bottom:max(10px,env(safe-area-inset-bottom));left:7px;right:7px;z-index:9;max-height:55dvh;box-shadow:0 -10px 35px #0009}\n@media(max-width:650px){.dr-structure-fullscreen .dr-structure-scroll{min-height:0!important;flex:1 1 auto!important}.dr-structure-fullscreen .dr-structure-scroll svg[data-dr-interactive]{width:100%!important;height:100%!important}}\n";document.head.appendChild(css);hook();let resizeQueued=false;addEventListener('resize',()=>{if(resizeQueued||!state.result||state.pointers.size)return;resizeQueued=true;requestAnimationFrame(()=>{resizeQueued=false;paintChart()})});
+`;css.textContent+="\n/* V18.8 adaptive chart axis and accessible mobile controls */\n.dr-chart-levels{display:flex;gap:7px;overflow-x:auto;white-space:nowrap;padding:7px 2px;scrollbar-width:thin}\n.dr-chart-levels span{flex:0 0 auto;display:flex;gap:5px;align-items:center;padding:6px 8px;border:1px solid #31566e;background:#0d2738;border-radius:7px;font-size:11px}\n.dr-chart-levels small{color:#9ac0d5;font-size:10px}.dr-chart-levels b{color:#e4faff}\n.dr-chart-help{position:relative;background:#0b2535;border:1px solid #48b69b;border-radius:10px;margin:8px 0;padding:12px;max-height:50dvh;overflow:auto;line-height:1.6}\n.dr-chart-help>b{color:#8ff5d0}.dr-chart-help p{font-size:12px;margin:7px 0;color:#c7dbea}.dr-chart-help strong{color:#f0f9ff}\n.dr-draw-toolbar button[aria-pressed=true]{border-color:#36d9ac;background:#123f34;color:#a9ffdf}\n.dr-structure-fullscreen .dr-chart-levels{display:none}\n.dr-structure-fullscreen>.dr-indicator-feedback{display:block!important;min-height:18px!important;flex:0 0 auto!important;color:#a1f8d3!important;font-size:11px!important}\n.dr-structure-fullscreen .dr-chart-help{position:absolute;bottom:max(10px,env(safe-area-inset-bottom));left:7px;right:7px;z-index:9;max-height:55dvh;box-shadow:0 -10px 35px #0009}\n@media(max-width:650px){.dr-structure-fullscreen .dr-structure-scroll{min-height:0!important;flex:1 1 auto!important}.dr-structure-fullscreen .dr-structure-scroll svg[data-dr-interactive]{width:100%!important;height:100%!important}}\n";css.textContent+="\n/* Advanced studies available inside iPhone fullscreen via a compact floating tray. */\n@media(max-width:700px){\n .dr-structure-fullscreen .dr-extra-indicators{\n  display:block!important;position:absolute!important;z-index:15!important;\n  bottom:max(7px,env(safe-area-inset-bottom,0px))!important;\n  left:max(7px,env(safe-area-inset-left,0px))!important;\n  right:max(7px,env(safe-area-inset-right,0px))!important;\n  width:auto!important;max-height:62dvh;overflow-y:auto!important;\n  background:#0a2031!important;border:1px solid #4b8aa2!important;\n  box-shadow:0 6px 28px #000b!important;margin:0!important;\n }\n .dr-structure-fullscreen .dr-extra-indicators:not([open]){\n  right:auto!important;width:min(215px,65vw)!important;max-height:52px!important;\n }\n .dr-structure-fullscreen .dr-extra-indicators>summary{\n  min-height:40px;padding:10px 8px!important;font-size:12px!important;\n  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;\n }\n .dr-structure-fullscreen .dr-extra-indicators[open]{max-height:62dvh!important}\n .dr-structure-fullscreen .dr-extra-indicators .dr-quick-layer-grid{\n  grid-template-columns:repeat(2,minmax(0,1fr))!important;\n }\n}\n";document.head.appendChild(css);hook();let resizeQueued=false;addEventListener('resize',()=>{if(resizeQueued||!state.result||state.pointers.size)return;resizeQueued=true;requestAnimationFrame(()=>{resizeQueued=false;paintChart()})});
 })();
