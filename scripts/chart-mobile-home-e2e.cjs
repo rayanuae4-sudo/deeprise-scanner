@@ -55,6 +55,7 @@ const {webkit,devices}=require('playwright');
  await extra.locator('summary').tap();
  assert.equal(await extra.evaluate(el=>el.open),false,'Advanced indicator drawer must close without closing fullscreen');
  for(const indicator of ['ema20','ema50','ema200','rsi','macd','atr','poc','volumeProfile','orderBlocks','fvg','fib']){
+  console.log('Touch indicator:',indicator);
   const before=await layer(indicator);
   await page.locator('#drStructurePanel .dr-fast-toggles [data-toggle-indicator="'+indicator+'"]').tap();
   assert.equal(await layer(indicator),!before,indicator+' must toggle on tap in fullscreen');
@@ -70,4 +71,4 @@ const {webkit,devices}=require('playwright');
  console.log('iPhone HOME chart: fullscreen persistence, preserved SVG, 12 indicators including advanced drawer, drawing toolbar and zoom PASS');
  if(errors.some(e=>/structure-chart|DeepRiseStructureChart/i.test(e)))throw Error(errors.join('\n'));
  await browser.close();
-})().catch(e=>{console.error(e);process.exitCode=1});
+})().catch(e=>{console.error('iPhone scanner chart E2E failed:',e);process.exit(1)});
