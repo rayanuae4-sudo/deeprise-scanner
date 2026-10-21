@@ -12,10 +12,10 @@ function zoom(factor,anchor=.5){if(!state.result)return;const before=viewport(st
 function pan(candles){if(!state.result)return;state.view.offset+=candles;viewport(state.result.bars.length);queuePaint()}
 function fit(){state.view={count:defaultCount(),offset:0};state.pending=null;queuePaint()}
 function toolBar(){return `<div class="dr-draw-toolbar" aria-label="${esc(wt('drawings'))}"><div><button data-chart-zoom=".75" aria-label="${esc(wt('zoomIn'))}">＋</button><button data-chart-zoom="1.3333" aria-label="${esc(wt('zoomOut'))}">−</button><button data-chart-pan="1" aria-label="${esc(wt('older'))}">◀</button><button data-chart-pan="-1" aria-label="${esc(wt('newer'))}">▶</button><button data-chart-fit>${wt('fit')}</button><small data-bar-count>${state.view.count} ${wt('bars')}</small></div><div>${['pan','line','horizontal','rectangle','drawFib'].map(k=>`<button data-chart-tool="${k}" aria-pressed="${state.tool===k}" class="${state.tool===k?'active':''}">${wt(k)}</button>`).join('')}<button data-chart-undo ${drawings().length?'':'disabled'}>${wt('undo')}</button><button data-chart-clear ${drawings().length?'':'disabled'}>${wt('clear')}</button>${state.pending?`<button data-chart-cancel>${wt('cancel')}</button>`:''}<button type="button" data-chart-price-focus aria-pressed="${state.priceFocus}">${lang()==='ar'?'▣ سعر فقط':'▣ Price focus'}</button><button type="button" data-chart-help aria-expanded="${state.helpOpen}">${lang()==='ar'?'ⓘ شرح الأدوات':'ⓘ Help'}</button></div></div><div class="dr-structure-note" role="status">${state.pending?wt('pending'):wt('hint')}</div>`}
-let chartFrame=0;
+let chartFrame=0,paintTimer=0,lastPaintAt=0;
 function paintChart(){
  const plot=document.querySelector('#drStructurePanel .dr-structure-scroll');
- if(!plot||!state.result)return;
+ if(!plot||!state.result||document.hidden)return;
  const focused=document.activeElement?.matches('svg[data-dr-interactive]');
  plot.innerHTML=svg(state.result);
  const count=document.querySelector('#drStructurePanel [data-bar-count]');
@@ -23,7 +23,14 @@ function paintChart(){
  const legend=document.querySelector('#drStructurePanel [data-chart-levels]');if(legend)legend.innerHTML=priceLegend(state.result);
  if(focused)plot.querySelector('svg[data-dr-interactive]')?.focus({preventScroll:true});
 }
-function queuePaint(){if(chartFrame)return;chartFrame=requestAnimationFrame(()=>{chartFrame=0;paintChart()})}
+function queuePaint(){
+ if(chartFrame||paintTimer)return;
+ // Mobile Safari must not rebuild the full annotated SVG for every touch event.
+ const gap=state.pointers.size?(window.innerWidth<700?64:32):0;
+ const delay=Math.max(0,gap-(performance.now()-lastPaintAt));
+ const schedule=()=>{paintTimer=0;chartFrame=requestAnimationFrame(()=>{chartFrame=0;lastPaintAt=performance.now();paintChart()})};
+ if(delay)paintTimer=setTimeout(schedule,delay);else schedule();
+}
 function updateLayer(key,enabled){
  if(!Object.prototype.hasOwnProperty.call(state.layers,key))return;
  state.layers[key]=Boolean(enabled);if(['volume','rsi','macd','atr'].includes(key)&&enabled)state.priceFocus=false;
@@ -31,7 +38,7 @@ function updateLayer(key,enabled){
  panel?.querySelectorAll('[data-structure-layer="'+key+'"]').forEach(el=>{el.checked=state.layers[key];el.closest('label')?.classList.toggle('is-on',state.layers[key])});
  panel?.querySelectorAll('[data-toggle-indicator="'+key+'"]').forEach(btn=>{btn.classList.toggle('active',state.layers[key]);btn.setAttribute('aria-pressed',String(state.layers[key]));const flag=btn.querySelector('[data-indicator-status]');if(flag)flag.textContent=state.layers[key]?'●':'○'});
  state.preset='custom';const presetNodes=panel?.querySelectorAll('[data-chart-preset]');presetNodes?.forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-pressed','false')});
-  const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error)paintChart();
+  const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error)queuePaint();
 }
 const indicatorCache=new WeakMap(),INDICATORS=new Set(['ema20','ema50','ema200','bollinger','volume','rsi','macd','atr','poc','volumeProfile']);
 function studies(bars){
@@ -141,6 +148,10 @@ function bindInteractive(panel){
   }else if(g){const remaining=[...state.pointers.values()][0];g.moved=true;g.multitouch=true;g.distance=null;g.startX=remaining.x;g.startY=remaining.y;g.offset=state.view.offset;state.dragPreview=null}
  };
  panel.addEventListener('pointerup',release);panel.addEventListener('pointercancel',release);
+ panel.addEventListener('lostpointercapture',release);
+ const resetTouch=()=>{if(!state.pointers.size)return;state.pointers.clear();state.gesture=null;state.dragPreview=null;queuePaint()};
+ window.addEventListener('blur',resetTouch);
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)resetTouch()});
  panel.addEventListener('keydown',e=>{if(!e.target.matches('svg[data-dr-interactive]'))return;if(e.key==='+'||e.key==='='){e.preventDefault();zoom(.75)}if(e.key==='-'){e.preventDefault();zoom(1.3333)}if(e.key==='ArrowLeft'){e.preventDefault();pan(10)}if(e.key==='ArrowRight'){e.preventDefault();pan(-10)}if(e.key==='0'){e.preventDefault();fit()}});
 }
 const copy={
@@ -248,7 +259,12 @@ function ensure(){
  panel.addEventListener('change',e=>{const key=e.target?.dataset?.structureLayer;if(key)updateLayer(key,e.target.checked)});
   panel.addEventListener('contextmenu',e=>{if(e.target.closest('svg[data-dr-interactive]'))e.preventDefault()});
  // Delegated click persists when render() replaces controls.
- panel.addEventListener('click',e=>{if(activateChartButton(e.target)){e.preventDefault();e.stopPropagation()}},true);
+ let lastTouchButton=null,lastTouchAt=0;
+ panel.addEventListener('click',e=>{
+  const button=e.target?.closest?.('button');
+  if(button&&button===lastTouchButton&&performance.now()-lastTouchAt<750){e.preventDefault();e.stopPropagation();return}
+  if(activateChartButton(e.target)){e.preventDefault();e.stopPropagation()}
+ },true);
  // WebKit can drop synthetic click after touchend during frequent chart updates.
  // Fire stationary real touches directly and cancel duplicate synthetic clicks.
  let touch=null;
@@ -263,7 +279,7 @@ function ensure(){
   const t=Array.from(e.changedTouches).find(x=>x.identifier===start.id);
   if(!t||Math.hypot(t.clientX-start.x,t.clientY-start.y)>14)return;
   if(!start.button.contains(e.target))return;
-  e.preventDefault();e.stopPropagation();activateChartButton(start.button);
+  e.preventDefault();e.stopPropagation();lastTouchButton=start.button;lastTouchAt=performance.now();activateChartButton(start.button);
  },{passive:false});
  panel.addEventListener('touchcancel',()=>{touch=null},{passive:true});
  return panel;
@@ -443,8 +459,15 @@ function render(){const panel=ensure();if(!panel)return;panel.dir=lang()==='ar'?
   protectionInfo(r.internal?.protectedHigh,t('internalScope'),t('high'))+
   protectionInfo(r.internal?.protectedLow,t('internalScope'),t('low'))+'</div>';
   const noOb=r&&!state.loading&&state.layers.orderBlocks&&!(r.blocks||[]).some(b=>b.status!=='INVALID')?'<div class="dr-structure-note dr-no-ob">'+esc(t('noOrderBlocks'))+'</div>':'';
+ const scrollTop=state.expanded?panel.scrollTop:0;
+ const quickScroll=panel.querySelector('.dr-fast-toggles')?.scrollLeft||0;
+ const drawScroll=panel.querySelector('.dr-draw-toolbar>div:nth-child(2)')?.scrollLeft||0;
  panel.innerHTML=header+indicatorQuick()+`<div class="dr-indicator-feedback" data-indicator-feedback role="status" aria-live="polite"></div>`+body+noOb+extraIndicators(extraOpen)+`<div class="dr-plot-options"><details class="dr-layer-picker" ${layersOpen?'open':''}><summary>${wt('layers')}</summary>${controls}</details><details class="dr-indicator-picker" ${indicatorsOpen?'open':''}><summary>${t('indicators')}</summary>${indicatorControls}</details></div><div class="dr-structure-note">${t('note')}${state.layers.timeZones?'<br>'+t('timeNote'):''}</div>`;
- if(r&&!state.error)requestAnimationFrame(()=>{if(panel.isConnected&&!state.pointers.size)paintChart()});
+ if(state.expanded)panel.scrollTop=scrollTop;
+ const quick=panel.querySelector('.dr-fast-toggles');if(quick)quick.scrollLeft=quickScroll;
+ const drawTools=panel.querySelector('.dr-draw-toolbar>div:nth-child(2)');if(drawTools)drawTools.scrollLeft=drawScroll;
+ // render() already builds the initial chart; repaint only after fullscreen sizing.
+ if(r&&!state.error&&state.expanded)requestAnimationFrame(()=>{if(panel.isConnected&&!state.pointers.size)paintChart()});
 }
 async function load(symbol,tf='4h',force=false){
  if(!symbol)return;symbol=String(symbol).replace(/[^A-Z0-9]/gi,'').toUpperCase();const token=++state.token;state.controller?.abort();if(state.symbol!==symbol||state.tf!==tf){state.view={count:defaultCount(),offset:0};state.pending=null;state.pointers.clear();state.gesture=null;state.dragPreview=null}state.symbol=symbol;state.tf=tf;state.result=null;state.error=false;state.errorMessage='';state.loading=true;render();
