@@ -41,6 +41,7 @@ function updateLayer(key,enabled){
   const status=panel?.querySelector('[data-indicator-feedback]');
   const r=state.result;
   const missing=state.layers[key]&&r?(
+   key==='ema200'&&(r.bars||[]).length<200?'EMA 200 needs 200 closed candles':
    key==='orderBlocks'&&!(r.blocks||[]).some(b=>b.status!=='INVALID')?'No active Order Blocks on this timeframe':
    key==='fvg'&&!(r.gaps||[]).some(g=>g.status!=='FILLED')?'No active FVG on this timeframe':
    key==='fib'&&!r.fib?'No confirmed Fibonacci anchors yet':
@@ -291,8 +292,12 @@ function ensure(){
  let lastTouchButton=null,lastTouchAt=0,lastTouchX=0,lastTouchY=0;
  // Cancel delayed iOS synthetic clicks even if the original button moves in the DOM.
  document.addEventListener('click',e=>{
-  if(!lastTouchAt||Date.now()-lastTouchAt>650)return;
-  if(Math.hypot((e.clientX||0)-lastTouchX,(e.clientY||0)-lastTouchY)>28)return;
+  const last=window.__drLastToolTouch;
+  const timestamp=Math.max(lastTouchAt,last?.at||0);
+  if(!timestamp||Date.now()-timestamp>650)return;
+  const x=last?.at>=lastTouchAt?last.x:lastTouchX;
+  const y=last?.at>=lastTouchAt?last.y:lastTouchY;
+  if(Math.hypot((e.clientX||0)-x,(e.clientY||0)-y)>28)return;
   e.preventDefault();e.stopImmediatePropagation();
  },true);
  panel.addEventListener('click',e=>{
@@ -314,7 +319,7 @@ function ensure(){
   const t=Array.from(e.changedTouches).find(x=>x.identifier===start.id);
   if(!t||Math.hypot(t.clientX-start.x,t.clientY-start.y)>14)return;
   if(!start.button.contains(e.target))return;
-  e.preventDefault();e.stopPropagation();lastTouchButton=start.button;lastTouchAt=Date.now();lastTouchX=t.clientX;lastTouchY=t.clientY;activateChartButton(start.button);
+  e.preventDefault();e.stopPropagation();lastTouchButton=start.button;lastTouchAt=Date.now();lastTouchX=t.clientX;lastTouchY=t.clientY;window.__drLastToolTouch={at:lastTouchAt,x:lastTouchX,y:lastTouchY};activateChartButton(start.button);
  },{passive:false});
  panel.addEventListener('touchcancel',()=>{touch=null},{passive:true});
  return panel;
