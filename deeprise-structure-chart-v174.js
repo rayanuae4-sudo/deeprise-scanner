@@ -38,7 +38,7 @@ function updateLayer(key,enabled){
  panel?.querySelectorAll('[data-structure-layer="'+key+'"]').forEach(el=>{el.checked=state.layers[key];el.closest('label')?.classList.toggle('is-on',state.layers[key])});
  panel?.querySelectorAll('[data-toggle-indicator="'+key+'"]').forEach(btn=>{btn.classList.toggle('active',state.layers[key]);btn.setAttribute('aria-pressed',String(state.layers[key]));const flag=btn.querySelector('[data-indicator-status]');if(flag)flag.textContent=state.layers[key]?'●':'○'});
  state.preset='custom';const presetNodes=panel?.querySelectorAll('[data-chart-preset]');presetNodes?.forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-pressed','false')});
-  const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error)queuePaint();
+  const status=panel?.querySelector('[data-indicator-feedback]');if(status)status.textContent=(state.layers[key]?'✓ ON · ':'○ OFF · ')+t(key)+(state.result?' · Chart updated ↓':' · '+t('loading'));if(state.result&&!state.error){if(state.pointers.size)queuePaint();else paintChart();}
 }
 const indicatorCache=new WeakMap(),INDICATORS=new Set(['ema20','ema50','ema200','bollinger','volume','rsi','macd','atr','poc','volumeProfile']);
 function studies(bars){
