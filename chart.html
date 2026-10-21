@@ -27,7 +27,7 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
 </main>
 <script defer src="./deeprise-market-structure-v174.js?v=1850"></script>
 <script defer src="./deeprise-structure-explain-v182.js?v=1820"></script>
-<script defer src="./deeprise-structure-chart-v174.js?v=1880"></script>
+<script defer src="./deeprise-structure-chart-v174.js?v=1881"></script>
 <script defer src="./deeprise-structure-reasons-v182.js?v=1820"></script>
 <script defer>
 (function(){
@@ -108,10 +108,11 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
   syncButtons();
  }
  for(const btn of [fullTop,obTop,rsiTop]){
-  btn.addEventListener('click',()=>topAction(btn));
+  let suppressClickUntil=0;
+   btn.addEventListener('click',e=>{if(performance.now()<suppressClickUntil){e.preventDefault();return}topAction(btn)});
   let tap=null;
   btn.addEventListener('touchstart',e=>{const t=e.touches[0];tap=e.touches.length===1?{x:t.clientX,y:t.clientY}:null},{passive:true});
-  btn.addEventListener('touchend',e=>{const p=tap,t=e.changedTouches[0];tap=null;if(!p||!t||Math.hypot(p.x-t.clientX,p.y-t.clientY)>14)return;e.preventDefault();topAction(btn)},{passive:false});
+  btn.addEventListener('touchend',e=>{const p=tap,t=e.changedTouches[0];tap=null;if(!p||!t||Math.hypot(p.x-t.clientX,p.y-t.clientY)>14)return;e.preventDefault();suppressClickUntil=performance.now()+750;topAction(btn)},{passive:false});
   btn.addEventListener('touchcancel',()=>{tap=null},{passive:true});
  }
  document.getElementById('chartPanel').addEventListener('click',()=>queueMicrotask(syncButtons));
