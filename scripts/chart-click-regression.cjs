@@ -113,7 +113,7 @@ function button(selector){const b=w.document.querySelector(selector);assert.ok(b
  assert.match(button('#drStructurePanel svg').outerHTML,/data-last-close-price=/,'Chart must show last-close price marker');
  const standalone=fs.readFileSync('chart.html','utf8');
  assert.match(standalone,/DOMContentLoaded/);
- assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1880/);
+ assert.match(standalone,/deeprise-structure-chart-v174.js\?v=1882/);
  assert.match(standalone,/symbolForm/);
  console.log('DeepRise v18.8 price-axis, interactive help, profile, touch-draw and fullscreen DOM regression: PASS');
  dom.window.close();
