@@ -111,7 +111,7 @@ main{padding:0 8px 14px}#chartQuickOpen{display:flex;flex-wrap:wrap;gap:8px;padd
   let suppressClickUntil=0;
    btn.addEventListener('click',e=>{if(performance.now()<suppressClickUntil){e.preventDefault();return}topAction(btn)});
   let tap=null;
-  btn.addEventListener('touchstart',e=>{const t=e.touches[0];tap=e.touches.length===1?{x:t.clientX,y:t.clientY}:null},{passive:true});
+  btn.addEventListener('touchstart',e=>{window.__drLastToolTouch=null;const t=e.touches[0];tap=e.touches.length===1?{x:t.clientX,y:t.clientY}:null},{passive:true});
   btn.addEventListener('touchend',e=>{const p=tap,t=e.changedTouches[0];tap=null;if(!p||!t||Math.hypot(p.x-t.clientX,p.y-t.clientY)>14)return;e.preventDefault();suppressClickUntil=performance.now()+750;window.__drLastToolTouch={at:Date.now(),x:t.clientX,y:t.clientY};topAction(btn)},{passive:false});
   btn.addEventListener('touchcancel',()=>{tap=null},{passive:true});
  }
